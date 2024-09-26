@@ -9,14 +9,17 @@ const UserListPage = () => {
     const fetchUsers = async () => {
         try {
             const response = await fetchAllUsersAPI();
-            if (response.data.length === 0) {
+            console.log('API Response:', response); // Log the response
+            if (Array.isArray(response.data) && response.data.length === 0) {
                 console.log('No users found');
             }
             setUsers(response.data);
         } catch (err) {
             setError(err.message);
+            console.error('Error fetching users:', err); // Log the error
         }
     };
+    
 
     useEffect(() => {
         fetchUsers();
@@ -68,11 +71,12 @@ const UserListPage = () => {
             {error && <Alert message="Error" description={error} type="error" showIcon />}
             { !error && (
                 <Table
-                    dataSource={users}
-                    columns={columns}
-                    rowKey="id"
-                    pagination={{ pageSize: 20 }}
-                />
+                dataSource={Array.isArray(users) ? users : []} // Ensure users is an array
+                columns={columns}
+                rowKey="id"
+                pagination={{ pageSize: 20 }}
+            />
+            
             )}
         </div>
     );
