@@ -9,7 +9,7 @@ const UserListPage = () => {
     const fetchUsers = async () => {
         try {
             const response = await fetchAllUsersAPI();
-            console.log('API Response:', response); // Log the response
+            console.log('API Response:', response.data); // Log the response
             if (Array.isArray(response.data) && response.data.length === 0) {
                 console.log('No users found');
             }
