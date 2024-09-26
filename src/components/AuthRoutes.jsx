@@ -19,7 +19,7 @@ export const AuthRoutes = (props) => {
             title="Need Login action"
             subTitle="Sorry, you are not authorized to access this page."
             extra={<Button type="primary" >
-                <Link to="/login"><span>Back to login</span></Link>
+                <Link to="/"><span>Back to login</span></Link>
             </Button>}
         />
 

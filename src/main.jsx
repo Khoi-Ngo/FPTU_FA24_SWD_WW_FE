@@ -6,34 +6,29 @@ import ErrorPage from './pages/ErrorPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { AuthWrapper } from './components/auth-context.jsx';
 import { AuthRoutes } from './components/AuthRoutes.jsx';
-import { HomePage } from './pages/HomePage.jsx';
+import { App } from './pages/App.jsx';
 
 //config browser route region
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "demo",
-        // index: true,
-        element: <DemoPage />
-      },
-    ],
-  },
-  {
-    path: "/login",
     element: <LoginPage />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
+
   {
-    path: "/demo1",
+    path: "/app",
     element:
-      <AuthRoutes>
-        <DemoPage />
-      </AuthRoutes>
+      // <AuthRoutes>
+      <App />
+    // </AuthRoutes>,
+    ,
+    errorElement: <ErrorPage />,
+    children: ([
+
+    ]),
   },
+
 ]);
 
 //end region
