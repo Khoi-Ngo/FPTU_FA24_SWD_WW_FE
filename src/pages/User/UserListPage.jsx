@@ -4,7 +4,6 @@ import { fetchAllUsersAPI } from '../../service/api-service/UserApiService';
 
 const UserListPage = () => {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const fetchUsers = async () => {
@@ -14,10 +13,8 @@ const UserListPage = () => {
                 console.log('No users found');
             }
             setUsers(response.data);
-            setLoading(false);
         } catch (err) {
             setError(err.message);
-            setLoading(false);
         }
     };
 
@@ -68,9 +65,8 @@ const UserListPage = () => {
     return (
         <div>
             <h1 style={{ textAlign: 'center' }}>User List</h1>
-            {loading && <Spin tip="Loading users..." />}
             {error && <Alert message="Error" description={error} type="error" showIcon />}
-            {!loading && !error && (
+            { !error && (
                 <Table
                     dataSource={users}
                     columns={columns}

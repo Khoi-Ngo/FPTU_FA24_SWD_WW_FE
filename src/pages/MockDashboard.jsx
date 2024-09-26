@@ -8,20 +8,19 @@ const { Sider, Content } = Layout;
 
 const MockDashboardPage = () => {
     const [selectedMenu, setSelectedMenu] = useState('Overview'); // State to track selected menu
-
-
     const navigate = useNavigate();
 
     const handleMenuClick = (menuKey) => {
+        setSelectedMenu(menuKey); // Update selected menu
         switch (menuKey) {
             case 'Overview':
-                navigate('/overview');
+                navigate('/app'); // Direct to the app base route
                 break;
             case 'Analytics':
-                navigate('/analytics');
+                navigate('/app/analytics'); // Correct path for analytics
                 break;
             case 'Users':
-                navigate('/users');
+                navigate('/app/users'); // Correct path for users
                 break;
             default:
                 break;
@@ -74,7 +73,7 @@ const MockDashboardPage = () => {
                 <div className="logo">Dashboard</div>
                 <Menu
                     theme="dark"
-                    defaultSelectedKeys={['1']}
+                    selectedKeys={[selectedMenu]} // Set selected keys to reflect current menu
                     mode="inline"
                     onClick={({ key }) => handleMenuClick(key)} // Add click handler here
                 >
