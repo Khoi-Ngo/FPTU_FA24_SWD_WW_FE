@@ -1,0 +1,27 @@
+/* Sider logo */
+.logo {
+    height: 32px;
+    margin: 16px;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  /* Site layout */
+  .site-layout-background {
+    background: #fff;
+    padding: 24px;
+    border-radius: 8px;
+  }
+  
+  /* Ant Design Cards */
+  .ant-card {
+    border-radius: 8px;
+  }
+  
+  /* Customize menu item */
+  .ant-menu-item {
+    font-size: 16px;
+  }
+  

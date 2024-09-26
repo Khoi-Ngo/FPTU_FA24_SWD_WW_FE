@@ -7,6 +7,8 @@ import { LoginPage } from './pages/LoginPage.jsx';
 import { AuthWrapper } from './components/auth-context.jsx';
 import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { App } from './pages/App.jsx';
+import MockDashboardPage from './pages/MockDashboard.jsx';
+import UserListPage from './pages/User/UserListPage.jsx';
 
 //config browser route region
 const router = createBrowserRouter([
@@ -21,11 +23,25 @@ const router = createBrowserRouter([
     element:
       // <AuthRoutes>
       <App />
-    // </AuthRoutes>,
+    //</AuthRoutes>
     ,
     errorElement: <ErrorPage />,
     children: ([
 
+      {
+        index: true,
+        element: <MockDashboardPage></MockDashboardPage>
+      },
+
+      {
+        path: 'demo',
+        element: <DemoPage></DemoPage>
+      },
+
+      {
+        path: 'users',
+        element: <UserListPage></UserListPage>
+      }
     ]),
   },
 

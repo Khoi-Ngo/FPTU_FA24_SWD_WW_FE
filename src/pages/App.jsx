@@ -46,10 +46,7 @@ export const App = () => {
         ) : (
             <>
                 <Layout style={{ minHeight: '80vh' }}>
-                    {/* <Header /> */}
-                    <Outlet
-                        fetchUserInfo={fetchUserInfo}
-                    />
+                    <Outlet fetchUserInfo={fetchUserInfo} />
                 </Layout>
                 <Footer />
             </>

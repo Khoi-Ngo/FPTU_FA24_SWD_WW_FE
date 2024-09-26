@@ -31,22 +31,35 @@ instance.interceptors.request.use(function (config) {
 });
 
 // Add a response interceptor
+// instance.interceptors.response.use(function (response) {
+
+
+
+//     // Any status code that lie within the range of 2xx cause this function to trigger
+//     // Do something with response data
+//     //! Check data from response
+//     //? Response here having many config relating to HTTP Response 
+//     // => just need data if success
+//     if (response.data != null && response.data.data != null)
+//         return response.data;//response {status, payload, ...}
+// }, function (error) {
+//     // Any status codes that falls outside the range of 2xx cause this function to trigger
+//     // Do something with response error
+//     if (error.response != null && error.response.data != null) return error.response.data;
+//     return Promise.reject(error);
+// });
+
+
 instance.interceptors.response.use(function (response) {
-
-
-
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    //! Check data from response
-    //? Response here having many config relating to HTTP Response 
-    // => just need data if success
-    if (response.data != null && response.data.data != null)
-        return response.data;//response {status, payload, ...}
+    // If response contains data, return it
+    if (response.data != null) {
+        // If `data` contains another `data` field, return it; otherwise, return the whole response
+        return response.data.data ? response.data.data : response.data;
+    }
 }, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
     if (error.response != null && error.response.data != null) return error.response.data;
     return Promise.reject(error);
 });
+
 
 export default instance;
