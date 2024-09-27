@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     element:
       // <AuthRoutes>
       <App />
-    //</AuthRoutes>
+    // </AuthRoutes>
     ,
     errorElement: <ErrorPage />,
     children: ([

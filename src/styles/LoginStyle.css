@@ -1,26 +1,19 @@
-/* LoginPage.css */
-
+/* Full-page layout with background image */
 .login-page {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: #f0f2f5; /* Light background */
+    background-image: url('../../public/login-bg.jpg'); /* Background image from public folder */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
     overflow: hidden;
 }
 
-.video-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    filter: brightness(50%);
-}
-
+/* Container for the login form */
 .login-form-container {
     background-color: #fff;
     padding: 40px;
@@ -29,23 +22,28 @@
     width: 100%;
     max-width: 400px;
     text-align: center;
+    z-index: 1; /* Ensure form stays above the background */
 }
 
+/* Header for the login form */
 .login-form h2 {
     margin-bottom: 24px;
     font-size: 24px;
     color: #333;
 }
 
+/* Form item spacing */
 .login-form .ant-form-item {
     margin-bottom: 16px;
 }
 
+/* Input field styling */
 .login-form .ant-input {
     height: 40px;
     font-size: 16px;
 }
 
+/* Submit button styling */
 .login-form-button {
     width: 100%;
     height: 40px;
@@ -53,10 +51,12 @@
     font-weight: bold;
 }
 
+/* Remove button outline when focused */
 .login-form-button:focus {
     outline: none;
 }
 
+/* Link styling within the form (e.g., forgot password, sign up) */
 .login-form-container a {
     display: block;
     margin-top: 12px;
@@ -64,6 +64,15 @@
     color: #1890ff;
 }
 
+/* Hover effect for links */
 .login-form-container a:hover {
     color: #40a9ff;
+}
+
+/* Optional: adjust layout for smaller screens */
+@media (max-width: 480px) {
+    .login-form-container {
+        padding: 20px;
+        max-width: 100%;
+    }
 }

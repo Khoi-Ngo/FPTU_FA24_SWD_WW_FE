@@ -46,6 +46,13 @@ const UserDetailPage = () => {
         });
     };
 
+    const handleUploadAvatar = (event) => {
+        notification.info({
+            message: "Clik upload avatar"
+        })
+        //TODO implement later
+    }
+
     const handleSave = () => {
         // Implement save logic, e.g., sending data to the backend
         setUser(editableUser); // Update the user state with new data
@@ -73,12 +80,26 @@ const UserDetailPage = () => {
     return (
         <div className="user-detail-container">
             <Card className="user-card">
-                {/* TODO: implement changing profile later */}
                 <Avatar
-                    size={128}
-                    icon={<UserOutlined />}
-                    src={user.profileImageUrl || 'default-avatar.png'}
-                    className="user-avatar"
+                    size={64}
+                    src={user.profileImageUrl}
+                    alt="User Avatar"
+                    style={{
+                        borderRadius: '50%',
+                        border: '0.3px solid black',
+                    }}
+                />
+                <label
+                    style={{ marginTop: 10, cursor: 'pointer', color: 'gray' }}
+                    htmlFor="btnUpload"
+                >
+                    Change avatar
+                </label>
+                <input
+                    type="file"
+                    hidden
+                    id="btnUpload"
+                    onChange={(event) => handleUploadAvatar(event)}
                 />
                 <h2>{editableUser.firstName} {editableUser.lastName}</h2>
                 <p className="user-role">{user.role}</p>
