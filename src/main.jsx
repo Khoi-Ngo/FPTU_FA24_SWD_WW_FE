@@ -9,7 +9,7 @@ import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { App } from './pages/App.jsx';
 import MockDashboardPage from './pages/MockDashboard.jsx';
 import UserListPage from './pages/User/UserListPage.jsx';
-
+import UserImportRequest from './pages/User/UserImportRequest.jsx';
 //config browser route region
 const router = createBrowserRouter([
   {
@@ -17,7 +17,11 @@ const router = createBrowserRouter([
     element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
-
+  {
+    path: "/user/import",
+    element: <UserImportRequest />,
+    errorElement: <ErrorPage />,
+  },
   {
     path: "/app",
     element:
