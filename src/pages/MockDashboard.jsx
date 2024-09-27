@@ -69,29 +69,11 @@ const MockDashboardPage = () => {
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Sider>
-                <div className="logo">Dashboard</div>
-                <Menu
-                    theme="dark"
-                    selectedKeys={[selectedMenu]} // Set selected keys to reflect current menu
-                    mode="inline"
-                    onClick={({ key }) => handleMenuClick(key)} // Add click handler here
-                >
-                    <Menu.Item key="Overview" icon={<PieChartOutlined />}>
-                        Overview
-                    </Menu.Item>
-                    <Menu.Item key="Analytics" icon={<DesktopOutlined />}>
-                        Analytics
-                    </Menu.Item>
-                    <Menu.Item key="Users" icon={<UserOutlined />}>
-                        Users
-                    </Menu.Item>
-                </Menu>
-            </Sider>
+
 
             <Layout className="site-layout">
-                <Content style={{ margin: '16px' }}>
-                    <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+                <Content >
+                    <div className="site-layout-background" style={{ minHeight: 360 }}>
                         {renderContent()}
                     </div>
                 </Content>

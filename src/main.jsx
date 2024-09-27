@@ -10,6 +10,7 @@ import { App } from './pages/App.jsx';
 import MockDashboardPage from './pages/MockDashboard.jsx';
 import UserListPage from './pages/User/UserListPage.jsx';
 import UserImportRequest from './pages/User/UserImportRequest.jsx';
+import UserDetailPage from './pages/User/UserDetailPage.jsx';
 //config browser route region
 const router = createBrowserRouter([
   {
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
     element:
       // <AuthRoutes>
       <App />
-    //</AuthRoutes>
+    // </AuthRoutes>
     ,
     errorElement: <ErrorPage />,
     children: ([
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: 'users',
         element: <UserListPage></UserListPage>
+      },
+      {
+        path: 'profile',
+        element: <UserDetailPage></UserDetailPage>
       }
     ]),
   },

@@ -1,6 +1,5 @@
 export const DemoComponent = () => {
  
-    console.log("This is the demo component");
 
     return (
         <>

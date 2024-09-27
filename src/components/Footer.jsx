@@ -3,7 +3,8 @@ import '../styles/init-global.css';
 
 const Footer = () => {
   return (
-    <footer className="footer">
+   <div style={{width: '100vw'}}>
+     <footer className="footer">
       <div className="footer-content">
         <div className="footer-section about">
           <h2 className="logo-text">YourBrand</h2>
@@ -36,6 +37,7 @@ const Footer = () => {
         <p>&copy; 2024 YourBrand | Designed with 💙 by YourTeam</p>
       </div>
     </footer>
+   </div>
   );
 };
 

@@ -14,7 +14,7 @@ export default function ErrorPage() {
       title="Ooopppps!!!!"
       subTitle={error.statusText || error.message}
       extra={<Button type="primary" >
-        <Link to="/"><span>Back to homepage</span></Link>
+        <Link to="/app"><span>Back to homepage</span></Link>
       </Button>}
     />
   );
