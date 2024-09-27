@@ -26,12 +26,6 @@ export const App = () => {
         fetchUserInfo();
     }, []);
 
-    const navigate = useNavigate(); // Initialize navigate
-
-
-    const handleRedirect = () => {
-        navigate('/demo'); // Redirect to the demo page
-    };
 
     return (
         isAppLoading ? (

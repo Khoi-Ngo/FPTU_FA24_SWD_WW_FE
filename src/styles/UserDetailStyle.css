@@ -1,0 +1,97 @@
+/* UserDetail.css */
+
+.user-detail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f4f8, #dfe8ef);
+    padding: 20px;
+}
+
+.user-card {
+    width: 650px;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.user-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.user-avatar {
+    margin-bottom: 20px;
+    border: 3px solid #1890ff;
+    transition: transform 0.3s ease-in-out;
+}
+
+.user-avatar:hover {
+    transform: scale(1.1);
+}
+
+h2 {
+    margin-top: 10px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 0.5px;
+}
+
+.user-role {
+    font-size: 18px;
+    color: #1890ff;
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+/* Descriptions Styling */
+.ant-descriptions-bordered {
+    border-color: #1890ff;
+    border-radius: 10px;
+}
+
+.ant-descriptions-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+}
+
+.ant-descriptions-item-label {
+    font-weight: bold;
+    color: #555;
+    font-size: 15px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.ant-descriptions-item-content {
+    color: #333;
+    font-size: 16px;
+}
+
+.ant-descriptions-row {
+    border-bottom: 1px solid #ddd;
+}
+
+.ant-descriptions-item {
+    padding: 16px;
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.error-message {
+    text-align: center;
+    color: red;
+    font-size: 18px;
+    padding: 20px;
+}

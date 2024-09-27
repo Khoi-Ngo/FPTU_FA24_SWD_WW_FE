@@ -58,7 +58,7 @@ export const LoginPage = () =>{
 
     return (
         <div className="login-page">
-            {/* <video className="video-bg" src={videoBg} autoPlay loop muted /> */}
+            {/* TODO: inserting background */}
             <div className="login-form-container">
                 <Form
                     form={form}
