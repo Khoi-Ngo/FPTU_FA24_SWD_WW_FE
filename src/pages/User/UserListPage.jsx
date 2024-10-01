@@ -128,14 +128,20 @@ const UserListPage = () => {
             render: (text) => new Date(text).toLocaleString(),
         },
         {
+            title: 'AccountStatus',
+            dataIndex: 'accountStatus',
+            key: 'accountStatus',
+        },
+
+        {
             title: '',
             key: 'action',
             render: (text, record) => (
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <button style={{margin: 10}} className="btn-delete" onClick={() => handleDelete(record.id)}>
+                    <button style={{ margin: 10 }} className="btn-delete" onClick={() => handleDelete(record.id)}>
                         <UserDeleteOutlined />
                     </button>
-                    <button style={{margin: 10}} className="btn-update" onClick={() => handleUpdate(record.id)}>
+                    <button style={{ margin: 10 }} className="btn-update" onClick={() => handleUpdate(record.id)}>
                         <EditOutlined />
                     </button>
                 </div>
