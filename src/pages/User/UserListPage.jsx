@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Spin, Alert, Button, Modal, Form, Input, notification } from 'antd';
-import { fetchAllUsersAPI, deleteUserApi } from '../../service/api-service/UserApiService';
+import { fetchAllUsersAPI, deleteUserApi } from '../../services/api-service/UserApiService';
 import { EditOutlined, UserDeleteOutlined } from '@ant-design/icons';
 import { UserDetailPopup } from '../../components/User/UserDetailPopup';
 import { AddUserForm } from '../../components/User/AddUserForm';
