@@ -13,8 +13,8 @@ import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import { RoomListPage } from './pages/Room/RoomListPage.jsx';
 import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
 import { IORequestDetailListPage } from './pages/IORequest/IORequestDetailListPage.jsx';
-
-
+import UserImportRequest from './pages/User/UserImportRequest.jsx';
+import UserManageCategory from './pages/User/UserManageCategory.jsx';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -48,7 +48,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'winecates',
-        element: <WineCateListPage />
+        element: <UserManageCategory />
       },
       {
         path: 'rooms',
@@ -61,7 +61,12 @@ const router = createBrowserRouter([
       {
         path: 'iodetail', // TODO replace id later
         element: <IORequestDetailListPage />
-      }
+      },
+      {
+        path: "import_request",
+        element: <UserImportRequest />
+      },
+
     ],
   },
 ]);
