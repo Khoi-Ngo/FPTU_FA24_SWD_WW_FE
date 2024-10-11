@@ -33,6 +33,7 @@ export const App = () => {
         if (path.startsWith('/app/wines')) return 'Wines';
         if (path.startsWith('/app/winecates')) return 'WineCates';
         if (path.startsWith('/app/rooms')) return 'Rooms';
+        if (path.startsWith('/app/iorequests')) return 'IORequests';
 
 
 
@@ -68,11 +69,6 @@ export const App = () => {
             case 'IORequests':
                 navigate('/app/iorequests');
                 break;
-            // case 'IORequestDetails':
-            //     navigate('/app/iorequests/id');
-            //     break;
-
-
             default:
                 break;
         }
