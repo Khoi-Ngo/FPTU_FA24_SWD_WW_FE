@@ -1,0 +1,30 @@
+.wine-list-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wine-list-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4A4A4A;
+}
+
+.create-wine-button {
+    margin-bottom: 20px;
+}
+
+.wine-table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden; /* Ensure the border radius is respected */
+}
+
+.wine-modal {
+    border-radius: 8px;
+}
+
+.submit-button {
+    width: 100%;
+}

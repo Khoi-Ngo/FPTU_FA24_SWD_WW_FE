@@ -1,17 +1,20 @@
-import { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ReactDOM from 'react-dom/client';
 import { DemoPage } from './pages/DemoPage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { AuthWrapper } from './components/auth-context.jsx';
-import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { App } from './pages/App.jsx';
 import MockDashboardPage from './pages/MockDashboard.jsx';
 import UserListPage from './pages/User/UserListPage.jsx';
-import UserImportRequest from './pages/User/UserImportRequest.jsx';
 import UserDetailPage from './pages/User/UserDetailPage.jsx';
-//config browser route region
+import WineListPage from './pages/Wine/WineListPage.jsx';
+import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
+import { RoomListPage } from './pages/Room/RoomListPage.jsx';
+import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
+import { IORequestDetailListPage } from './pages/IORequest/IORequestDetailListPage.jsx';
+
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,49 +22,54 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/user/import",
-    element: <UserImportRequest />,
-    errorElement: <ErrorPage />,
-
-  },
-  {
     path: "/app",
-    element:
-      // <AuthRoutes>
-      <App />
-    // </AuthRoutes>
-    ,
+    element: <App />,
     errorElement: <ErrorPage />,
-    children: ([
-
+    children: [
       {
         index: true,
-        element: <MockDashboardPage></MockDashboardPage>
+        element: <MockDashboardPage />
       },
-
       {
         path: 'demo',
-        element: <DemoPage></DemoPage>
+        element: <DemoPage />
       },
-
       {
         path: 'users',
-        element: <UserListPage></UserListPage>
+        element: <UserListPage />
       },
       {
         path: 'profile',
-        element: <UserDetailPage></UserDetailPage>
+        element: <UserDetailPage />
+      },
+      {
+        path: 'wines',
+        element: <WineListPage />
+      },
+      {
+        path: 'winecates',
+        element: <WineCateListPage />
+      },
+      {
+        path: 'rooms',
+        element: <RoomListPage />
+      },
+      {
+        path: 'iorequests',
+        element: <IORequestListPage />,
+      },
+      {
+        path: 'iodetail', // TODO replace id later
+        element: <IORequestDetailListPage />
       }
-    ]),
+    ],
   },
-
 ]);
 
-//end region
 
-
-ReactDOM.createRoot(document.getElementById('root')).render(
+// Render the application
+createRoot(document.getElementById('root')).render(
   <AuthWrapper>
     <RouterProvider router={router} />
   </AuthWrapper>
-)
+);

@@ -153,7 +153,7 @@ const UserListPage = () => {
         <div>
             <h1 style={{ textAlign: 'center' }}>User List</h1>
             {error && <Alert message="Error" description={error} type="error" showIcon />}
-            <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ margin: '16px' }}>
+            <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ margin: '20px' }}>
                 Add User
             </Button>
             {!error && (

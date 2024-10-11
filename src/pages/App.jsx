@@ -30,10 +30,16 @@ export const App = () => {
         if (path.startsWith('/app/analytics')) return 'Analytics';
         if (path.startsWith('/app/users')) return 'Users';
         if (path.startsWith('/app/profile')) return 'Profile';
+        if (path.startsWith('/app/wines')) return 'Wines';
+        if (path.startsWith('/app/winecates')) return 'WineCates';
+        if (path.startsWith('/app/rooms')) return 'Rooms';
+
+
+
 
         return 'Overview'; // Default to 'Overview'
     };
-    
+
 
     const handleMenuClick = (menuKey) => {
         setSelectedMenu(menuKey); // Update selected menu
@@ -50,6 +56,23 @@ export const App = () => {
             case 'Profile':
                 navigate('/app/profile');
                 break;
+            case 'Wines':
+                navigate('/app/wines');
+                break;
+            case 'WineCates':
+                navigate('/app/winecates');
+                break;
+            case 'Rooms':
+                navigate('/app/rooms');
+                break;
+            case 'IORequests':
+                navigate('/app/iorequests');
+                break;
+            // case 'IORequestDetails':
+            //     navigate('/app/iorequests/id');
+            //     break;
+
+
             default:
                 break;
         }
@@ -71,7 +94,7 @@ export const App = () => {
         const currentMenu = getMenuKeyFromPath(location.pathname);
         setSelectedMenu(currentMenu);
     }, [location.pathname]);
-    
+
 
     return (
         isAppLoading ? (
@@ -95,7 +118,7 @@ export const App = () => {
                             mode="inline"
                             onClick={({ key }) => handleMenuClick(key)} // Add click handler here
                         >
-                             <Menu.Item key="Profile" icon={<RobotOutlined />}>
+                            <Menu.Item key="Profile" icon={<RobotOutlined />}>
                                 Profile
                             </Menu.Item>
                             <Menu.Item key="Overview" icon={<PieChartOutlined />}>
@@ -107,11 +130,23 @@ export const App = () => {
                             <Menu.Item key="Users" icon={<UserOutlined />}>
                                 Users
                             </Menu.Item>
+                            <Menu.Item key="Wines" icon={<UserOutlined />}>
+                                Wines
+                            </Menu.Item>
+                            <Menu.Item key="WineCates" icon={<UserOutlined />}>
+                                Wine Category
+                            </Menu.Item>
+                            <Menu.Item key="Rooms" icon={<UserOutlined />}>
+                                Room
+                            </Menu.Item>
+                            <Menu.Item key="IORequests" icon={<UserOutlined />}>
+                                I/O Requests
+                            </Menu.Item>
                         </Menu>
                     </Sider>
                     {/* <Outlet fetchUserInfo={fetchUserInfo} /> */}
                     <Content style={{ margin: '0 ' }}>
-                        <div style={{  background: '#fff', minHeight: 360 }}>
+                        <div style={{ background: '#fff', minHeight: 360 }}>
                             <Outlet fetchUserInfo={fetchUserInfo} />
                         </div>
                     </Content>
