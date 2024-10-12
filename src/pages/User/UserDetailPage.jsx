@@ -57,7 +57,9 @@ const UserDetailPage = () => {
         // Implement save logic, e.g., sending data to the backend
         setUser(editableUser); // Update the user state with new data
         setIsEditing(false);
-        message.success('Profile updated successfully.');
+        notification.success({
+            message: "Successfully"
+        })
     };
 
     const handleCancel = () => {

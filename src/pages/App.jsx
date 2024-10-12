@@ -29,10 +29,13 @@ export const App = () => {
     const getMenuKeyFromPath = (path) => {
         if (path.startsWith('/app/users')) return 'Users';
         if (path.startsWith('/app/profile')) return 'Profile';
-        if (path.startsWith('/app/wines')) return 'Wines';
-        if (path.startsWith('/app/winecates')) return 'WineCates';
+        if (path.startsWith('/app/wines')
+            || path.startsWith('/app/create-wine')
+            || path.startsWith('/app/update-wine')
+        ) return 'Wines';
+        if (path.startsWith('/app/wine-cates')) return 'WineCates';
         if (path.startsWith('/app/rooms')) return 'Rooms';
-        if (path.startsWith('/app/iorequests')) return 'IORequests';
+        if (path.startsWith('/app/io-requests')) return 'IORequests';
         if (path.startsWith('/app/tasks')) return 'StaffTasks';
 
 
@@ -59,13 +62,13 @@ export const App = () => {
                 navigate('/app/wines');
                 break;
             case 'WineCates':
-                navigate('/app/winecates');
+                navigate('/app/wine-cates');
                 break;
             case 'Rooms':
                 navigate('/app/rooms');
                 break;
             case 'IORequests':
-                navigate('/app/iorequests');
+                navigate('/app/io-requests');
                 break;
             case 'StaffTasks':
                 navigate('/app/tasks');
@@ -148,7 +151,7 @@ export const App = () => {
                         </div>
                     </Content>
                 </Layout>
-                <Footer />
+                {/* <Footer /> */}
             </>
         )
     );
