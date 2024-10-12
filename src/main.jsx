@@ -14,6 +14,9 @@ import { RoomListPage } from './pages/Room/RoomListPage.jsx';
 import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
 import TaskHome from './pages/Task/TaskHome.jsx';
 import ResetPasswordPage from './pages/ResetPassword/ResetPasswordPage.jsx';
+import { CreateWinePage } from './pages/Wine/CreateWinePage.jsx';
+import { DetailWinePage } from './pages/Wine/DetailWinePage.jsx';
+import UpdateWinePage from './pages/Wine/UpdateWinePage.jsx';
 
 
 const router = createBrowserRouter([
@@ -24,7 +27,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/resetpassword",
+    path: "/reset-password",
     element: <ResetPasswordPage></ResetPasswordPage>,
     errorElement: <ErrorPage />
   },
@@ -59,7 +62,7 @@ const router = createBrowserRouter([
         element: <WineListPage />
       },
       {
-        path: 'winecates',
+        path: 'wine-cates',
         element: <WineCateListPage />
       },
       {
@@ -67,9 +70,21 @@ const router = createBrowserRouter([
         element: <RoomListPage />
       },
       {
-        path: 'iorequests',
+        path: 'io-requests',
         element: <IORequestListPage />,
       },
+      {
+        path: 'create-wine',
+        element: <CreateWinePage />,
+      },
+      {
+        path: 'wines/:wineId',
+        element: <DetailWinePage />,
+      },
+      {
+        path: 'update-wine/:wineId',
+        element: <UpdateWinePage />,
+      }
     ],
   },
 ]);
