@@ -12,7 +12,8 @@ import WineListPage from './pages/Wine/WineListPage.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import { RoomListPage } from './pages/Room/RoomListPage.jsx';
 import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
-import { IORequestDetailListPage } from './pages/IORequest/IORequestDetailListPage.jsx';
+import TaskHome from './pages/Task/TaskHome.jsx';
+import ResetPasswordPage from './pages/ResetPassword/ResetPasswordPage.jsx';
 
 
 const router = createBrowserRouter([
@@ -21,6 +22,13 @@ const router = createBrowserRouter([
     element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
+
+  {
+    path: "/resetpassword",
+    element: <ResetPasswordPage></ResetPasswordPage>,
+    errorElement: <ErrorPage />
+  },
+
   {
     path: "/app",
     element: <App />,
@@ -37,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: 'users',
         element: <UserListPage />
+      },
+      {
+        path: 'tasks',
+        element: <TaskHome />
       },
       {
         path: 'profile',
@@ -58,10 +70,6 @@ const router = createBrowserRouter([
         path: 'iorequests',
         element: <IORequestListPage />,
       },
-      {
-        path: 'iodetail', // TODO replace id later
-        element: <IORequestDetailListPage />
-      }
     ],
   },
 ]);

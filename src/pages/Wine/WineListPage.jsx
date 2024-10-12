@@ -2,33 +2,6 @@ import React, { useState } from 'react';
 import { Table, Button, Modal, Form, Input, message } from 'antd';
 import '../../styles/WineListStyle.css'; // Import custom styles
 
-const mockWines = [
-    {
-        id: 1,
-        wineName: 'Chardonnay',
-        alcoholContent: 13.5,
-        bottleSize: '750ml',
-        availableStock: 100,
-        supplier: 'Wine Supplier A',
-    },
-    {
-        id: 2,
-        wineName: 'Merlot',
-        alcoholContent: 14.0,
-        bottleSize: '750ml',
-        availableStock: 80,
-        supplier: 'Wine Supplier B',
-    },
-    {
-        id: 3,
-        wineName: 'Cabernet Sauvignon',
-        alcoholContent: 15.0,
-        bottleSize: '750ml',
-        availableStock: 60,
-        supplier: 'Wine Supplier C',
-    },
-];
-
 export const WineListPage = () => {
     const [wines, setWines] = useState(mockWines);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -158,3 +131,37 @@ export const WineListPage = () => {
 };
 
 export default WineListPage;
+
+
+
+
+
+// MOCK DATA BELOW
+
+
+const mockWines = [
+    {
+        id: 1,
+        wineName: 'Chardonnay',
+        alcoholContent: 13.5,
+        bottleSize: '750ml',
+        availableStock: 100,
+        supplier: 'Wine Supplier A',
+    },
+    {
+        id: 2,
+        wineName: 'Merlot',
+        alcoholContent: 14.0,
+        bottleSize: '750ml',
+        availableStock: 80,
+        supplier: 'Wine Supplier B',
+    },
+    {
+        id: 3,
+        wineName: 'Cabernet Sauvignon',
+        alcoholContent: 15.0,
+        bottleSize: '750ml',
+        availableStock: 60,
+        supplier: 'Wine Supplier C',
+    },
+];

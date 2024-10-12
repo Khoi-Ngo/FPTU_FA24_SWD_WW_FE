@@ -20,7 +20,7 @@ export const LoginPage = () => {
                 message: "Implement login later",
             });
 
-            // Call API login logic here...
+            //TODO:  call API login
             
             setIsLoading(false);
             setIsEntered(false);
@@ -35,6 +35,12 @@ export const LoginPage = () => {
 
     // Handle modal OK
     const handleOk = () => {
+
+        //TODO: call api send code verification 
+
+        navigate("/resetpassword");
+
+
         // Handle forgot password logic here, e.g., sending email
         notification.info({
             message: `Password reset link sent to ${modalEmail}`,
@@ -45,6 +51,7 @@ export const LoginPage = () => {
 
     // Handle modal Cancel
     const handleCancel = () => {
+        setModalEmail(""); // Clear input after cancel
         setIsModalVisible(false);
     };
 
@@ -111,24 +118,3 @@ export const LoginPage = () => {
 };
 
 
-//call API login
-            // const res = await loginAPI(values.email, values.password);
-            // if (res.data) {
-            //     notification.success(
-            //         {
-            //             message: "Login successfully"
-            //         }
-            //     );
-            //     //!SAVE some crucial information user
-            //     localStorage.setItem("access_token", res.data.access_token);
-            //     setUserLogin(res.data.user);
-            //     //redirect into HomePage
-            //     navigate("/");
-            // } else {
-            //     notification.error(
-            //         {
-            //             message: "Login failed",
-            //             description: res.message
-            //         }
-            //     )
-            // }
