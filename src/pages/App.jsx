@@ -27,13 +27,14 @@ export const App = () => {
     }
 
     const getMenuKeyFromPath = (path) => {
-        if (path.startsWith('/app/analytics')) return 'Analytics';
         if (path.startsWith('/app/users')) return 'Users';
         if (path.startsWith('/app/profile')) return 'Profile';
         if (path.startsWith('/app/wines')) return 'Wines';
         if (path.startsWith('/app/winecates')) return 'WineCates';
         if (path.startsWith('/app/rooms')) return 'Rooms';
         if (path.startsWith('/app/iorequests')) return 'IORequests';
+        if (path.startsWith('/app/tasks')) return 'StaffTasks';
+
 
 
 
@@ -47,9 +48,6 @@ export const App = () => {
         switch (menuKey) {
             case 'Overview':
                 navigate('/app'); // Direct to the app base route
-                break;
-            case 'Analytics':
-                navigate('/app/analytics'); // Correct path for analytics
                 break;
             case 'Users':
                 navigate('/app/users'); // Correct path for users
@@ -68,6 +66,9 @@ export const App = () => {
                 break;
             case 'IORequests':
                 navigate('/app/iorequests');
+                break;
+            case 'StaffTasks':
+                navigate('/app/tasks');
                 break;
             default:
                 break;
@@ -120,9 +121,6 @@ export const App = () => {
                             <Menu.Item key="Overview" icon={<PieChartOutlined />}>
                                 Overview
                             </Menu.Item>
-                            <Menu.Item key="Analytics" icon={<DesktopOutlined />}>
-                                Analytics
-                            </Menu.Item>
                             <Menu.Item key="Users" icon={<UserOutlined />}>
                                 Users
                             </Menu.Item>
@@ -137,6 +135,9 @@ export const App = () => {
                             </Menu.Item>
                             <Menu.Item key="IORequests" icon={<UserOutlined />}>
                                 I/O Requests
+                            </Menu.Item>
+                            <Menu.Item key="StaffTasks" icon={<UserOutlined />}>
+                                Staff-Task
                             </Menu.Item>
                         </Menu>
                     </Sider>
