@@ -12,11 +12,15 @@ import WineListPage from './pages/Wine/WineListPage.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import { RoomListPage } from './pages/Room/RoomListPage.jsx';
 import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
+
 import TaskHome from './pages/Task/TaskHome.jsx';
 import ResetPasswordPage from './pages/ResetPassword/ResetPasswordPage.jsx';
 import { CreateWinePage } from './pages/Wine/CreateWinePage.jsx';
 import { DetailWinePage } from './pages/Wine/DetailWinePage.jsx';
 import UpdateWinePage from './pages/Wine/UpdateWinePage.jsx';
+
+import UserImportRequest from './pages/User/UserImportRequest.jsx';
+import UserManageCategory from './pages/User/UserManageCategory.jsx';
 
 const router = createBrowserRouter([
   {
@@ -61,8 +65,10 @@ const router = createBrowserRouter([
         element: <WineListPage />
       },
       {
-        path: 'wine-cates',
-        element: <WineCateListPage />
+
+        path: 'winecates',
+        element: <UserManageCategory />
+
       },
       {
         path: 'rooms',
@@ -73,6 +79,7 @@ const router = createBrowserRouter([
         element: <IORequestListPage />,
       },
       {
+
         path: 'create-wine',
         element: <CreateWinePage />,
       },
@@ -85,6 +92,13 @@ const router = createBrowserRouter([
         element: <UpdateWinePage />,
       }
       
+
+       
+      {
+        path: "import_request",
+        element: <UserImportRequest />
+      },
+
     ],
   },
 ]);
