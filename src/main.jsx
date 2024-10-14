@@ -90,10 +90,8 @@ const router = createBrowserRouter([
       {
         path: 'update-wine/:wineId',
         element: <UpdateWinePage />,
-      }
-      
+      },
 
-       
       {
         path: "import_request",
         element: <UserImportRequest />
