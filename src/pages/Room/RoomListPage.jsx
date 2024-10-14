@@ -1,6 +1,8 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Button, Space, Typography, Card, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import PopupRoom from '../../components/Form/PopupRoom';
+import { createRoomAPI, fetchRoomsAPI } from '../../services/axios-customize';
 
 const { Title } = Typography;
 
@@ -33,6 +35,19 @@ const mockRooms = [
 ];
 
 export const RoomListPage = () => {
+  const [data, setData] = useState([])
+  const [newRoom, setNewRoom] = useState(null)
+  const fetchRoomData = () => {
+    fetchRoomsAPI().then((response) => {
+      setData(response);
+      console.log("data: " + data)
+    }).catch(error => {
+      console.error('Error fetching data:', error)
+    })
+  }
+  useEffect(() => {
+    fetchRoomData()
+  }, [])
   const columns = [
     {
       title: 'Room Name',
@@ -71,6 +86,7 @@ export const RoomListPage = () => {
       ),
     },
   ];
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleDetail = (id) => {
     console.log(`Navigate to detail page of record with id: ${id}`);
@@ -85,30 +101,38 @@ export const RoomListPage = () => {
   };
 
   const handleCreate = () => {
-    console.log("Navigate to create new record page");
+    console.log("Navigate to create new record page")
+    setIsModalOpen(true)
+    
   };
+  const createRoom = async (newRoomData) => {
+    const createdRoom = await createRoomAPI({ ...newRoomData })
+    setData((prevData) => [...prevData, createdRoom]);
+    fetchRoomData()
+  }
 
   return (
     <div style={{ padding: '24px' }}>
       <Card bordered={false}>
         <Title level={2}>Room List</Title>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
-          onClick={handleCreate} 
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleCreate}
           style={{ marginBottom: 16 }}
         >
           Create New Room
         </Button>
         <Divider />
-        <Table 
-          columns={columns} 
-          dataSource={mockRooms} 
-          rowKey="id" 
-          bordered 
-          pagination={{ pageSize: 5 }} 
+        <Table
+          columns={columns}
+          dataSource={data}
+          rowKey="id"
+          bordered
+          pagination={{ pageSize: 5 }}
         />
       </Card>
+      <PopupRoom setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} setNewRoom={setNewRoom} createRoom = {createRoom} />
     </div>
   );
 };

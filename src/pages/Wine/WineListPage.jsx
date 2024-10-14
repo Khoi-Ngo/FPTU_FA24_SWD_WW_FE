@@ -1,89 +1,58 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, message } from 'antd';
+import { Table, Button, Modal, notification } from 'antd';
 import '../../styles/WineListStyle.css'; // Import custom styles
-
-const mockWines = [
-    {
-        id: 1,
-        wineName: 'Chardonnay',
-        alcoholContent: 13.5,
-        bottleSize: '750ml',
-        availableStock: 100,
-        supplier: 'Wine Supplier A',
-    },
-    {
-        id: 2,
-        wineName: 'Merlot',
-        alcoholContent: 14.0,
-        bottleSize: '750ml',
-        availableStock: 80,
-        supplier: 'Wine Supplier B',
-    },
-    {
-        id: 3,
-        wineName: 'Cabernet Sauvignon',
-        alcoholContent: 15.0,
-        bottleSize: '750ml',
-        availableStock: 60,
-        supplier: 'Wine Supplier C',
-    },
-];
+import { useNavigate } from 'react-router-dom';
 
 export const WineListPage = () => {
     const [wines, setWines] = useState(mockWines);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [currentWine, setCurrentWine] = useState(null);
-    const [form] = Form.useForm();
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [currentWineId, setCurrentWineId] = useState(null);
+    const navigate = useNavigate();
 
-    const handleCreateOrUpdate = (values) => {
-        if (currentWine) {
-            // Update
-            setWines((prevWines) =>
-                prevWines.map((wine) =>
-                    wine.id === currentWine.id ? { ...wine, ...values } : wine
-                )
-            );
-            message.success('Wine updated successfully');
-        } else {
-            // Create
-            const newWine = { id: wines.length + 1, ...values }; // Simple ID assignment
-            setWines((prevWines) => [...prevWines, newWine]);
-            message.success('Wine created successfully');
-        }
-        setIsModalVisible(false);
-        form.resetFields();
+    const handleDeleteButtonClicked = (wineId) => {
+        setCurrentWineId(wineId);
+        setIsDeleteModalVisible(true);
     };
 
-    const handleDelete = (wineId) => {
-        setWines((prevWines) => prevWines.filter((wine) => wine.id !== wineId));
-        message.success('Wine deleted successfully');
+    const confirmDelete = () => {
+        try {
+            // TODO: call API to delete and reload page
+            setWines((prevWines) => prevWines.filter((wine) => wine.id !== currentWineId));
+            notification.success({
+                message: `Wine deleted successfully`,
+                description: `Wine with ID: ${currentWineId} was deleted.`,
+            });
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: error.message,
+            });
+        }
+        setIsDeleteModalVisible(false);
     };
 
-    const showModal = (wine = null) => {
-        setCurrentWine(wine);
-        if (wine) {
-            form.setFieldsValue(wine);
-        } else {
-            form.resetFields();
-        }
-        setIsModalVisible(true);
+    const handleCreateButtonClicked = () => {
+        navigate("/app/create-wine");
+    };
+
+    const handleDetailButtonClicked = (record) => {
+        navigate(`/app/wines/${record.id}`);
+    };
+
+    const handleUpdateButtonClicked = (record) => {
+        navigate(`/app/update-wine/${record.id}`);
     };
 
     const columns = [
         {
+            title: 'ID',
+            dataIndex: 'id',
+            key: 'id',
+        },
+        {
             title: 'Wine Name',
             dataIndex: 'wineName',
             key: 'wineName',
-        },
-        {
-            title: 'Alcohol Content',
-            dataIndex: 'alcoholContent',
-            key: 'alcoholContent',
-        },
-        {
-            title: 'Bottle Size',
-            dataIndex: 'bottleSize',
-            key: 'bottleSize',
         },
         {
             title: 'Available Stock',
@@ -91,18 +60,40 @@ export const WineListPage = () => {
             key: 'availableStock',
         },
         {
+            title: 'MFD',
+            dataIndex: 'mfd',
+            key: 'mfd',
+        },
+        {
             title: 'Supplier',
             dataIndex: 'supplier',
             key: 'supplier',
+        },
+        {
+            title: 'Image',
+            dataIndex: 'imgUrl',
+            key: 'imgUrl',
+            render: (text) => (
+                <img
+                    src={text}
+                    alt="wine"
+                    style={{ width: 50, height: 50, borderRadius: '5%' }}
+                />
+            ),
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
         },
         {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
                 <div>
-                    <Button type="default" onClick={() => showModal(record)}>Update</Button>
-                    <Button danger onClick={() => handleDelete(record.id)}>Delete</Button>
-                    <Button type="link" onClick={() => showModal(record)}>View Details</Button>
+                    <Button type="default" onClick={() => handleUpdateButtonClicked(record)}>Update</Button>
+                    <Button danger onClick={() => handleDeleteButtonClicked(record.id)}>Delete</Button>
+                    <Button type="link" onClick={() => handleDetailButtonClicked(record)}>View Details</Button>
                 </div>
             ),
         },
@@ -111,50 +102,81 @@ export const WineListPage = () => {
     return (
         <div className="wine-list-container">
             <h1 className="wine-list-title">Wine List</h1>
-            <Button 
+            <Button
                 type="primary"
                 className="create-wine-button"
-                onClick={() => showModal()}
+                onClick={handleCreateButtonClicked}
             >
                 Create New Wine
             </Button>
-            <Table 
-                dataSource={wines} 
-                columns={columns} 
-                rowKey="id" 
-                pagination={{ pageSize: 5 }} 
+            <Table
+                dataSource={wines}
+                columns={columns}
+                rowKey="id"
+                pagination={{ pageSize: 5 }}
                 className="wine-table"
             />
             <Modal
-                title={currentWine ? 'Update Wine' : 'Create New Wine'}
-                visible={isModalVisible}
-                onCancel={() => setIsModalVisible(false)}
-                footer={null}
-                className="wine-modal"
+                title="Confirm Delete"
+                visible={isDeleteModalVisible}
+                onOk={confirmDelete}
+                onCancel={() => setIsDeleteModalVisible(false)}
+                okText="Yes"
+                cancelText="No"
             >
-                <Form form={form} onFinish={handleCreateOrUpdate}>
-                    <Form.Item name="wineName" label="Wine Name" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="alcoholContent" label="Alcohol Content">
-                        <Input type="number" />
-                    </Form.Item>
-                    <Form.Item name="bottleSize" label="Bottle Size">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="availableStock" label="Available Stock">
-                        <Input type="number" />
-                    </Form.Item>
-                    <Form.Item name="supplier" label="Supplier" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" className="submit-button">Submit</Button>
-                    </Form.Item>
-                </Form>
+                <p>Are you sure you want to delete this wine?</p>
             </Modal>
         </div>
     );
 };
 
 export default WineListPage;
+
+// MOCK DATA BELOW
+const mockWines = [
+    {
+        id: 1,
+        wineName: 'Chardonnay',
+        availableStock: 100,
+        mfd: '2024-01-01',
+        supplier: 'Wine Supplier A',
+        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
+        status: 'Available',
+    },
+    {
+        id: 2,
+        wineName: 'Merlot',
+        availableStock: 80,
+        mfd: '2024-02-01',
+        supplier: 'Wine Supplier B',
+        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
+        status: 'Available',
+    },
+    {
+        id: 3,
+        wineName: 'Cabernet Sauvignon',
+        availableStock: 60,
+        mfd: '2024-03-01',
+        supplier: 'Wine Supplier C',
+        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
+        status: 'Out of Stock',
+    },
+    {
+        id: 4,
+        wineName: 'Zinfandel',
+        availableStock: 50,
+        mfd: '2024-04-01',
+        supplier: 'Wine Supplier D',
+        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
+        status: 'Available',
+    },
+    {
+        id: 5,
+        wineName: 'Pinot Noir',
+        availableStock: 75,
+        mfd: '2024-05-01',
+        supplier: 'Wine Supplier E',
+        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
+        status: 'Available',
+    },
+];
