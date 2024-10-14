@@ -38,10 +38,6 @@ export const App = () => {
         if (path.startsWith('/app/io-requests')) return 'IORequests';
         if (path.startsWith('/app/tasks')) return 'StaffTasks';
 
-
-
-
-
         return 'Overview'; // Default to 'Overview'
     };
 
@@ -137,13 +133,12 @@ export const App = () => {
                                 Room
                             </Menu.Item>
                             <Menu.Item key="IORequests" icon={<UserOutlined />}>
-                                I/O Requests
-                            </Menu.Item>
+                                I/O Requests </Menu.Item>
                             <Menu.Item key="StaffTasks" icon={<UserOutlined />}>
                                 Staff-Task
                             </Menu.Item>
                         </Menu>
-                    </Sider>
+                    </Sider >
                     {/* <Outlet fetchUserInfo={fetchUserInfo} /> */}
                     <Content style={{ margin: '0 ' }}>
                         <div style={{ background: '#fff', minHeight: 360 }}>

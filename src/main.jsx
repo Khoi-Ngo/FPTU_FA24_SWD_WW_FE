@@ -18,7 +18,6 @@ import { CreateWinePage } from './pages/Wine/CreateWinePage.jsx';
 import { DetailWinePage } from './pages/Wine/DetailWinePage.jsx';
 import UpdateWinePage from './pages/Wine/UpdateWinePage.jsx';
 
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -85,6 +84,7 @@ const router = createBrowserRouter([
         path: 'update-wine/:wineId',
         element: <UpdateWinePage />,
       }
+      
     ],
   },
 ]);
