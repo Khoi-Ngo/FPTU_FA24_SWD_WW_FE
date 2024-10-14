@@ -27,15 +27,16 @@ export const App = () => {
     }
 
     const getMenuKeyFromPath = (path) => {
-        if (path.startsWith('/app/analytics')) return 'Analytics';
         if (path.startsWith('/app/users')) return 'Users';
         if (path.startsWith('/app/profile')) return 'Profile';
-        if (path.startsWith('/app/wines')) return 'Wines';
-        if (path.startsWith('/app/winecates')) return 'WineCates';
+        if (path.startsWith('/app/wines')
+            || path.startsWith('/app/create-wine')
+            || path.startsWith('/app/update-wine')
+        ) return 'Wines';
+        if (path.startsWith('/app/wine-cates')) return 'WineCates';
         if (path.startsWith('/app/rooms')) return 'Rooms';
-        if (path.startsWith('/app/iorequests')) return 'IORequests';
-        if (path.startsWith('/app/importTest')) return 'ImportTest';
-
+        if (path.startsWith('/app/io-requests')) return 'IORequests';
+        if (path.startsWith('/app/tasks')) return 'StaffTasks';
 
         return 'Overview'; // Default to 'Overview'
     };
@@ -47,9 +48,6 @@ export const App = () => {
             case 'Overview':
                 navigate('/app'); // Direct to the app base route
                 break;
-            case 'Analytics':
-                navigate('/app/analytics'); // Correct path for analytics
-                break;
             case 'Users':
                 navigate('/app/users'); // Correct path for users
                 break;
@@ -60,16 +58,16 @@ export const App = () => {
                 navigate('/app/wines');
                 break;
             case 'WineCates':
-                navigate('/app/winecates');
+                navigate('/app/wine-cates');
                 break;
             case 'Rooms':
                 navigate('/app/rooms');
                 break;
             case 'IORequests':
-                navigate('/app/iorequests');
+                navigate('/app/io-requests');
                 break;
-            case 'ImportTest':
-                navigate('/app/importTest');
+            case 'StaffTasks':
+                navigate('/app/tasks');
                 break;
             default:
                 break;
@@ -122,9 +120,6 @@ export const App = () => {
                             <Menu.Item key="Overview" icon={<PieChartOutlined />}>
                                 Overview
                             </Menu.Item>
-                            <Menu.Item key="Analytics" icon={<DesktopOutlined />}>
-                                Analytics
-                            </Menu.Item>
                             <Menu.Item key="Users" icon={<UserOutlined />}>
                                 Users
                             </Menu.Item>
@@ -139,19 +134,19 @@ export const App = () => {
                             </Menu.Item>
                             <Menu.Item key="IORequests" icon={<UserOutlined />}>
                                 I/O Requests </Menu.Item>
-                            <Menu.Item key="ImportTest" icon={<UserOutlined />}>
-                                ImportPage
+                            <Menu.Item key="StaffTasks" icon={<UserOutlined />}>
+                                Staff-Task
                             </Menu.Item>
                         </Menu>
                     </Sider >
                     {/* <Outlet fetchUserInfo={fetchUserInfo} /> */}
-                    <Content Content style={{ margin: '0 ' }}>
+                    <Content style={{ margin: '0 ' }}>
                         <div style={{ background: '#fff', minHeight: 360 }}>
                             <Outlet fetchUserInfo={fetchUserInfo} />
                         </div>
                     </Content>
-                </Layout >
-                <Footer />
+                </Layout>
+                {/* <Footer /> */}
             </>
         )
     );

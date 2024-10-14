@@ -12,9 +12,11 @@ import WineListPage from './pages/Wine/WineListPage.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import { RoomListPage } from './pages/Room/RoomListPage.jsx';
 import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
-import { IORequestDetailListPage } from './pages/IORequest/IORequestDetailListPage.jsx';
-import ImportPage from './pages/ImportPage.jsx';
-import './styles/tailwind.css';
+import TaskHome from './pages/Task/TaskHome.jsx';
+import ResetPasswordPage from './pages/ResetPassword/ResetPasswordPage.jsx';
+import { CreateWinePage } from './pages/Wine/CreateWinePage.jsx';
+import { DetailWinePage } from './pages/Wine/DetailWinePage.jsx';
+import UpdateWinePage from './pages/Wine/UpdateWinePage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +24,13 @@ const router = createBrowserRouter([
     element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
+
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage></ResetPasswordPage>,
+    errorElement: <ErrorPage />
+  },
+
   {
     path: "/app",
     element: <App />,
@@ -40,6 +49,10 @@ const router = createBrowserRouter([
         element: <UserListPage />
       },
       {
+        path: 'tasks',
+        element: <TaskHome />
+      },
+      {
         path: 'profile',
         element: <UserDetailPage />
       },
@@ -48,7 +61,7 @@ const router = createBrowserRouter([
         element: <WineListPage />
       },
       {
-        path: 'winecates',
+        path: 'wine-cates',
         element: <WineCateListPage />
       },
       {
@@ -56,16 +69,20 @@ const router = createBrowserRouter([
         element: <RoomListPage />
       },
       {
-        path: 'iorequests',
+        path: 'io-requests',
         element: <IORequestListPage />,
       },
       {
-        path: 'iodetail', // TODO replace id later
-        element: <IORequestDetailListPage />
+        path: 'create-wine',
+        element: <CreateWinePage />,
       },
       {
-        path: 'importTest',
-        element: <ImportPage />
+        path: 'wines/:wineId',
+        element: <DetailWinePage />,
+      },
+      {
+        path: 'update-wine/:wineId',
+        element: <UpdateWinePage />,
       }
       
     ],

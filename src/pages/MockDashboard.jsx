@@ -22,12 +22,6 @@ const MockDashboardPage = () => {
             case 'Users':
                 navigate('/app/users'); // Correct path for users
                 break;
-            case 'Test':
-                navigate('/app/test'); // Correct path for users
-                break;
-            case 'ImportPage':
-                navigate('/app/importPage'); // Correct path for users
-                break;
             default:
                 break;
         }
@@ -65,18 +59,6 @@ const MockDashboardPage = () => {
             case 'Users':
                 return (
                     <Card title="Users" bordered={false}>
-                        User list content goes here
-                    </Card>
-                );
-            case 'Test':
-                return (
-                    <Card title="Test" bordered={false}>
-                        User list content goes here
-                    </Card>
-                );
-            case 'ImportPage':
-                return (
-                    <Card title="ImportPage" bordered={false}>
                         User list content goes here
                     </Card>
                 );
