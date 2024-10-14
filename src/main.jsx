@@ -13,7 +13,8 @@ import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import { RoomListPage } from './pages/Room/RoomListPage.jsx';
 import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
 import { IORequestDetailListPage } from './pages/IORequest/IORequestDetailListPage.jsx';
-
+import ImportPage from './pages/ImportPage.jsx';
+import './styles/tailwind.css';
 
 const router = createBrowserRouter([
   {
@@ -61,7 +62,12 @@ const router = createBrowserRouter([
       {
         path: 'iodetail', // TODO replace id later
         element: <IORequestDetailListPage />
+      },
+      {
+        path: 'importTest',
+        element: <ImportPage />
       }
+      
     ],
   },
 ]);

@@ -34,8 +34,7 @@ export const App = () => {
         if (path.startsWith('/app/winecates')) return 'WineCates';
         if (path.startsWith('/app/rooms')) return 'Rooms';
         if (path.startsWith('/app/iorequests')) return 'IORequests';
-
-
+        if (path.startsWith('/app/importTest')) return 'ImportTest';
 
 
         return 'Overview'; // Default to 'Overview'
@@ -68,6 +67,9 @@ export const App = () => {
                 break;
             case 'IORequests':
                 navigate('/app/iorequests');
+                break;
+            case 'ImportTest':
+                navigate('/app/importTest');
                 break;
             default:
                 break;
@@ -136,17 +138,19 @@ export const App = () => {
                                 Room
                             </Menu.Item>
                             <Menu.Item key="IORequests" icon={<UserOutlined />}>
-                                I/O Requests
+                                I/O Requests </Menu.Item>
+                            <Menu.Item key="ImportTest" icon={<UserOutlined />}>
+                                ImportPage
                             </Menu.Item>
                         </Menu>
-                    </Sider>
+                    </Sider >
                     {/* <Outlet fetchUserInfo={fetchUserInfo} /> */}
-                    <Content style={{ margin: '0 ' }}>
+                    <Content Content style={{ margin: '0 ' }}>
                         <div style={{ background: '#fff', minHeight: 360 }}>
                             <Outlet fetchUserInfo={fetchUserInfo} />
                         </div>
                     </Content>
-                </Layout>
+                </Layout >
                 <Footer />
             </>
         )
