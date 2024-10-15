@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Table, Button, Space, Typography, Card, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import PopupRoom from '../../components/Form/PopupRoom';
-import { createRoomAPI, fetchRoomsAPI } from '../../services/axios-customize';
+import PopupDialog from '~/components/PopupDialog';
+import CreateRoomForm from './CreateRoomForm';
+import { createRoomAPI, deleteRoomAPI, fetchRoomsAPI, updateRoomAPI } from '~/services/api-service/RoomApiService';
+import DeleteRoom from './DeleteRoom';
 
 const { Title } = Typography;
 
@@ -36,7 +38,9 @@ const mockRooms = [
 
 export const RoomListPage = () => {
   const [data, setData] = useState([])
-  const [newRoom, setNewRoom] = useState(null)
+  const [modalAction, setModalAction] = useState('')
+  const [content, setContent] = useState(null)
+  
   const fetchRoomData = () => {
     fetchRoomsAPI().then((response) => {
       setData(response);
@@ -77,33 +81,51 @@ export const RoomListPage = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (text, record) => (
+      render: record => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button>
-          <Button type="default" onClick={() => handleUpdate(record.id)}>Update</Button>
-          <Button type="danger" onClick={() => handleDelete(record.id)}>Delete</Button>
+          <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
+          <Button type="default" onClick={() => handleUpdate(record)}>Update</Button>
+          <Button type="danger" onClick={() => handleDelete(record)}>Delete</Button>
         </Space>
       ),
     },
-  ];
+  ]
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleDetail = (id) => {
-    console.log(`Navigate to detail page of record with id: ${id}`);
-  };
+    setModalAction('detail')
+    console.log(`Navigate to detail page of record with id: ${id}`)
+  }
 
-  const handleUpdate = (id) => {
-    console.log(`Navigate to update page of record with id: ${id}`);
-  };
+  const handleUpdate = (data) => {
+    setModalAction('update')
+    console.log(`Navigate to update page of record with id: ${data.id}`)
+    setIsModalOpen(true)
+    setContent(<CreateRoomForm updateRoom={updateRoom} setIsModalOpen={setIsModalOpen} data = {data} modalAction = {modalAction} />)
+  }
+  const updateRoom = async (id, data) => {
+    await updateRoomAPI(id, data)
+    fetchRoomData();
+  }
 
-  const handleDelete = (id) => {
-    console.log(`Delete record with id: ${id}`);
-  };
+  const handleDelete = (data) => {
+    setModalAction('delete')
+    console.log(`Delete record with id: ${data.id}`);
+    setIsModalOpen(true)
+    setContent(<DeleteRoom setIsModalOpen={setIsModalOpen} deleteRoom={deleteRoom} data = {data} />)
+  }
+  const deleteRoom = async (id) => {
+    await deleteRoomAPI(id);
+    fetchRoomData()
+  }
+
 
   const handleCreate = () => {
     console.log("Navigate to create new record page")
+    setModalAction('create')
     setIsModalOpen(true)
-    
+    setContent(<CreateRoomForm createRoom={createRoom} setIsModalOpen={setIsModalOpen} />)
+
   };
   const createRoom = async (newRoomData) => {
     const createdRoom = await createRoomAPI({ ...newRoomData })
@@ -129,10 +151,18 @@ export const RoomListPage = () => {
           dataSource={data}
           rowKey="id"
           bordered
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 10 }}
         />
       </Card>
-      <PopupRoom setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} setNewRoom={setNewRoom} createRoom = {createRoom} />
+      {/* <PopupRoom setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} createRoom={createRoom} /> */}
+      <PopupDialog
+        title={modalAction === 'create' ? "Create Room" :
+          modalAction === 'delete' ? "Delete Room" :
+            modalAction === 'update' ? "Update Room" :
+              "Room Details"}
+        content={content}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen} />
     </div>
   );
 };

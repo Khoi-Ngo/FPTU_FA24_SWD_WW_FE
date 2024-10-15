@@ -1,5 +1,5 @@
 import { Button, Form, Input, InputNumber, Modal } from 'antd'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 function PopupRoom({ setIsModalOpen, isModalOpen, setNewRoom, createRoom }) {
   const [form] = Form.useForm();
