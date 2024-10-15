@@ -1,11 +1,11 @@
 import { Button, Form, Input, InputNumber } from 'antd'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalAction }) {
+function UpdateRoomForm({ setIsModalOpen, updateRoom, data, isModalOpen, setModalAction }) {
   const [form] = Form.useForm()
   const handleSubmit = (e) => {
-    createRoom(formData)
-    console.log('Form Data:', formData)
+    console.log('formData id: ', formData.id)
+    updateRoom(formData.id, formData)
     setIsModalOpen(false)
     clearForm()
 
@@ -23,14 +23,7 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
     capacity: 0,
     currentOccupancy: 0,
     managerName: '',
-    wineRooms: [
-      // {
-      //   currQuantity: 0,
-      //   totalQuantity: 0,
-      //   roomId: 0,
-      //   wineId: 0
-      // }
-    ]
+    wineRooms: []
   })
   const handleCancle = () => {
     setIsModalOpen(false)
@@ -43,6 +36,11 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
       [name]: value
     }))
   }
+  useEffect(() => {
+    console.log('update data: ' + data)
+    setFormData(data)
+    form.setFieldsValue(data)
+  }, [data, form])
   return (
     <Form
       form={form}
@@ -144,4 +142,4 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
   )
 }
 
-export default CreateRoomForm
+export default UpdateRoomForm

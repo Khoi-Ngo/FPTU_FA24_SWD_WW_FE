@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Card, Divider } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import PopupDialog from '~/components/PopupDialog';
-import CreateRoomForm from './CreateRoomForm';
-import { createRoomAPI, deleteRoomAPI, fetchRoomsAPI, updateRoomAPI } from '~/services/api-service/RoomApiService';
-import DeleteRoom from './DeleteRoom';
+import { useEffect, useState } from 'react'
+import { Table, Button, Space, Typography, Card, Divider } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import PopupDialog from '~/components/PopupDialog'
+import CreateRoomForm from './CreateRoomForm'
+import { createRoomAPI, deleteRoomAPI, fetchRoomsAPI, updateRoomAPI } from '~/services/api-service/RoomApiService'
+import DeleteRoom from './DeleteRoom'
+import UpdateRoomForm from './UpdateRoomForm'
 
-const { Title } = Typography;
+const { Title } = Typography
 
 // Mock Data
 const mockRooms = [
@@ -34,17 +35,17 @@ const mockRooms = [
     currentOccupancy: 10,
     managerName: "Emily Johnson",
   },
-];
+]
 
 export const RoomListPage = () => {
   const [data, setData] = useState([])
   const [modalAction, setModalAction] = useState('')
   const [content, setContent] = useState(null)
-  
+
   const fetchRoomData = () => {
     fetchRoomsAPI().then((response) => {
-      setData(response);
-      console.log("data: " + data)
+      setData(response)
+      console.log('data: ' + data.id)
     }).catch(error => {
       console.error('Error fetching data:', error)
     })
@@ -56,27 +57,27 @@ export const RoomListPage = () => {
     {
       title: 'Room Name',
       dataIndex: 'roomName',
-      key: 'roomName',
+      key: 'roomName'
     },
     {
       title: 'Location Address',
       dataIndex: 'locationAddress',
-      key: 'locationAddress',
+      key: 'locationAddress'
     },
     {
       title: 'Capacity',
       dataIndex: 'capacity',
-      key: 'capacity',
+      key: 'capacity'
     },
     {
       title: 'Current Occupancy',
       dataIndex: 'currentOccupancy',
-      key: 'currentOccupancy',
+      key: 'currentOccupancy'
     },
     {
       title: 'Manager Name',
       dataIndex: 'managerName',
-      key: 'managerName',
+      key: 'managerName'
     },
     {
       title: 'Actions',
@@ -87,8 +88,8 @@ export const RoomListPage = () => {
           <Button type="default" onClick={() => handleUpdate(record)}>Update</Button>
           <Button type="danger" onClick={() => handleDelete(record)}>Delete</Button>
         </Space>
-      ),
-    },
+      )
+    }
   ]
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -101,35 +102,35 @@ export const RoomListPage = () => {
     setModalAction('update')
     console.log(`Navigate to update page of record with id: ${data.id}`)
     setIsModalOpen(true)
-    setContent(<CreateRoomForm updateRoom={updateRoom} setIsModalOpen={setIsModalOpen} data = {data} modalAction = {modalAction} />)
+    setContent(<UpdateRoomForm updateRoom={updateRoom} setIsModalOpen={setIsModalOpen} data = {data} setModalAction ={setModalAction} isModalOpen ={isModalOpen}/>)
   }
   const updateRoom = async (id, data) => {
     await updateRoomAPI(id, data)
-    fetchRoomData();
+    fetchRoomData()
   }
 
   const handleDelete = (data) => {
     setModalAction('delete')
-    console.log(`Delete record with id: ${data.id}`);
+    console.log(`Delete record with id: ${data.id}`)
     setIsModalOpen(true)
-    setContent(<DeleteRoom setIsModalOpen={setIsModalOpen} deleteRoom={deleteRoom} data = {data} />)
+    setContent(<DeleteRoom setIsModalOpen={setIsModalOpen} deleteRoom={deleteRoom} data={data} />)
   }
   const deleteRoom = async (id) => {
-    await deleteRoomAPI(id);
+    await deleteRoomAPI(id)
     fetchRoomData()
   }
 
 
   const handleCreate = () => {
-    console.log("Navigate to create new record page")
+    console.log('Navigate to create new record page')
     setModalAction('create')
     setIsModalOpen(true)
-    setContent(<CreateRoomForm createRoom={createRoom} setIsModalOpen={setIsModalOpen} />)
+    setContent(<CreateRoomForm createRoom={createRoom} setIsModalOpen={setIsModalOpen} modalAction={modalAction} isModalOpen={isModalOpen} setModalAction={setModalAction} />)
 
-  };
+  }
   const createRoom = async (newRoomData) => {
     const createdRoom = await createRoomAPI({ ...newRoomData })
-    setData((prevData) => [...prevData, createdRoom]);
+    setData((prevData) => [...prevData, createdRoom])
     fetchRoomData()
   }
 
@@ -156,13 +157,13 @@ export const RoomListPage = () => {
       </Card>
       {/* <PopupRoom setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} createRoom={createRoom} /> */}
       <PopupDialog
-        title={modalAction === 'create' ? "Create Room" :
-          modalAction === 'delete' ? "Delete Room" :
-            modalAction === 'update' ? "Update Room" :
-              "Room Details"}
+        title={modalAction === 'create' ? 'Create Room' :
+          modalAction === 'delete' ? 'Delete Room' :
+            modalAction === 'update' ? 'Update Room' :
+              'Room Details'}
         content={content}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen} />
     </div>
-  );
-};
+  )
+}
