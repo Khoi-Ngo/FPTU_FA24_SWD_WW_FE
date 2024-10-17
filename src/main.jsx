@@ -22,6 +22,7 @@ import UserProfilePage from './pages/User/UserProfilePage.jsx';
 import { UserDetailPage } from './components/User/UserDetailPage.jsx';
 import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
+import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -40,8 +41,8 @@ const router = createBrowserRouter([
     path: "/app",
     element:
       // <AuthRoutes>
-        <App />
-      // </AuthRoutes>
+      <App />
+    // </AuthRoutes>
     ,
     errorElement: <ErrorPage />,
     children: [
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
       {
         path: 'users',
         element:
-        //  <NonStaffRoutes>
+          //  <NonStaffRoutes>
           <UserListPage />
         // </NonStaffRoutes>
       },
@@ -77,6 +78,12 @@ const router = createBrowserRouter([
 
         path: 'winecates',
         element: <UserManageCategory />
+
+      },
+      {
+
+        path: 'wine-cates',
+        element: <WineCateListPage />
 
       },
       {
