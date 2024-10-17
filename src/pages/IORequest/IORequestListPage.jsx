@@ -1,45 +1,33 @@
-import React, { useState } from 'react'; // Thêm useState
-import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input } from 'antd'; // Thêm Modal, Form, Input
+import React, { useState, useEffect } from 'react'; // Thêm useEffect
+import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select } from 'antd'; // Thêm Modal, Form, Input
 import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom'; // Updated import
+import axios from 'axios';
 
 const { Title } = Typography;
-
-// Mock Data
-const initialIORequests = [
-  {
-    id: 1,
-    requestCode: "REQ001",
-    startDate: "2024-10-01",
-    dueDate: "2024-10-10",
-    totalQuantity: 100,
-    comments: "Urgent",
-    ioType: "IN",
-    priorityLevel: "High",
-    requesterId: 1,
-    requesterName: "Alice",
-  },
-  {
-    id: 2,
-    requestCode: "REQ002",
-    startDate: "2024-10-05",
-    dueDate: "2024-10-15",
-    totalQuantity: 200,
-    comments: "Normal",
-    ioType: "OUT",
-    priorityLevel: "Medium",
-    requesterId: 2,
-    requesterName: "Bob",
-  },
-];
-
 
 export const IORequestListPage = () => {
   const navigate = useNavigate(); // Updated to useNavigate
   const [isModalVisible, setIsModalVisible] = useState(false); // Trạng thái hiển thị modal
   const [currentRequest, setCurrentRequest] = useState(null); // Đối tượng yêu cầu hiện tại
-  const [ioRequests, setIORequests] = useState(initialIORequests); // Trạng thái cho danh sách yêu cầu
+  const [ioRequests, setIORequests] = useState([]); // Trạng thái cho danh sách yêu cầu (bỏ dữ liệu mẫu)
   const [form] = Form.useForm(); // Sử dụng hook useForm
+  const [details, setDetails] = useState([]); // Trạng thái cho danh sách chi tiết
+  const [detailForm] = Form.useForm(); // Sử dụng hook useForm cho form chi tiết
+
+  // Gọi API lấy dữ liệu IO Requests
+  useEffect(() => {
+    const fetchIORequests = async () => {
+      try {
+        const response = await axios.get('https://winewarehousesystem.azurewebsites.net/api/v1/iorequests'); // Gọi API
+        setIORequests(response.data); // Cập nhật dữ liệu vào trạng thái ioRequests
+      } catch (error) {
+        console.error('Error fetching IO Requests:', error);
+      }
+    };
+
+    fetchIORequests(); // Gọi hàm lấy dữ liệu khi component mount
+  }, []); // Chỉ chạy một lần khi component được render lần đầu
 
   const columns = [
     {
@@ -87,7 +75,7 @@ export const IORequestListPage = () => {
           <Button
             type="danger"
             onClick={() => {
-              if (window.confirm("Bạn có chắc chắn muốn xóa bản ghi này?")) {
+              if (window.confirm("Are you sure ?")) {
                 handleDelete(record.id);
               }
             }}
@@ -116,20 +104,27 @@ export const IORequestListPage = () => {
   const handleCreate = () => {
     setCurrentRequest(null); // Đặt yêu cầu hiện tại là null để tạo mới
     form.resetFields(); // Reset form
+    setDetails([]); // Reset danh sách chi tiết
     setIsModalVisible(true); // Hiển thị modal
   };
 
   const handleOk = (values) => {
+    if (details.length === 0) {
+      alert("Please add at least one detail.");
+      return;
+    }
+
     if (currentRequest) {
       // Cập nhật yêu cầu
       setIORequests(ioRequests.map(request =>
-        request.id === currentRequest.id ? { ...request, ...values } : request
+        request.id === currentRequest.id ? { ...request, ...values, details } : request
       ));
     } else {
       // Tạo yêu cầu mới
       const newRequest = {
         id: ioRequests.length + 1, // Tạo ID mới
         ...values,
+        details, // Thêm danh sách chi tiết vào yêu cầu mới
       };
       setIORequests([...ioRequests, newRequest]); // Thêm yêu cầu mới vào danh sách
     }
@@ -141,6 +136,15 @@ export const IORequestListPage = () => {
     setIsModalVisible(false); // Đóng modal
     setCurrentRequest(null); // Đặt lại yêu cầu hiện tại
     form.resetFields(); // Reset form khi đóng modal
+  };
+
+  const addDetail = () => {
+    detailForm.validateFields().then(values => {
+      setDetails([...details, values]); // Thêm chi tiết vào danh sách
+      detailForm.resetFields(); // Reset form chi tiết
+    }).catch(info => {
+      console.log('Validate Failed:', info);
+    });
   };
 
   return (
@@ -158,7 +162,7 @@ export const IORequestListPage = () => {
         <Divider />
         <Table
           columns={columns}
-          dataSource={ioRequests} // Sử dụng danh sách yêu cầu từ trạng thái
+          dataSource={ioRequests} // Sử dụng danh sách yêu cầu từ API
           rowKey="id"
           bordered
           pagination={{ pageSize: 5 }}
@@ -167,7 +171,7 @@ export const IORequestListPage = () => {
 
       {/* Modal để tạo hoặc cập nhật yêu cầu */}
       <Modal
-        title={currentRequest ? "Cập nhật yêu cầu" : "Tạo yêu cầu mới"}
+        title={currentRequest ? "Update Form" : "Create Form"}
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -176,25 +180,63 @@ export const IORequestListPage = () => {
           form={form} // Kết nối form với useForm
           layout="vertical"
           onFinish={handleOk}
-          initialValues={currentRequest ? { ...currentRequest } : {}} // Hiển thị dữ liệu hiện có
+          initialValues={currentRequest ? { ...currentRequest } : {}}
         >
-          <Form.Item name="requestCode" label="Request Code" rules={[{ required: true, message: 'Vui lòng nhập mã yêu cầu!' }]}>
+          <Form.Item name="requestCode" label="Request Code" rules={[{ required: true, message: 'Please enter the request code!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Vui lòng nhập ngày bắt đầu!' }]}>
+          <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Please enter the start date!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="dueDate" label="Due Date" rules={[{ required: true, message: 'Vui lòng nhập ngày đến hạn!' }]}>
+          <Form.Item name="dueDate" label="Due Date" rules={[{ required: true, message: 'Please enter the due date!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="totalQuantity" label="Total Quantity" rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}>
+          <Form.Item name="totalQuantity" label="Total Quantity" rules={[{ required: true, message: 'Please enter the quantity!' }]}>
             <Input />
           </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {currentRequest ? "Cập nhật" : "Tạo"}
-            </Button>
+          <Form.Item name="ioType" label="IO Type" rules={[{ required: true, message: 'Please select the IO type!' }]}>
+            <Select>
+              <Select.Option value="IN">In</Select.Option>
+              <Select.Option value="OUT">Out</Select.Option>
+            </Select>
           </Form.Item>
+          <Form.Item name="priorityLevel" label="Priority" rules={[{ required: true, message: 'Please select the priority level!' }]}>
+            <Select>
+              <Select.Option value="Easy">Easy</Select.Option>
+              <Select.Option value="Medium">Medium</Select.Option>
+              <Select.Option value="High">High</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="requesterName" label="Requester Name" rules={[{ required: true, message: 'Please enter the requester name!' }]}>
+            <Input />
+          </Form.Item>
+
+          {/* Form chi tiết */}
+          <div style={{ marginBottom: 16, border: '1px solid #d9d9d9', padding: '16px', borderRadius: '4px' }}>
+            <h4>Detail Information</h4>
+            <Form form={detailForm} layout="vertical">
+              <Form.Item name="wineID" label="Wine ID" rules={[{ required: true, message: 'Please enter the wine ID!' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="quantity" label="Quantity" rules={[{ required: true, message: 'Please enter the quantity!' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="comment" label="Comment">
+                <Input />
+              </Form.Item>
+              <Form.Item name="supplier" label="Supplier" rules={[{ required: true, message: 'Please enter the supplier name!' }]}>
+                <Input />
+              </Form.Item>
+              <Button type="primary" onClick={addDetail}>
+                Add Detail
+              </Button>
+            </Form>
+          </div>
+
+          <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>
+            {currentRequest ? "Update" : "Create"}
+          </Button>
+          <Button onClick={handleCancel}>Cancel</Button>
         </Form>
       </Modal>
     </div>
