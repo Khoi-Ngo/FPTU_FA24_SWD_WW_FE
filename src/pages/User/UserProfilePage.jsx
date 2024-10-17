@@ -1,61 +1,58 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Card, Avatar, Descriptions, Spin, message, Button, Input, notification } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import '../../styles/UserDetailStyle.css';
+import { AuthContext } from '../../components/auth-context';
 
-const tempConstAvt = 'https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png';
 
-const UserDetailPage = () => {
+const UserProfilePage = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false); // Control edit mode
     const [editableUser, setEditableUser] = useState(null); // To store editable user details
+    const { userLogin, setUserLogin } = useContext(AuthContext);
+
+    //#region fetch user profile
 
     useEffect(() => {
-        const mockUser = {
-            id: 1,
-            username: 'john.doe',
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com',
-            phoneNumber: '123-456-7890',
-            role: 'Admin',
-            status: 'Active',
-            lastLogin: '2024-09-25T12:34:56Z',
-            createdAt: '2023-01-15T08:23:11Z',
-            preferredLanguage: 'English',
-            timeZone: 'America/New_York',
-            profileImageUrl: tempConstAvt,
-            bio: 'A software engineer with a passion for developing backend systems.',
-        };
-
         setTimeout(() => {
-            setUser(mockUser);
-            setEditableUser(mockUser); // Set initial editable user
+            setUser(userLogin);
+            setEditableUser(userLogin);
             setLoading(false);
         }, 1000);
     }, []);
 
-    const handleUpdateProfile = () => {
-        setIsEditing(true);
-    };
+    //#endregion
 
+
+    //#region update password
     const handleUpdatePassword = () => {
         notification.info({
             message: "Click update password"
         });
     };
 
+    //#endregion
+
+
+    //#region upload image
     const handleUploadAvatar = (event) => {
         notification.info({
             message: "Clik upload avatar"
         })
         //TODO implement later
     }
+    //#endregion
+
+
+    //#region update profile
+    const handleUpdateProfile = () => {
+        setIsEditing(true);
+    };
 
     const handleSave = () => {
-        // Implement save logic, e.g., sending data to the backend
-        setUser(editableUser); // Update the user state with new data
+        setUser(editableUser);
+        //TODO: implement calling BE and set UserLogin basing on the update
         setIsEditing(false);
         notification.success({
             message: "Successfully"
@@ -70,7 +67,10 @@ const UserDetailPage = () => {
     const handleInputChange = (field, value) => {
         setEditableUser({ ...editableUser, [field]: value });
     };
+    //#endregion
 
+
+    //#region init
     if (loading) {
         return <Spin className="loading-spinner" />;
     }
@@ -78,6 +78,7 @@ const UserDetailPage = () => {
     if (!user) {
         return <div className="error-message">No user data available.</div>;
     }
+    //#endregion
 
     return (
         <div className="user-detail-container">
@@ -140,39 +141,8 @@ const UserDetailPage = () => {
                             user.phoneNumber || 'N/A'
                         )}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Status">{user.status || 'Active'}</Descriptions.Item>
-                    <Descriptions.Item label="Last Login">{new Date(user.lastLogin).toLocaleString()}</Descriptions.Item>
-                    <Descriptions.Item label="Created At">{new Date(user.createdAt).toLocaleString()}</Descriptions.Item>
-                    <Descriptions.Item label="Preferred Language">
-                        {isEditing ? (
-                            <Input
-                                value={editableUser.preferredLanguage}
-                                onChange={(e) => handleInputChange('preferredLanguage', e.target.value)}
-                            />
-                        ) : (
-                            user.preferredLanguage || 'English'
-                        )}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Time Zone">
-                        {isEditing ? (
-                            <Input
-                                value={editableUser.timeZone}
-                                onChange={(e) => handleInputChange('timeZone', e.target.value)}
-                            />
-                        ) : (
-                            user.timeZone || 'N/A'
-                        )}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Bio">
-                        {isEditing ? (
-                            <Input
-                                value={editableUser.bio}
-                                onChange={(e) => handleInputChange('bio', e.target.value)}
-                            />
-                        ) : (
-                            user.bio || 'No bio available.'
-                        )}
-                    </Descriptions.Item>
+                    <Descriptions.Item label="Status">{user.status }</Descriptions.Item>
+                    
                 </Descriptions>
 
                 {/* Conditionally render buttons */}
@@ -204,4 +174,4 @@ const UserDetailPage = () => {
     );
 };
 
-export default UserDetailPage;
+export default UserProfilePage;

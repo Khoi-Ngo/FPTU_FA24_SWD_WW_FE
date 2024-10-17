@@ -1,12 +1,23 @@
-import { Button, Input, Form, Select } from "antd";
+import { Button, Input, Form, Select, notification } from "antd";
+import { createUserApi } from "../../services/api-service/UserApiService";
 
 export const AddUserForm = ({ setIsModalVisible, fetchUsers }) => {
     const [form] = Form.useForm();
 
     const handleAddUser = async (values) => {
-        setIsModalVisible(false);
-        form.resetFields();
-        await fetchUsers();
+        try {
+            setIsModalVisible(false);
+            await createUserApi(values);
+            form.resetFields();
+            await fetchUsers();
+            notification.success({
+                message: "Created user!"
+            })
+        } catch (error) {
+            notification.error({
+                message: "Cannot create user",
+            })
+        }
     };
 
     return (
@@ -17,7 +28,7 @@ export const AddUserForm = ({ setIsModalVisible, fetchUsers }) => {
         >
             <Form.Item
                 label="Username"
-                name="userName"
+                name="username"
                 rules={[{ required: true, message: 'Please input the user name!' }]}
             >
                 <Input />
@@ -57,12 +68,13 @@ export const AddUserForm = ({ setIsModalVisible, fetchUsers }) => {
 
             <Form.Item
                 label="Role"
-                name="role"
+                name="roleId"
                 rules={[{ required: true, message: 'Please select the role!' }]}
             >
                 <Select placeholder="Select a role">
-                    <Select.Option value="STAFF">STAFF</Select.Option>
-                    <Select.Option value="MANAGER">MANAGER</Select.Option>
+                    <Select.Option value="3">MANAGER</Select.Option>
+                    <Select.Option value="2">STAFF</Select.Option>
+                    <Select.Option value="1">ADMIN</Select.Option>
                 </Select>
             </Form.Item>
 

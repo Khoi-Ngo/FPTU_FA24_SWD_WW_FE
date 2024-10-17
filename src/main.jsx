@@ -1,15 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { DemoPage } from './pages/DemoPage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { AuthWrapper } from './components/auth-context.jsx';
 import { App } from './pages/App.jsx';
 import MockDashboardPage from './pages/MockDashboard.jsx';
 import UserListPage from './pages/User/UserListPage.jsx';
-import UserDetailPage from './pages/User/UserDetailPage.jsx';
 import WineListPage from './pages/Wine/WineListPage.jsx';
-import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import { RoomListPage } from './pages/Room/RoomListPage.jsx';
 import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
 
@@ -21,6 +18,10 @@ import UpdateWinePage from './pages/Wine/UpdateWinePage.jsx';
 
 import UserImportRequest from './pages/User/UserImportRequest.jsx';
 import UserManageCategory from './pages/User/UserManageCategory.jsx';
+import UserProfilePage from './pages/User/UserProfilePage.jsx';
+import { UserDetailPage } from './components/User/UserDetailPage.jsx';
+import { AuthRoutes } from './components/AuthRoutes.jsx';
+import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
 
 const router = createBrowserRouter([
   {
@@ -37,7 +38,11 @@ const router = createBrowserRouter([
 
   {
     path: "/app",
-    element: <App />,
+    element:
+      // <AuthRoutes>
+        <App />
+      // </AuthRoutes>
+    ,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -45,20 +50,24 @@ const router = createBrowserRouter([
         element: <MockDashboardPage />
       },
       {
-        path: 'demo',
-        element: <DemoPage />
+        path: 'users',
+        element:
+        //  <NonStaffRoutes>
+          <UserListPage />
+        // </NonStaffRoutes>
       },
       {
-        path: 'users',
-        element: <UserListPage />
+        path: 'users/:userId',
+        element: <UserDetailPage />
       },
+
       {
         path: 'tasks',
         element: <TaskHome />
       },
       {
         path: 'profile',
-        element: <UserDetailPage />
+        element: <UserProfilePage />
       },
       {
         path: 'wines',

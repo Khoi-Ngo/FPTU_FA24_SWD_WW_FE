@@ -13,10 +13,13 @@ export const AuthWrapper = (props) => {
     const [userLogin, setUserLogin] = useState({
         email: "",
         phone: "",
-        fullName: "",
+        firstName: "",
+        lastName: "",
+        username: "",
         role: "",
         avatar: "",
-        id: ""
+        id: "",
+        status: "",
     });
 
     const [otherStuffRelatingAuth, setOtherStuffRelatingAuth] = useState();

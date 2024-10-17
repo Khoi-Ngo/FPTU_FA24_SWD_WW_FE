@@ -1,23 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/auth-context";
-import { Layout, Menu, Spin } from "antd";
+import { Layout, Menu, notification, Spin } from "antd";
 import Footer from "../components/Footer";
 import { PieChartOutlined, DesktopOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 
-
 export const App = () => {
-    const { userLogin, setUserLogin, isAppLoading, SetIsAppLoading } = useContext(AuthContext);
-    const [selectedMenu, setSelectedMenu] = useState('Overview'); // State to track selected menu
+    const { isAppLoading, SetIsAppLoading, setUserLogin } = useContext(AuthContext);
+    const [selectedMenu, setSelectedMenu] = useState('Overview');
     const navigate = useNavigate();
-
-
-
     const location = useLocation();
-
-
     const delay = (milSeconds) => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -25,7 +19,32 @@ export const App = () => {
             }, milSeconds)
         })
     }
-
+    const handleLogout = async () => {
+        try {
+            localStorage.removeItem("access_token");
+            setUserLogin(
+                {
+                    email: "",
+                    phone: "",
+                    firstName: "",
+                    lastName: "",
+                    username: "",
+                    role: "",
+                    avatar: "",
+                    id: "",
+                    status: "",
+                }
+            )
+            notification.success({
+                message: "Logout ok"
+            });
+            navigate("/");
+        } catch (error) {
+            notification.error({
+                message: "Logout fail"
+            })
+        }
+    }
     const getMenuKeyFromPath = (path) => {
         if (path.startsWith('/app/users')) return 'Users';
         if (path.startsWith('/app/profile')) return 'Profile';
@@ -37,19 +56,17 @@ export const App = () => {
         if (path.startsWith('/app/rooms')) return 'Rooms';
         if (path.startsWith('/app/io-requests')) return 'IORequests';
         if (path.startsWith('/app/tasks')) return 'StaffTasks';
-
-        return 'Overview'; // Default to 'Overview'
+        return 'Overview';
     };
 
-
     const handleMenuClick = (menuKey) => {
-        setSelectedMenu(menuKey); // Update selected menu
+        setSelectedMenu(menuKey);
         switch (menuKey) {
             case 'Overview':
-                navigate('/app'); // Direct to the app base route
+                navigate('/app');
                 break;
             case 'Users':
-                navigate('/app/users'); // Correct path for users
+                navigate('/app/users');
                 break;
             case 'Profile':
                 navigate('/app/profile');
@@ -74,11 +91,8 @@ export const App = () => {
         }
     };
 
-
-
     const fetchUserInfo = async () => {
         await delay(500);
-        //TODO: fetch user info here
         SetIsAppLoading(false);
     };
 
@@ -90,7 +104,6 @@ export const App = () => {
         const currentMenu = getMenuKeyFromPath(location.pathname);
         setSelectedMenu(currentMenu);
     }, [location.pathname]);
-
 
     return (
         isAppLoading ? (
@@ -105,48 +118,57 @@ export const App = () => {
         ) : (
             <>
                 <Layout style={{ minHeight: '100vh' }}>
-
-                    <Sider >
+                    <Sider>
                         <div className="logo">Dashboard</div>
-                        <Menu
-                            theme="dark"
-                            selectedKeys={[selectedMenu]} // Set selected keys to reflect current menu
-                            mode="inline"
-                            onClick={({ key }) => handleMenuClick(key)} // Add click handler here
-                        >
-                            <Menu.Item key="Profile" icon={<RobotOutlined />}>
-                                Profile
-                            </Menu.Item>
-                            <Menu.Item key="Overview" icon={<PieChartOutlined />}>
-                                Overview
-                            </Menu.Item>
-                            <Menu.Item key="Users" icon={<UserOutlined />}>
-                                Users
-                            </Menu.Item>
-                            <Menu.Item key="Wines" icon={<UserOutlined />}>
-                                Wines
-                            </Menu.Item>
-                            <Menu.Item key="WineCates" icon={<UserOutlined />}>
-                                Wine Category
-                            </Menu.Item>
-                            <Menu.Item key="Rooms" icon={<UserOutlined />}>
-                                Room
-                            </Menu.Item>
-                            <Menu.Item key="IORequests" icon={<UserOutlined />}>
-                                I/O Requests </Menu.Item>
-                            <Menu.Item key="StaffTasks" icon={<UserOutlined />}>
-                                Staff-Task
+                        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <Menu
+                                theme="dark"
+                                selectedKeys={[selectedMenu]}
+                                mode="inline"
+                                onClick={({ key }) => handleMenuClick(key)}
+                                style={{ flex: 1 }}
+                            >
+                                <Menu.Item key="Profile" icon={<RobotOutlined />}>
+                                    Profile
+                                </Menu.Item>
+                                <Menu.Item key="Overview" icon={<PieChartOutlined />}>
+                                    Overview
+                                </Menu.Item>
+                                <Menu.Item key="Users" icon={<UserOutlined />}>
+                                    Users
+                                </Menu.Item>
+                                <Menu.Item key="Wines" icon={<UserOutlined />}>
+                                    Wines
+                                </Menu.Item>
+                                <Menu.Item key="WineCates" icon={<UserOutlined />}>
+                                    Wine Category
+                                </Menu.Item>
+                                <Menu.Item key="Rooms" icon={<UserOutlined />}>
+                                    Room
+                                </Menu.Item>
+                                <Menu.Item key="IORequests" icon={<UserOutlined />}>
+                                    I/O Requests
+                                </Menu.Item>
+                                <Menu.Item key="StaffTasks" icon={<UserOutlined />}>
+                                    Staff-Task
+                                </Menu.Item>
+                            </Menu>
+                            <Menu
+                                theme="dark"
+                                mode="inline"
+                            >
+                                <Menu.Item key="Logout" icon={<UserOutlined /> } onClick={handleLogout}>
+                                Logout
                             </Menu.Item>
                         </Menu>
-                    </Sider >
-                    {/* <Outlet fetchUserInfo={fetchUserInfo} /> */}
-                    <Content style={{ margin: '0 ' }}>
-                        <div style={{ background: '#fff', minHeight: 360 }}>
-                            <Outlet fetchUserInfo={fetchUserInfo} />
-                        </div>
-                    </Content>
-                </Layout>
-                {/* <Footer /> */}
+                    </div>
+                </Sider>
+                <Content style={{ margin: '0 ' }}>
+                    <div style={{ background: '#fff', minHeight: 360 }}>
+                        <Outlet fetchUserInfo={fetchUserInfo} />
+                    </div>
+                </Content>
+            </Layout >
             </>
         )
     );

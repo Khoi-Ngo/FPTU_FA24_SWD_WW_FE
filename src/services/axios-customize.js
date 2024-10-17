@@ -1,66 +1,35 @@
-import axios from "axios"
+import axios from "axios";
 
-// Set config defaults when creating the instance
+
+// Create an Axios instance with default baseURL
 const instance = axios.create({
-  //Replace baseURL for calling BE here
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL, // Replace baseURL for calling BE here
 });
 
-// Alter defaults after instance has been created
-
-// Add a request interceptor
+// Add a request interceptor to always send the JWT token if available
 instance.interceptors.request.use(
   function (config) {
-    //Auth
-    if (
-      typeof window !== "undefined" &&
-      window &&
-      window.localStorage &&
-      window.localStorage.getItem("access_token")
-    ) {
-      config.headers.Authorization =
-        "Bearer " + window.localStorage.getItem("access_token");
+    const token = window?.localStorage?.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // Do something before request is sent
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
-  },
+  }
 );
 
-// Add a response interceptor
-// instance.interceptors.response.use(function (response) {
-
-//     // Any status code that lie within the range of 2xx cause this function to trigger
-//     // Do something with response data
-//     //! Check data from response
-//     //? Response here having many config relating to HTTP Response
-//     // => just need data if success
-//     if (response.data != null && response.data.data != null)
-//         return response.data;//response {status, payload, ...}
-// }, function (error) {
-//     // Any status codes that falls outside the range of 2xx cause this function to trigger
-//     // Do something with response error
-//     if (error.response != null && error.response.data != null) return error.response.data;
-//     return Promise.reject(error);
-// });
-
+// Add a response interceptor to handle response data
 instance.interceptors.response.use(
   function (response) {
-    // If response contains data, return it
-    if (response.data != null) {
-      // If `data` contains another `data` field, return it; otherwise, return the whole response
-      return response.data.data ? response.data.data : response.data;
-    }
+    // Return `data.data` if it exists, otherwise return `data`
+    return response.data?.data || response.data;
   },
   function (error) {
-    if (error.response != null && error.response.data != null)
-      return error.response.data;
-    return Promise.reject(error);
-  },
+    // Return response error data if available, otherwise reject the error
+    return error.response?.data || Promise.reject(error);
+  }
 );
 
 export default instance;
