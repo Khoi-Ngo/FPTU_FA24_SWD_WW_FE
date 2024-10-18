@@ -23,6 +23,7 @@ import { UserDetailPage } from './components/User/UserDetailPage.jsx';
 import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
+import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
 
 const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
       {
         path: 'rooms',
         element: <RoomListPage />
+      },
+      {
+        path: 'room-details/:roomId',
+        element: <RoomDetails />
       },
       {
         path: 'io-requests',

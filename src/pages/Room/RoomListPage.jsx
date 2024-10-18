@@ -6,6 +6,7 @@ import CreateRoomForm from './CreateRoomForm'
 import { createRoomAPI, deleteRoomAPI, fetchRoomsAPI, updateRoomAPI } from '~/services/api-service/RoomApiService'
 import DeleteRoom from './DeleteRoom'
 import UpdateRoomForm from './UpdateRoomForm'
+import { useNavigate } from 'react-router-dom'
 
 const { Title } = Typography
 
@@ -41,6 +42,7 @@ export const RoomListPage = () => {
   const [data, setData] = useState([])
   const [modalAction, setModalAction] = useState('')
   const [content, setContent] = useState(null)
+  const navigate = useNavigate();
 
   const fetchRoomData = async () => {
     const response = await fetchRoomsAPI()
@@ -89,7 +91,7 @@ export const RoomListPage = () => {
       key: 'actions',
       render: record => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
+          <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button>
           <Button type="default" onClick={() => handleUpdate(record)}>Update</Button>
           <Button type="danger" onClick={() => handleDelete(record)}>Delete</Button>
         </Space>
@@ -101,6 +103,7 @@ export const RoomListPage = () => {
   const handleDetail = (id) => {
     setModalAction('detail')
     console.log(`Navigate to detail page of record with id: ${id}`)
+    navigate(`/app/room-details/${id}`); 
   }
 
   const handleUpdate = (data) => {
