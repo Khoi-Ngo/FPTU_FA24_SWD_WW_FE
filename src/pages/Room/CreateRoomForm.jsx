@@ -21,16 +21,16 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
     roomName: '',
     locationAddress: '',
     capacity: 0,
-    currentOccupancy: 0,
-    managerName: '',
-    wineRooms: [
-      // {
-      //   currQuantity: 0,
-      //   totalQuantity: 0,
-      //   roomId: 0,
-      //   wineId: 0
-      // }
-    ]
+    //currentOccupancy: 0,
+    managerName: ''
+    // wineRooms: [
+    //   {
+    //     currQuantity: 0,
+    //     totalQuantity: 0,
+    //     roomId: 0,
+    //     wineId: 0
+    //   }
+    // ]
   })
   const handleCancle = () => {
     setIsModalOpen(false)
@@ -101,7 +101,7 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
         />
       </Form.Item>
 
-      <Form.Item
+      {/* <Form.Item
         label="Current Occupancy"
         name="currentOccupancy"
         rules={[{ required: true, message: 'Please input the current occupancy!' }]}
@@ -118,7 +118,7 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
             }))
           }
         />
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item
         label="Manager Name"
