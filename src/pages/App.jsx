@@ -1,21 +1,21 @@
-import { useContext, useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../components/auth-context";
-import { Layout, Menu, Spin } from "antd";
-import Footer from "../components/Footer";
-import { PieChartOutlined, DesktopOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
-import Sider from "antd/es/layout/Sider";
-import { Content } from "antd/es/layout/layout";
+import { useContext, useEffect, useState } from "react"
+import { Outlet, useLocation, useNavigate } from "react-router-dom"
+import { AuthContext } from "../components/auth-context"
+import { Layout, Menu, Spin } from "antd"
+import Footer from "../components/Footer"
+import { PieChartOutlined, DesktopOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons'
+import Sider from "antd/es/layout/Sider"
+import { Content } from "antd/es/layout/layout"
 
 
 export const App = () => {
-    const { userLogin, setUserLogin, isAppLoading, SetIsAppLoading } = useContext(AuthContext);
-    const [selectedMenu, setSelectedMenu] = useState('Overview'); // State to track selected menu
-    const navigate = useNavigate();
+    const { userLogin, setUserLogin, isAppLoading, SetIsAppLoading } = useContext(AuthContext)
+    const [selectedMenu, setSelectedMenu] = useState('Overview') // State to track selected menu
+    const navigate = useNavigate()
 
 
 
-    const location = useLocation();
+    const location = useLocation()
 
 
     const delay = (milSeconds) => {

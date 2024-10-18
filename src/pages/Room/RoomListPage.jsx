@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Table, Button, Space, Typography, Card, Divider } from 'antd'
+import { Table, Button, Space, Typography, Card, Divider, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import PopupDialog from '~/components/PopupDialog'
 import CreateRoomForm from './CreateRoomForm'
@@ -42,13 +42,13 @@ export const RoomListPage = () => {
   const [modalAction, setModalAction] = useState('')
   const [content, setContent] = useState(null)
 
-  const fetchRoomData = () => {
-    fetchRoomsAPI().then((response) => {
-      setData(response)
-      console.log('data: ' + data.id)
-    }).catch(error => {
-      console.error('Error fetching data:', error)
-    })
+  const fetchRoomData = async () => {
+    const response = await fetchRoomsAPI()
+    const activeRooms = response.filter(room => room.status === 'Active')
+    setData(activeRooms)
+    // .catch(error => {
+    //   message.error('Error fetching data:', error.data)
+    // })
   }
   useEffect(() => {
     fetchRoomData()
@@ -80,6 +80,11 @@ export const RoomListPage = () => {
       key: 'managerName'
     },
     {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status'
+    },
+    {
       title: 'Actions',
       key: 'actions',
       render: record => (
@@ -102,10 +107,12 @@ export const RoomListPage = () => {
     setModalAction('update')
     console.log(`Navigate to update page of record with id: ${data.id}`)
     setIsModalOpen(true)
-    setContent(<UpdateRoomForm updateRoom={updateRoom} setIsModalOpen={setIsModalOpen} data = {data} setModalAction ={setModalAction} isModalOpen ={isModalOpen}/>)
+    setContent(<UpdateRoomForm updateRoom={updateRoom} setIsModalOpen={setIsModalOpen} data={data} setModalAction={setModalAction} isModalOpen={isModalOpen} />)
   }
   const updateRoom = async (id, data) => {
-    await updateRoomAPI(id, data)
+    await updateRoomAPI(id, data).then(() => message.success('Updated Succesfully')).catch(error => {
+      message.error(error.response.data.errorMessage)
+    })
     fetchRoomData()
   }
 
@@ -116,7 +123,7 @@ export const RoomListPage = () => {
     setContent(<DeleteRoom setIsModalOpen={setIsModalOpen} deleteRoom={deleteRoom} data={data} />)
   }
   const deleteRoom = async (id) => {
-    await deleteRoomAPI(id)
+    await deleteRoomAPI(id).then(() => message.success('Deleted Succesfully')).catch(error => message.error(error.response.data.errorMessage))
     fetchRoomData()
   }
 
@@ -129,7 +136,7 @@ export const RoomListPage = () => {
 
   }
   const createRoom = async (newRoomData) => {
-    const createdRoom = await createRoomAPI({ ...newRoomData })
+    const createdRoom = await createRoomAPI({ ...newRoomData }).then(() => message.success('Created Succesfully')).catch(error => message.error(error.response.data.errorMessage))
     setData((prevData) => [...prevData, createdRoom])
     fetchRoomData()
   }
