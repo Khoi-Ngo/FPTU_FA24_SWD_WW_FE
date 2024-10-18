@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, notification } from 'antd';
 import '../../styles/WineListStyle.css'; // Import custom styles
 import { useNavigate } from 'react-router-dom';
-import { deleteWineAPI } from '../../services/api-service/WineApiService';
+import { deleteWineAPI, fetchAllWineAPI } from '../../services/api-service/WineApiService';
 
 export const WineListPage = () => {
     const [wines, setWines] = useState(null);
@@ -50,7 +50,7 @@ export const WineListPage = () => {
     //#region fetch wine region
     const fetchAllWines = async () => {
         try {
-            const response = await fetchAllWines();
+            const response = await fetchAllWineAPI();
             if (response.data) {
                 setWines(response.data);
             } else {
