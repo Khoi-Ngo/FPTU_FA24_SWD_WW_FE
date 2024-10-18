@@ -4,11 +4,14 @@ import { useNavigate } from "react-router-dom";
 import '../styles/LoginStyle.css';
 import { LoginAPI } from '../services/api-service/AuthApiService';
 import { AuthContext } from '../components/auth-context';
+import { sendMailResetPassAPI } from '~/services/api-service/UserApiService';
 
 export const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false); // For modal visibility
-    const [modalEmail, setModalEmail] = useState(""); // To store email in the modal
+    const [modalEmail, setModalEmail] = useState("");
+    const [modalUsername, setModalUsername] = useState("");
+
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [isEntered, setIsEntered] = useState(false);
@@ -29,7 +32,7 @@ export const LoginPage = () => {
                     //login ok
                     localStorage.setItem("access_token", res.data.accessToken);
                     setUserLogin(res.data.userInfo);
-                    
+
                 }
                 notification.info({
                     message: "Login successfully",
@@ -53,24 +56,44 @@ export const LoginPage = () => {
     };
 
     // Handle modal OK
-    const handleOk = () => {
+    const handleOk = async () => {
 
-        //TODO: call api send code verification 
+        try {
+            setIsModalVisible(false);
+            setModalEmail("");
+            setModalUsername("");
+            const response = await sendMailResetPassAPI({
+                username: modalUsername,
+                email: modalEmail,
+            });
+            if (response.data && response.status === 200) {
+                navigate("/reset-password");
+                notification.success(
+                    {
+                        message: "Code sent"
+                    }
+                )
+            } else {
+                notification.warning(
+                    {
+                        message: "Need check action"
+                    }
+                )
+            }
+        } catch (error) {
+            notification.error(
+                {
+                    message: "Something wrong"
+                }
+            )
+        }
 
-        navigate("/resetpassword");
-
-
-        // Handle forgot password logic here, e.g., sending email
-        notification.info({
-            message: `Password reset link sent to ${modalEmail}`,
-        });
-        setIsModalVisible(false);
-        setModalEmail(""); // Clear input after submit
     };
 
     // Handle modal Cancel
     const handleCancel = () => {
         setModalEmail(""); // Clear input after cancel
+        setModalUsername("");
         setIsModalVisible(false);
     };
 
@@ -129,6 +152,13 @@ export const LoginPage = () => {
                         placeholder="Enter your email"
                         value={modalEmail}
                         onChange={(e) => setModalEmail(e.target.value)}
+                    />
+
+
+                    <Input
+                        placeholder="Enter your username"
+                        value={modalUsername}
+                        onChange={(e) => setModalUsername(e.target.value)}
                     />
                 </Modal>
             </div>
