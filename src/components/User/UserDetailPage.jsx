@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Spin, Alert, Card, Row, Col, Typography, Button, Descriptions, Avatar, notification, message, Input, Modal, Flex } from 'antd'; // Add Input component
+import { Spin, Alert, Card, Button, Descriptions, Avatar, notification, Input, Modal, Form } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { deleteUserApi, fetchUserDetail } from '../../services/api-service/UserApiService';
-
-const { Title, Text } = Typography;
+import { deleteUserApi, fetchUserDetail, resetPasswordADMINApi, updateUserApi } from '../../services/api-service/UserApiService';
 
 export const UserDetailPage = () => {
     const { userId } = useParams();
@@ -11,24 +9,48 @@ export const UserDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [editableUser, setEditableUser] = useState(null);
+    const [editableUser, setEditableUser] = useState({}); // Initialize as an empty object
     const navigate = useNavigate();
+    const [passwordform] = Form.useForm();
+    const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 
     //#region update password
-
     const handleUpdatePassword = () => {
-        notification.info({
-            message: "Click update password"
-        });
+        setIsPasswordModalVisible(true);
     };
 
+    const handleOkPasswordForm = async () => {
+        try {
+            const values = await passwordform.validateFields();
+            const response = await resetPasswordADMINApi({
+                username: userDetail.username,
+                newPass: values.newPass,
+            });
 
+            if (response.data && response.status === 200) {
+                passwordform.resetFields();
+                setIsPasswordModalVisible(false);
+                notification.success({ message: "Password updated successfully" });
+            } else {
+                notification.warning({ message: "Check your action" });
+            }
+        } catch (error) {
+            passwordform.resetFields();
+            setIsPasswordModalVisible(false);
+            notification.error({ message: "Failed to update password" });
+        }
+    };
+
+    const handleCancelPasswordForm = () => {
+        passwordform.resetFields();
+        setIsPasswordModalVisible(false);
+    };
     //#endregion
 
     //#region delete/ disable user
-    const handleDisaleUser = async () => {
+    const handleDisableUser = async () => {
         Modal.confirm({
-            title: 'Are you sure you want to delete this user?',
+            title: 'Are you sure you want to disable this user?',
             content: 'This action cannot be undone.',
             okText: 'Yes',
             okType: 'danger',
@@ -36,44 +58,55 @@ export const UserDetailPage = () => {
             onOk: async () => {
                 try {
                     await deleteUserApi(userId);
-                    notification.success({
-                        message: "Disabled done"
-                    });
+                    notification.success({ message: "User disabled" });
                     const response = await fetchUserDetail(userId);
                     setUserDetail(response.data);
                 } catch (ex) {
-                    notification.error({
-                        message: ex.message,
-                    });
+                    notification.error({ message: ex.message });
                 }
             }
         });
-    }
+    };
     //#endregion
 
     //#region update profile
     const handleUpdateProfile = () => {
+        setEditableUser(userDetail || {}); // Initialize editableUser safely
         setIsEditing(true);
-        setEditableUser(userDetail); // Initialize editableUser with current user details
     };
 
-    const handleSave = () => {
-        setUserDetail(editableUser);
-        setIsEditing(false);
-        notification.success({
-            message: "Successfully updated"
-        });
+    const handleSave = async () => {
+        try {
+            const response = await updateUserApi(editableUser);
+            if (response.data && response.status === 200) {
+                setUserDetail(editableUser);
+                notification.success({ message: "Profile updated successfully" });
+            } else {
+                notification.warning({ message: "Something went wrong" });
+            }
+        } catch (error) {
+            console.error("Failed to save user profile:", error);
+            notification.error({
+                message: "Failed to update profile",
+                description: error.message
+            });
+        } finally {
+            setIsEditing(false);
+        }
     };
 
     const handleCancel = () => {
-        setEditableUser(userDetail);
         setIsEditing(false);
+    };
+
+    const handleInputChange = (field, value) => {
+        if (editableUser) {
+            setEditableUser({ ...editableUser, [field]: value });
+        }
     };
     //#endregion
 
-
-    //#region fetch detail user
-
+    //#region fetch user detail
     useEffect(() => {
         const getUserDetail = async () => {
             try {
@@ -99,24 +132,19 @@ export const UserDetailPage = () => {
     if (error) {
         return <Alert message="Error fetching user details" type="error" showIcon />;
     }
-
-
     //#endregion
 
-    //redirect to the user list
     const handleBackToList = () => {
-        notification.info({
-            message: "Back to the user list"
-        })
+        notification.info({ message: "Back to the user list" });
         navigate('/app/users');
     };
-
 
     return (
         <div className="user-detail-container" style={{ minWidth: '100vh', margin: '0 auto', padding: '20px', display: 'flex', flexDirection: 'column' }}>
             <Button type="default" onClick={handleBackToList} style={{ width: '25%', height: '40px', backgroundColor: 'white', margin: '15px' }}>
                 Back to list of user
             </Button>
+            {/* USER CARD REGION */}
             <Card className="user-card" bordered={false}>
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                     <Avatar
@@ -129,77 +157,97 @@ export const UserDetailPage = () => {
                         }}
                     />
                 </div>
-                <h2 style={{ textAlign: 'center' }}>{userDetail?.firstName} {userDetail?.lastName}</h2>
-                <p className="user-role" style={{ textAlign: 'center', color: 'grey' }}>{userDetail?.role}</p>
-                <Descriptions
-                    bordered
-                    column={1}
-                    className="user-descriptions"
-                >
-                    <Descriptions.Item label="Username">
-                        {isEditing ?
-                            <Input
-                                value={editableUser.username}
-                                onChange={(e) => setEditableUser({ ...editableUser, username: e.target.value })}
-                            />
-                            :
-                            userDetail?.username
-                        }
-                    </Descriptions.Item>
-
+                <h2>{userDetail?.firstName} {userDetail?.lastName}</h2>
+                <p className="user-role">{userDetail?.role}</p>
+                <Descriptions bordered column={1} className="user-descriptions">
+                    <Descriptions.Item label="Username">{userDetail?.username}</Descriptions.Item>
                     <Descriptions.Item label="Email">
-                        {isEditing ?
-                            <Input
-                                value={editableUser.email}
-                                onChange={(e) => setEditableUser({ ...editableUser, email: e.target.value })}
-                            />
-                            :
+                        {isEditing ? (
+                            <Input value={editableUser?.email} onChange={(e) => handleInputChange('email', e.target.value)} />
+                        ) : (
                             userDetail?.email
-                        }
+                        )}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="First name">
+                        {isEditing ? (
+                            <Input value={editableUser?.firstName} onChange={(e) => handleInputChange('firstName', e.target.value)} />
+                        ) : (
+                            userDetail?.firstName
+                        )}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Last name">
+                        {isEditing ? (
+                            <Input value={editableUser?.lastName} onChange={(e) => handleInputChange('lastName', e.target.value)} />
+                        ) : (
+                            userDetail?.lastName
+                        )}
                     </Descriptions.Item>
                     <Descriptions.Item label="Phone Number">
-                        {isEditing ?
-                            <Input
-                                value={editableUser.phoneNumber}
-                                onChange={(e) => setEditableUser({ ...editableUser, phoneNumber: e.target.value })}
-                            />
-                            :
+                        {isEditing ? (
+                            <Input value={editableUser?.phoneNumber} onChange={(e) => handleInputChange('phoneNumber', e.target.value)} />
+                        ) : (
                             userDetail?.phoneNumber || 'N/A'
-                        }
+                        )}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Status">
-                        {
-                            userDetail.status
-                        }
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Created At">{new Date(userDetail?.createdAt).toLocaleString()}</Descriptions.Item>
-
+                    <Descriptions.Item label="Status">{userDetail?.status}</Descriptions.Item>
                 </Descriptions>
-                
-                
+
                 <div style={{ marginTop: '10vh' }}>
                     {!isEditing ? (
                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                            <Button type="primary" onClick={handleUpdateProfile} >
-                                Update Profile
-                            </Button>
-                            <Button type="default" onClick={handleUpdatePassword} >
-                                Update Password
-                            </Button>
-                            <Button type="default" onClick={handleDisaleUser} >
-                                Disable
-                            </Button>
+                            <Button type="primary" onClick={handleUpdateProfile}>Update Profile</Button>
+                            <Button type="default" onClick={handleUpdatePassword}>Update Password</Button>
+                            <Button type="default" onClick={handleDisableUser}>Disable</Button>
                         </div>
                     ) : (
                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                            <Button type="primary" onClick={handleSave} >
-                                Save
-                            </Button>
+                            <Button type="primary" onClick={handleSave}>Save</Button>
                             <Button onClick={handleCancel}>Cancel</Button>
                         </div>
                     )}
                 </div>
             </Card>
+
+            {/* RESET PASSWORD REGION */}
+            <Modal
+                title="Change Password"
+                visible={isPasswordModalVisible}
+                onOk={handleOkPasswordForm}
+                onCancel={handleCancelPasswordForm}
+                okText="Update"
+            >
+                <Form form={passwordform} layout="vertical" name="password_form">
+                    <Form.Item
+                        label="New Password"
+                        name="newPass"
+                        rules={[
+                            { required: true, message: 'Please input your new password!' },
+                            { min: 8, message: 'Password must be at least 8 characters!' },
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        label="Confirm Password"
+                        name="confirmPass"
+                        dependencies={['newPass']}
+                        hasFeedback
+                        rules={[
+                            { required: true, message: 'Please confirm your new password!' },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('newPass') === value) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('Passwords do not match!'));
+                                },
+                            }),
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };
