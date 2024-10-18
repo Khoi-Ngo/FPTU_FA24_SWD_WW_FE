@@ -50,5 +50,6 @@ dist-ssr
 *.sln
 *.sw?
 
-#Eslint
-estlint.config.js
+
+# Ignore ESLint config file
+eslint.config.js

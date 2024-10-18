@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, notification } from 'antd';
 import '../../styles/WineListStyle.css'; // Import custom styles
 import { useNavigate } from 'react-router-dom';
+import { deleteWineAPI } from '../../services/api-service/WineApiService';
 
 export const WineListPage = () => {
-    const [wines, setWines] = useState(mockWines);
+    const [wines, setWines] = useState(null);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [currentWineId, setCurrentWineId] = useState(null);
     const navigate = useNavigate();
 
+    //#region directly DELETE wine in the list
     const handleDeleteButtonClicked = (wineId) => {
         setCurrentWineId(wineId);
         setIsDeleteModalVisible(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         try {
-            // TODO: call API to delete and reload page
-            setWines((prevWines) => prevWines.filter((wine) => wine.id !== currentWineId));
+            await deleteWineAPI(currentWineId);
             notification.success({
                 message: `Wine deleted successfully`,
                 description: `Wine with ID: ${currentWineId} was deleted.`,
@@ -29,19 +30,51 @@ export const WineListPage = () => {
             });
         }
         setIsDeleteModalVisible(false);
+        fetchAllWines();
     };
+    //#endregion
 
+    //redirect to create wine page
     const handleCreateButtonClicked = () => {
         navigate("/app/create-wine");
     };
-
+    //redirect to the detail page with id path
     const handleDetailButtonClicked = (record) => {
         navigate(`/app/wines/${record.id}`);
     };
-
+    //redirect to the update wine page
     const handleUpdateButtonClicked = (record) => {
         navigate(`/app/update-wine/${record.id}`);
     };
+
+    //#region fetch wine region
+    const fetchAllWines = async () => {
+        try {
+            const response = await fetchAllWines();
+            if (response.data) {
+                setWines(response.data);
+            } else {
+                throw new Error('API request failed');
+            }
+            notification.success(
+                {
+                    message: "Load oke"
+                }
+            )
+        } catch (error) {
+            notification.error({
+                message: "Fail load"
+            })
+        }
+    }
+
+    useEffect(() => {
+        fetchAllWines();
+    }, [])
+    //#endregion
+
+
+
 
     const columns = [
         {
@@ -116,6 +149,17 @@ export const WineListPage = () => {
                 pagination={{ pageSize: 5 }}
                 className="wine-table"
             />
+
+
+
+
+
+
+
+
+
+
+            {/* MODAL CONFIRM */}
             <Modal
                 title="Confirm Delete"
                 visible={isDeleteModalVisible}
@@ -131,52 +175,3 @@ export const WineListPage = () => {
 };
 
 export default WineListPage;
-
-// MOCK DATA BELOW
-const mockWines = [
-    {
-        id: 1,
-        wineName: 'Chardonnay',
-        availableStock: 100,
-        mfd: '2024-01-01',
-        supplier: 'Wine Supplier A',
-        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
-        status: 'Available',
-    },
-    {
-        id: 2,
-        wineName: 'Merlot',
-        availableStock: 80,
-        mfd: '2024-02-01',
-        supplier: 'Wine Supplier B',
-        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
-        status: 'Available',
-    },
-    {
-        id: 3,
-        wineName: 'Cabernet Sauvignon',
-        availableStock: 60,
-        mfd: '2024-03-01',
-        supplier: 'Wine Supplier C',
-        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
-        status: 'Out of Stock',
-    },
-    {
-        id: 4,
-        wineName: 'Zinfandel',
-        availableStock: 50,
-        mfd: '2024-04-01',
-        supplier: 'Wine Supplier D',
-        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
-        status: 'Available',
-    },
-    {
-        id: 5,
-        wineName: 'Pinot Noir',
-        availableStock: 75,
-        mfd: '2024-05-01',
-        supplier: 'Wine Supplier E',
-        imgUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
-        status: 'Available',
-    },
-];
