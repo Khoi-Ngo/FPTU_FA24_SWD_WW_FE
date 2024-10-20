@@ -24,6 +24,7 @@ import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
+import { CheckRequestListPage } from './pages/CheckRequest/CheckRequestListPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -41,9 +42,9 @@ const router = createBrowserRouter([
   {
     path: "/app",
     element:
-      // <AuthRoutes>
-      <App />
-    // </AuthRoutes>
+      <AuthRoutes>
+        <App />
+      </AuthRoutes>
     ,
     errorElement: <ErrorPage />,
     children: [
@@ -54,9 +55,9 @@ const router = createBrowserRouter([
       {
         path: 'users',
         element:
-          //  <NonStaffRoutes>
-          <UserListPage />
-        // </NonStaffRoutes>
+          <NonStaffRoutes>
+            <UserListPage />
+          </NonStaffRoutes>
       },
       {
         path: 'users/:userId',
@@ -116,6 +117,10 @@ const router = createBrowserRouter([
       {
         path: "import_request",
         element: <UserImportRequest />
+      },
+      {
+        path: "checkrequests",
+        element: <CheckRequestListPage />
       },
 
     ],

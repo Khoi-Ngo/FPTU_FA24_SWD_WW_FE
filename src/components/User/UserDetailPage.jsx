@@ -77,7 +77,7 @@ export const UserDetailPage = () => {
 
     const handleSave = async () => {
         try {
-            const response = await updateUserApi(editableUser);
+            const response = await updateUserApi(editableUser, userId);
             if (response.data && response.status === 200) {
                 setUserDetail(editableUser);
                 notification.success({ message: "Profile updated successfully" });

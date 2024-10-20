@@ -95,7 +95,7 @@ const UserProfilePage = () => {
 
     const handleSave = async () => {
         try {
-            const response = await updateUserApi(editableUser);
+            const response = await updateUserApi(editableUser, userLogin.id);
             if (response.data && response.status === 200) {
                 setUser(editableUser);
                 setUserLogin(editableUser);

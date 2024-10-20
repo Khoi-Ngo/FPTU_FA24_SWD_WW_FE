@@ -47,6 +47,7 @@ export const LoginPage = () => {
             notification.error({
                 message: "Login failed"
             })
+            form.resetFields();
         }
     };
 

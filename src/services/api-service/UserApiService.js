@@ -20,8 +20,8 @@ const deleteUserApi = async (userId) => {
     return axios.delete(URL_BACKEND);
 };
 
-const updateUserApi = (updatedUserData) => {
-    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users`;
+const updateUserApi = (updatedUserData, userId) => {
+    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/${userId}`;
     return axios.put(URL_BACKEND, updatedUserData);
 }
 

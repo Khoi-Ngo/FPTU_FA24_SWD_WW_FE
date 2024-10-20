@@ -72,9 +72,10 @@ export const AddUserForm = ({ setIsModalVisible, fetchUsers }) => {
                 rules={[{ required: true, message: 'Please select the role!' }]}
             >
                 <Select placeholder="Select a role">
-                    <Select.Option value="3">MANAGER</Select.Option>
+                    <Select.Option value="1">MANAGER</Select.Option>
                     <Select.Option value="2">STAFF</Select.Option>
-                    <Select.Option value="1">ADMIN</Select.Option>
+                    <Select.Option value="2">ADMIN</Select.Option>
+
                 </Select>
             </Form.Item>
 
