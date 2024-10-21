@@ -157,18 +157,18 @@ export const App = () => {
                                 theme="dark"
                                 mode="inline"
                             >
-                                <Menu.Item key="Logout" icon={<UserOutlined /> } onClick={handleLogout}>
-                                Logout
-                            </Menu.Item>
-                        </Menu>
-                    </div>
-                </Sider>
-                <Content style={{ margin: '0 ' }}>
-                    <div style={{ background: '#fff', minHeight: 360 }}>
-                        <Outlet fetchUserInfo={fetchUserInfo} />
-                    </div>
-                </Content>
-            </Layout >
+                                <Menu.Item key="Logout" icon={<UserOutlined />} onClick={handleLogout}>
+                                    Logout
+                                </Menu.Item>
+                            </Menu>
+                        </div>
+                    </Sider>
+                    <Content style={{ margin: '0 ' }}>
+                        <div style={{ background: '#fff', minHeight: 360 }}>
+                            <Outlet fetchUserInfo={fetchUserInfo} />
+                        </div>
+                    </Content>
+                </Layout >
             </>
         )
     );

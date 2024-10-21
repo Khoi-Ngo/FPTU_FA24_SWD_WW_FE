@@ -23,14 +23,14 @@ export const IORequestListPage = () => {
   const [ioRequestDetails, setIORequestDetails] = useState([]);
   const [form] = Form.useForm();
 
+  const fetchData = async () => {
+    const requests = await fetchIORequestApi();
+    setIORequests(requests);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const requests = await fetchIORequestApi();
-      setIORequests(requests);
-    };
     fetchData();
   }, []);
-
   const columns = [
     {
       title: 'Request Code',
@@ -73,9 +73,9 @@ export const IORequestListPage = () => {
   ];
 
   const handleDetail = (record) => {
-    setCurrentRequest(record);
-    setIsDetailVisible(true);
+    navigate(`/app/iorequests/${record.id}`);
   };
+
 
   const handleUpdate = (record) => {
     setCurrentRequest(record);
@@ -85,26 +85,27 @@ export const IORequestListPage = () => {
   };
 
   const confirmDelete = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn vô hiệu hóa yêu cầu này?")) {
+    if (window.confirm("Are you sure you want to disable this request?")) {
       handleDisableStatus(id).then(() => {
-        setIORequests(ioRequests.filter(request => request.id !== id));
+
+        fetchData();
       });
     }
   };
 
 
-  const handleDisable = async (id) => {
-    try {
-      console.log(`Deleting IO Request with ID: ${id}`); // Kiểm tra ID
-      await deleteIORequestApi(id); // Gọi API để xóa yêu cầu
-      console.log(`Successfully deleted request with ID: ${id}`); // Xác nhận đã xóa
+  // const handleDisable = async (id) => {
+  //   try {
+  //     console.log(`Deleting IO Request with ID: ${id}`); // Kiểm tra ID
+  //     await deleteIORequestApi(id); // Gọi API để xóa yêu cầu
+  //     console.log(`Successfully deleted request with ID: ${id}`); // Xác nhận đã xóa
 
-      // Cập nhật lại danh sách yêu cầu trong state
-      setIORequests(ioRequests.filter(request => request.id !== id));
-    } catch (error) {
-      console.error("Error deleting request:", error);
-    }
-  };
+  //     // Cập nhật lại danh sách yêu cầu trong state
+  //     setIORequests(ioRequests.filter(request => request.id !== id));
+  //   } catch (error) {
+  //     console.error("Error deleting request:", error);
+  //   }
+  // };
 
 
 
@@ -132,14 +133,13 @@ export const IORequestListPage = () => {
     try {
       if (currentRequest) {
         const updatedRequest = await updateIORequestApi(currentRequest.id, requestPayload);
-        setIORequests(ioRequests.map(request => (request.id === currentRequest.id ? updatedRequest : request)));
       } else {
-        const newRequest = await createIORequestApi(requestPayload);
-        setIORequests([...ioRequests, newRequest]);
+        await createIORequestApi(requestPayload);
       }
       setIsModalVisible(false);
       setCurrentRequest(null);
       setIORequestDetails([]);
+      fetchData();
     } catch (error) {
       console.error("Error creating/updating request:", error);
     }
@@ -157,14 +157,14 @@ export const IORequestListPage = () => {
   return (
     <div style={{ padding: '24px' }}>
       <Card bordered={false}>
-        <Title level={2}>IO Request List</Title>
+        <Title level={2}>I/O Request List</Title>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={handleCreate}
           style={{ marginBottom: 16 }}
         >
-          Create New IO Request
+          Create New I/O Request
         </Button>
         <Divider />
         <Table
@@ -177,7 +177,7 @@ export const IORequestListPage = () => {
       </Card>
 
       <Modal
-        title={currentRequest ? "Cập nhật yêu cầu" : "Tạo yêu cầu mới"}
+        title={currentRequest ? "Update request" : "Create new request"}
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -188,64 +188,66 @@ export const IORequestListPage = () => {
           onFinish={handleOk}
           initialValues={currentRequest || {}}
         >
-          <Form.Item name="requestCode" label="Request Code" rules={[{ required: true, message: 'Vui lòng nhập mã yêu cầu!' }]}>
-            <Input />
+          <Form.Item name="requestCode" label="Request Code" rules={[{ required: true, message: 'Please enter the request code!' }]}>
+            <Input placeholder="Enter the request code" />
           </Form.Item>
-          <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Vui lòng nhập ngày bắt đầu!' }]}>
-            <Input />
+          <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Please enter start date!' }]}>
+            <Input placeholder="Enter the Start Date" />
           </Form.Item>
-          <Form.Item name="dueDate" label="Due Date" rules={[{ required: true, message: 'Vui lòng nhập ngày đến hạn!' }]}>
-            <Input />
+          <Form.Item name="dueDate" label="Due Date" rules={[{ required: true, message: 'Please enter due date!' }]}>
+            <Input placeholder="Enter the Due Date" />
           </Form.Item>
-          <Form.Item name="ioType" label="IO Type" rules={[{ required: true, message: 'Vui lòng chọn loại IO!' }]}>
-            <Select placeholder="Chọn loại IO">
+          <Form.Item name="ioType" label="IO Type" rules={[{ required: true, message: 'Please select IO type!' }]}>
+            <Select placeholder="Select IO type">
               <Option value="In">In</Option>
               <Option value="Out">Out</Option>
             </Select>
           </Form.Item>
           <Form.Item name="comments" label="Comments" rules={[{ required: false }]}>
-            <Input.TextArea />
+            <Input.TextArea placeholder="Enter your comments" />
           </Form.Item>
           <Form.Item name="supplierName" label="Supplier Name" rules={[{ required: false }]}>
-            <Input />
+            <Input placeholder="Enter Supplier Name" />
           </Form.Item>
           <Form.Item name="customerName" label="Customer Name" rules={[{ required: false }]}>
-            <Input />
+            <Input placeholder="Enter Customer Name" />
           </Form.Item>
-          <Form.Item name="roomId" label="Room ID" rules={[{ required: true, message: 'Vui lòng nhập RoomID !' }]}>
-            <Input />
+          <Form.Item name="roomId" label="Room ID" rules={[{ required: true, message: 'Please enter RoomID!' }]}>
+            <Input placeholder="Enter Room ID" />
           </Form.Item>
-          <Form.Item name="checkerId" label="Checker ID" rules={[{ required: true, message: 'Vui lòng nhập ChekerID !' }]}>
-            <Input />
+          <Form.Item name="checkerId" label="Checker ID" rules={[{ required: true, message: 'Please enter CheckerID!' }]}>
+            <Input placeholder="Enter Checker ID" />
           </Form.Item>
-          <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Please !' }]}>
+          <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Please Select Status!' }]}>
             <Select placeholder="Please Select Status">
-              <Option value="In">Active</Option>
-              <Option value="Out">InActive</Option>
+              <Option value="Active">Active</Option>
+              <Option value="InActive">InActive</Option>
             </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              {currentRequest ? "Cập nhật" : "Tạo"}
+              {currentRequest ? "Update" : "Create"}
             </Button>
-            <Button type="default" onClick={() => setDetailModalVisible(true)} style={{ marginLeft: 16 }}>
-              Thêm Chi Tiết
-            </Button>
+            {!currentRequest && (
+              <Button type="default" onClick={() => setDetailModalVisible(true)} style={{ marginLeft: 16 }}>
+                Add More Details
+              </Button>
+            )}
           </Form.Item>
         </Form>
-
-        <div style={{ marginTop: 20 }}>
-          <h3>Chi Tiết Yêu Cầu</h3>
-          <ul>
-            {ioRequestDetails.map((detail, index) => (
-              <li key={index}>{`Wine ID: ${detail.wineId}, Quantity: ${detail.quantity}`}</li>
-            ))}
-          </ul>
-        </div>
+        {!currentRequest && (
+          <div style={{ marginTop: 20 }}>
+            <h3>IO Request Details List</h3>
+            <ul>
+              {ioRequestDetails.map((detail, index) => (
+                <li key={index}>{`Wine ID: ${detail.wineId}, Quantity: ${detail.quantity}`}</li>
+              ))}
+            </ul>
+          </div>)}
       </Modal>
 
       <Modal
-        title="Thêm Chi Tiết Yêu Cầu"
+        title="Request Details Form"
         visible={isDetailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={null}
@@ -257,19 +259,19 @@ export const IORequestListPage = () => {
             setDetailModalVisible(false);
           }}
         >
-          <Form.Item name="wineId" label="Wine ID" rules={[{ required: true, message: 'Vui lòng nhập Wine ID!' }]}>
-            <Input />
+          <Form.Item name="wineId" label="Wine ID" rules={[{ required: true, message: 'Please enter Wine ID!' }]}>
+            <Input placeholder="Enter Wine ID " />
           </Form.Item>
-          <Form.Item name="quantity" label="Quantity" rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}>
-            <Input type="number" />
+          <Form.Item name="quantity" label="Quantity" rules={[{ required: true, message: 'Please enter quantity!' }]}>
+            <Input type="number" placeholder="Enter Quantity" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">ADD</Button>
+            <Button type="primary" htmlType="submit">Add</Button>
           </Form.Item>
         </Form>
       </Modal>
 
-      <Modal
+      {/* <Modal
         title="Request Details"
         visible={isDetailVisible}
         onCancel={handleCancel}
@@ -299,7 +301,7 @@ export const IORequestListPage = () => {
             ))}
           </ul>
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

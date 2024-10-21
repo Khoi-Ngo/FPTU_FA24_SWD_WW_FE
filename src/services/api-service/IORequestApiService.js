@@ -46,4 +46,13 @@ export const handleDisableStatus = async (id) => {
     }
 };
 
+export const fetchIORequestByIdApi = async (id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching IO Request with ID: ${id}`, error);
+        throw error;
+    }
+};
 

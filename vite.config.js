@@ -4,10 +4,12 @@ import react from '@vitejs/plugin-react-swc'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // modify port here
   resolve: {
     alias: [
       { find: '~', replacement: '/src' }
     ]
+  },
+  optimizeDeps: {
+    exclude: ['chunk-A2SJYFYN.js'] // Add this line to exclude the problematic chunk
   }
 })
