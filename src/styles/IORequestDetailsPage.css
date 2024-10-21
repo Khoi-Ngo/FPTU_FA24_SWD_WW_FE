@@ -1,0 +1,33 @@
+.container {
+    padding: 30px;
+    background: #e6f7ff;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.request-title {
+    margin-bottom: 20px;
+}
+
+.request-status-active {
+    color: #52c41a;
+    font-weight: bold;
+}
+
+.request-status-inactive {
+    color: #ff4d4f;
+    font-weight: bold;
+}
+
+.details-title {
+    margin-bottom: 10px;
+    color: blue;
+
+}
+
+.table-background {
+    background: #ffffff;
+}

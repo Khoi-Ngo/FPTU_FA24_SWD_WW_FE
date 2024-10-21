@@ -25,6 +25,7 @@ import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
 import { CheckRequestListPage } from './pages/CheckRequest/CheckRequestListPage.jsx';
+import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <MockDashboardPage />
+      },
+      {
+        path: 'iorequests/:id',
+        element: <IORequestDetailsPage />,
       },
       {
         path: 'users',
@@ -100,6 +105,7 @@ const router = createBrowserRouter([
         path: 'io-requests',
         element: <IORequestListPage />,
       },
+
       {
 
         path: 'create-wine',
