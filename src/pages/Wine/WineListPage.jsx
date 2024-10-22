@@ -18,6 +18,7 @@ export const WineListPage = () => {
 
     const confirmDelete = async () => {
         try {
+            console.log('currentWineId ', currentWineId)
             await deleteWineAPI(currentWineId);
             notification.success({
                 message: `Wine deleted successfully`,
@@ -51,8 +52,9 @@ export const WineListPage = () => {
     const fetchAllWines = async () => {
         try {
             const response = await fetchAllWineAPI();
-            if (response.data) {
-                setWines(response.data);
+            const activeWines = response.filter(wine => wine.status === 'Active')
+            if (activeWines) {
+                setWines(activeWines);
             } else {
                 throw new Error('API request failed');
             }
@@ -63,7 +65,7 @@ export const WineListPage = () => {
             )
         } catch (error) {
             notification.error({
-                message: "Fail load"
+                message: "Fail load" + error
             })
         }
     }
@@ -153,7 +155,7 @@ export const WineListPage = () => {
             {/* MODAL CONFIRM */}
             <Modal
                 title="Confirm Delete"
-                onOpen={isDeleteModalVisible}
+                open={isDeleteModalVisible}
                 onOk={confirmDelete}
                 onCancel={() => setIsDeleteModalVisible(false)}
                 okText="Yes"

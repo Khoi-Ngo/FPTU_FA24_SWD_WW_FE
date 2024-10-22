@@ -1,8 +1,12 @@
 import axios from "axios";
 
-const fetchAllWineAPI = async () => {
-    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/wines`;
-    return axios.get(URL_BACKEND);
+// const fetchAllWineAPI = async () => {
+//     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/wines`;
+//     return axios.get(URL_BACKEND);
+// }
+export const fetchAllWineAPI = async () => {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/wines`)
+    return response.data
 }
 
 const createWineAPI = async (createWineRequestDto) => {
@@ -67,6 +71,5 @@ export const fetchAlcoholVolumeAPI = async () => {
 }
 
 
-export {
-    fetchAllWineAPI, fetchWineDetailAPI, deleteWineAPI, updateWineAPI, uploadWineImage, createWineAPI, 
+export {fetchWineDetailAPI, deleteWineAPI, updateWineAPI, uploadWineImage, createWineAPI, 
 }
