@@ -10,6 +10,11 @@ export default defineConfig({
     ]
   },
   optimizeDeps: {
-    exclude: ['chunk-A2SJYFYN.js'] // Add this line to exclude the problematic chunk
+    exclude: [
+      'chunk-A2SJYFYN.js',
+      'chunk-KV22RJOG.js',
+      'chunk-SSLMVLZX.js'
+    ]
   }
+
 })

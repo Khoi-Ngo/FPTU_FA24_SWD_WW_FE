@@ -53,20 +53,6 @@ export const WineCateListPage = () => {
     }
   };
 
-  const handleUpdate = (id) => {
-    console.log(`Navigate to update page of record with id: ${id}`);
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://winewarehousesystem.azurewebsites.net/api/v1/wine-categories/${id}`);
-      message.success('Deleted category successfully');
-      fetchWineCategories(); // Refresh the list after deletion
-    } catch (error) {
-      message.error('Failed to delete category.');
-    }
-  };
-
   const columns = [
     {
       title: "Category ID",
@@ -85,8 +71,6 @@ export const WineCateListPage = () => {
       render: (text, record) => (
         <Space size="middle">
           <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button>
-          <Button type="default" onClick={() => handleUpdate(record.id)}>Update</Button>
-          <Button type="danger" onClick={() => handleDelete(record.id)}>Delete</Button>
         </Space>
       ),
     },
