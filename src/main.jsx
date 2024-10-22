@@ -23,6 +23,7 @@ import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
 import { CheckRequestListPage } from './pages/CheckRequest/CheckRequestListPage.jsx';
 import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx';
+import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -80,8 +81,13 @@ const router = createBrowserRouter([
       },
       {
 
-        path: 'wine-cates',
+        path: 'wine-categories',
         element: <WineCateListPage />
+      },
+      {
+
+        path: 'wine-categories/:id/wines',
+        element: <WineCateDetailsPage />
 
       },
       {
