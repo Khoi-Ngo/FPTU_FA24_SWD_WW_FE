@@ -56,3 +56,12 @@ export const fetchIORequestByIdApi = async (id) => {
     }
 };
 
+export const fetchIORequestTypeApi = async (ioType) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/style?io=${ioType}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching IO Request Type for ${ioType}`, error);
+        throw error;
+    }
+};
