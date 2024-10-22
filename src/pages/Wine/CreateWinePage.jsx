@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, message, Select, DatePicker, Upload, Row, Col, notification } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { createWineAPI, fetchAllWineAPI } from '../../services/api-service/WineApiService';
+import { createWineAPI, fetchAlcoholVolumeAPI, fetchAllWineAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI } from '../../services/api-service/WineApiService';
 
 const { Dragger } = Upload;
 
@@ -10,38 +10,54 @@ const { Dragger } = Upload;
 export const CreateWinePage = () => {
     const [form] = Form.useForm();
     const [wineCategories, setWineCategories] = useState([]);
+    const [countries, setCountries] = useState([]);
+    const [AlcoholVolume, setAlcoholVolume] = useState([]);
+    const [BottleSizes, setBottleSizes] = useState([]);
+    const [Classes, setClasses] = useState([]);
+    const [Brands, setBrands] = useState([]);
+    const [Corks, setCorks] = useState([]);
+    const [Qualifications, setQualifications] = useState([]);
+    const [Tastes, setTastes] = useState([]);
     const navigate = useNavigate();
 
     //#region  fetch wine categories
     useEffect(() => {
-        fethcWineCategories();
+        fetchWineCategories()
+        fetchContries()
+        fetchAlcoholVolume()
+        fetchBottleSizes()
+        fetchClasses()
+        fetchBrands()
+        fetchCorks()
+        fetchQualifications()
+        fetchTastes()
     }, []);
-    const fethcWineCategories = async () => {
-        try {
-            const response = await fetchAllWineAPI();
-            if (response.data) {
-                setWineCategories(response.data);
-                notification.success(
-                    {
-                        message: "Load cate ok"
-                    }
-                )
-            } else {
-                notification.warning({
-                    message: "Check cate list again"
-                })
-                setWineCategories([]);
-            }
+    // const fetchWineCategories = async () => {
+    //     try {
+    //         const response = await fetchAllWineAPI();
+    //         if (response.data) {
+    //             setWineCategories(response.data);
+    //             notification.success(
+    //                 {
+    //                     message: "Load cate ok"
+    //                 }
+    //             )
+    //         } else {
+    //             notification.warning({
+    //                 message: "Check cate list again"
+    //             })
+    //             setWineCategories([]);
+    //         }
 
-        } catch (error) {
-            notification.error(
-                {
-                    message: "Load cate fail",
-                }
-            )
-            navigate("/app/wines");
-        }
-    }
+    //     } catch (error) {
+    //         notification.error(
+    //             {
+    //                 message: "Load cate fail",
+    //             }
+    //         )
+    //         navigate("/app/wines");
+    //     }
+    // }
 
     //#endregion
 
@@ -67,12 +83,12 @@ export const CreateWinePage = () => {
     //#region API
     const handleCreateWine = async (createWineRequestDTO) => {
         try {
-          const response =   await createWineAPI(createWineRequestDTO);
-            if(response.data && response.status === 200){
+            const response = await createWineAPI(createWineRequestDTO);
+            if (response.data && response.status === 200) {
                 notification.success({
                     message: "Create oke"
                 })
-            }else{
+            } else {
                 notification.warning(
                     {
                         message: "Need check action"
@@ -82,9 +98,45 @@ export const CreateWinePage = () => {
 
         } catch (error) {
             notification.error(
-                { message : "Fail create"}
+                { message: "Fail create" }
             )
         }
+    }
+    const fetchWineCategories = async () => {
+        const data = await fetchWineCategoriesAPI()
+        if (data) setWineCategories(data)
+    }
+    const fetchContries = async () => {
+        const data = await fetchCountriesAPI()
+        if (data) setCountries(data)
+    }
+    const fetchTastes = async () => {
+        const data = await fetchTastesAPI()
+        if (data) setTastes(data)
+    }
+    const fetchClasses = async () => {
+        const data = await fetchClassesAPI()
+        if (data) setClasses(data)
+    }
+    const fetchQualifications = async () => {
+        const data = await fetchQualificationsAPI()
+        if (data) setQualifications(data)
+    }
+    const fetchCorks = async () => {
+        const data = await fetchCorksAPI()
+        if (data) setCorks(data)
+    }
+    const fetchBrands = async () => {
+        const data = await fetchBrandsAPI()
+        if (data) setBrands(data)
+    }
+    const fetchBottleSizes = async () => {
+        const data = await fetchBottleSizesAPI()
+        if (data) setBottleSizes(data)
+    }
+    const fetchAlcoholVolume = async () => {
+        const data = await fetchAlcoholVolumeAPI()
+        if (data) setAlcoholVolume(data)
     }
 
     //#endregion
@@ -120,20 +172,11 @@ export const CreateWinePage = () => {
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="alcoholContent"
-                            label="Alcohol Content"
-                            rules={[{ type: 'number', message: 'Please input a valid number!' }]}
+                            name="availableStock"
+                            label="Available Stock"
+                            rules={[{ required: true, message: 'Please input the available stock!' }]}
                         >
                             <Input type="number" />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name="bottleSize"
-                            label="Bottle Size"
-                            rules={[{ message: 'Please input the bottle size!' }]}
-                        >
-                            <Input />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -165,21 +208,142 @@ export const CreateWinePage = () => {
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="wineCategoryId"
+                            name="categoryId"
                             label="Wine Category"
-                            rules={[{ required: true, message: 'Please select a wine category!' }]}
+                            rules={[{ required: true, message: 'Please select wine category!' }]}
                         >
                             <Select>
                                 {wineCategories.map((category) => (
                                     <Select.Option key={category.id} value={category.id}>
-                                        {category.categoryName} - {category.wineType}
+                                        {category.categoryName}
                                     </Select.Option>
                                 ))}
                             </Select>
                         </Form.Item>
                     </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="countryId"
+                            label="Country"
+                            rules={[{ required: true, message: 'Please select country!' }]}
+                        >
+                            <Select>
+                                {countries.map((countries) => (
+                                    <Select.Option key={countries.id} value={countries.id}>
+                                        {countries.countryName}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="tasteId"
+                            label="Taste"
+                            rules={[{ required: true, message: 'Please select taste!' }]}
+                        >
+                            <Select>
+                                {Tastes.map((taste) => (
+                                    <Select.Option key={taste.id} value={taste.id}>
+                                        {taste.tasteType}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="classId"
+                            label="Class"
+                            rules={[{ required: true, message: 'Please select class!' }]}
+                        >
+                            <Select>
+                                {Classes.map((classes) => (
+                                    <Select.Option key={classes.id} value={classes.id}>
+                                        {classes.classType}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="qualificationId"
+                            label="Qualification"
+                            rules={[{ required: true, message: 'Please select qualification!' }]}
+                        >
+                            <Select>
+                                {Qualifications.map((qualification) => (
+                                    <Select.Option key={qualification.id} value={qualification.id}>
+                                        {qualification.qualificationType}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="corkId"
+                            label="Cork"
+                            rules={[{ required: true, message: 'Please select cork!' }]}
+                        >
+                            <Select>
+                                {Corks.map((cork) => (
+                                    <Select.Option key={cork.id} value={cork.id}>
+                                        {cork.corkType}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="brandId"
+                            label="Brand"
+                            rules={[{ required: true, message: 'Please select brand!' }]}
+                        >
+                            <Select>
+                                {Brands.map((brand) => (
+                                    <Select.Option key={brand.id} value={brand.id}>
+                                        {brand.brandName}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="bottleSizeId"
+                            label="Bottle size"
+                            rules={[{ required: true, message: 'Please select bottle size!' }]}
+                        >
+                            <Select>
+                                {BottleSizes.map((bottleSize) => (
+                                    <Select.Option key={bottleSize.id} value={bottleSize.id}>
+                                        {bottleSize.bottleSizeType}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="alcoholByVolumeId"
+                            label="Alcohol Volume"
+                            rules={[{ required: true, message: 'Please select Alcohol Volume!' }]}
+                        >
+                            <Select>
+                                {AlcoholVolume.map((alcoholVolume) => (
+                                    <Select.Option key={alcoholVolume.id} value={alcoholVolume.id}>
+                                        {alcoholVolume.alcoholByVolumeType}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+
                 </Row>
-                <Row gutter={[16, 16]}>
+                {/* <Row gutter={[16, 16]}>
                     <Col span={24}>
                         <Form.Item
                             name="imageUrl"
@@ -194,7 +358,7 @@ export const CreateWinePage = () => {
                             </Dragger>
                         </Form.Item>
                     </Col>
-                </Row>
+                </Row> */}
                 <Form.Item>
                     <Button type="primary" htmlType="submit" style={{ width: '100%', height: '40px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>
                         Create Wine

@@ -11,32 +11,32 @@ import { useNavigate } from 'react-router-dom'
 const { Title } = Typography
 
 // Mock Data
-const mockRooms = [
-  {
-    id: 1,
-    roomName: "Tasting Room 1",
-    locationAddress: "123 Vineyard Lane",
-    capacity: 50,
-    currentOccupancy: 30,
-    managerName: "John Doe",
-  },
-  {
-    id: 2,
-    roomName: "Cellar Room",
-    locationAddress: "456 Winery Blvd",
-    capacity: 100,
-    currentOccupancy: 80,
-    managerName: "Jane Smith",
-  },
-  {
-    id: 3,
-    roomName: "VIP Room",
-    locationAddress: "789 Estate Ave",
-    capacity: 20,
-    currentOccupancy: 10,
-    managerName: "Emily Johnson",
-  },
-]
+// const mockRooms = [
+//   {
+//     id: 1,
+//     roomName: "Tasting Room 1",
+//     locationAddress: "123 Vineyard Lane",
+//     capacity: 50,
+//     currentOccupancy: 30,
+//     managerName: "John Doe",
+//   },
+//   {
+//     id: 2,
+//     roomName: "Cellar Room",
+//     locationAddress: "456 Winery Blvd",
+//     capacity: 100,
+//     currentOccupancy: 80,
+//     managerName: "Jane Smith",
+//   },
+//   {
+//     id: 3,
+//     roomName: "VIP Room",
+//     locationAddress: "789 Estate Ave",
+//     capacity: 20,
+//     currentOccupancy: 10,
+//     managerName: "Emily Johnson",
+//   },
+// ]
 
 export const RoomListPage = () => {
   const [data, setData] = useState([])
