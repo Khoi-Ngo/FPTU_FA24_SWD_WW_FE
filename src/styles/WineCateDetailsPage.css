@@ -1,0 +1,33 @@
+.container {
+    padding: 30px;
+    background: #e6f7ff;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-title,
+.wines-title {
+    margin-bottom: 20px;
+    color: #1890ff;
+}
+
+.category-details {
+    margin-bottom: 20px;
+}
+
+.wine-status-active {
+    color: #52c41a;
+    font-weight: bold;
+}
+
+.wine-status-inactive {
+    color: #ff4d4f;
+    font-weight: bold;
+}
+
+.table-background {
+    background: #ffffff;
+}

@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Card, Divider, message, Modal, Form, Input, Select } from 'antd';
+import { Table, Button, Space, Typography, Card, Divider, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const { Title } = Typography;
-const { Option } = Select;
 
 export const WineCateListPage = () => {
   const [wineCategories, setWineCategories] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false); // For create modal
-  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false); // For detail modal
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const navigate = useNavigate(); // Khởi tạo useNavigate
 
   // Fetch all categories from the API
   const fetchWineCategories = async () => {
     setLoading(true);
     try {
       const response = await axios.get('https://winewarehousesystem.azurewebsites.net/api/v1/wine-categories');
-      setWineCategories(response.data); // Assuming API response has the list of categories
+      setWineCategories(response.data);
     } catch (error) {
       message.error('Failed to fetch categories.');
     } finally {
@@ -30,27 +28,9 @@ export const WineCateListPage = () => {
     fetchWineCategories();
   }, []);
 
-  // Handle form submission to create new category
-  const handleCreateNewCategory = async (values) => {
-    try {
-      await axios.post('https://winewarehousesystem.azurewebsites.net/api/v1/wine-categories', values);
-      message.success('Category created successfully!');
-      setIsModalVisible(false);
-      fetchWineCategories(); // Refresh the list
-    } catch (error) {
-      message.error('Failed to create category.');
-    }
-  };
-
-  // Handle viewing details of a category
-  const handleDetail = async (id) => {
-    try {
-      const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/wine-categories/${id}/wines`);
-      setSelectedCategory(response.data);
-      setIsDetailModalVisible(true);
-    } catch (error) {
-      message.error('Failed to fetch category details.');
-    }
+  // Hàm xử lý khi bấm vào nút "Detail"
+  const handleDetail = (id) => {
+    navigate(`/app/wine-categories/${id}/wines`); // Điều hướng đến trang chi tiết
   };
 
   const columns = [
@@ -64,13 +44,12 @@ export const WineCateListPage = () => {
       dataIndex: 'categoryName',
       key: 'categoryName',
     },
-
     {
       title: 'Actions',
       key: 'actions',
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button>
+          <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button> {/* Gọi hàm handleDetail */}
         </Space>
       ),
     },
@@ -98,49 +77,6 @@ export const WineCateListPage = () => {
           pagination={{ pageSize: 5 }}
         />
       </Card>
-
-      {/* Modal for creating new category */}
-      <Modal
-        title="Create New Wine Category"
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={null}
-      >
-        <Form
-          layout="vertical"
-          onFinish={handleCreateNewCategory}
-        >
-          <Form.Item
-            label="Category Name"
-            name="categoryName"
-            rules={[{ required: true, message: 'Please input the category name!' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">Create</Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* Modal for viewing category details */}
-      <Modal
-        title="Wine Category Details"
-        visible={isDetailModalVisible}
-        onCancel={() => setIsDetailModalVisible(false)}
-        footer={null}
-      >
-        {selectedCategory ? (
-          <div>
-            <p><strong>ID : </strong> {selectedCategory.id}</p>
-            <p><strong>Category Name:</strong> {selectedCategory.categoryName}</p>
-            <p><strong>Wine : </strong> {selectedCategory.wines}</p>
-            {/* Other details can be shown here */}
-          </div>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </Modal>
     </div>
   );
 };

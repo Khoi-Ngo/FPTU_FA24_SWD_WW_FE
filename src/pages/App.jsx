@@ -52,7 +52,7 @@ export const App = () => {
             || path.startsWith('/app/create-wine')
             || path.startsWith('/app/update-wine')
         ) return 'Wines';
-        if (path.startsWith('/app/wine-cates')) return 'WineCates';
+        if (path.startsWith('/app/wine-categories')) return 'WineCates';
         if (path.startsWith('/app/rooms')) return 'Rooms';
         if (path.startsWith('/app/iorequests')) return 'IORequests';
         if (path.startsWith('/app/tasks')) return 'StaffTasks';
@@ -75,7 +75,7 @@ export const App = () => {
                 navigate('/app/wines');
                 break;
             case 'WineCates':
-                navigate('/app/wine-cates');
+                navigate('/app/wine-categories');
                 break;
             case 'Rooms':
                 navigate('/app/rooms');
