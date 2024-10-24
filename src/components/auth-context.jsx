@@ -1,35 +1,45 @@
 import PropTypes from 'prop-types';
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
+
+
+//!  a GLOBAL VAR || A special var containing multiple vars state and allow the inside of the wrapper accessing all
 
 export const AuthContext = createContext();
 
+
+//! create component to cover all app and passing the global var
 export const AuthWrapper = (props) => {
 
-    const [userLogin, setUserLogin] = useState(null); // Bắt đầu với null
-    const [isAppLoading, setIsAppLoading] = useState(true); // Trạng thái loading khi kiểm tra token
+    const [userLogin, setUserLogin] = useState({
+        email: "",
+        phone: "",
+        firstName: "",
+        lastName: "",
+        username: "",
+        role: "",
+        avatar: "",
+        id: "",
+        status: "",
+    });
 
-    useEffect(() => {
-        const token = localStorage.getItem("access_token");
-        if (token) {
-            const userInfo = JSON.parse(localStorage.getItem("user_info"));
-            if (userInfo) {
-                setUserLogin(userInfo); // Đặt thông tin người dùng từ localStorage
-            }
-        }
-        setIsAppLoading(false); // Sau khi kiểm tra xong, đặt loading thành false
-    }, []);
+    const [otherStuffRelatingAuth, setOtherStuffRelatingAuth] = useState();
+
+    const [isAppLoading, SetIsAppLoading] = useState(true);
 
     return (
-        <AuthContext.Provider value={{ userLogin, setUserLogin, isAppLoading }}>
-            {isAppLoading ? (
-                <div>Loading...</div> // Hiển thị loading cho đến khi kiểm tra token xong
-            ) : (
-                props.children
-            )}
+        <AuthContext.Provider value={{
+            userLogin, setUserLogin, otherStuffRelatingAuth, setOtherStuffRelatingAuth,
+            isAppLoading, SetIsAppLoading
+        }}>
+            {props.children}
+            {/* this is child place holder if nothing then not show if having then show basing or page design */}
         </AuthContext.Provider>
     );
-};
 
+    //this wrapper will wrap on the HTML code and allow the inside component access the AuthContext var 
+}
+
+// Add PropTypes validation
 AuthWrapper.propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,  // Validate that children prop is passed
 };
