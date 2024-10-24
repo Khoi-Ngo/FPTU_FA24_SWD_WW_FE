@@ -5,24 +5,24 @@ export const AuthContext = createContext();
 
 export const AuthWrapper = (props) => {
 
-    const [userLogin, setUserLogin] = useState(null); // Bắt đầu với null
-    const [isAppLoading, setIsAppLoading] = useState(true); // Trạng thái loading khi kiểm tra token
+    const [userLogin, setUserLogin] = useState(null);
+    const [isAppLoading, setIsAppLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem("access_token");
         if (token) {
             const userInfo = JSON.parse(localStorage.getItem("user_info"));
             if (userInfo) {
-                setUserLogin(userInfo); // Đặt thông tin người dùng từ localStorage
+                setUserLogin(userInfo);
             }
         }
-        setIsAppLoading(false); // Sau khi kiểm tra xong, đặt loading thành false
+        setIsAppLoading(false);
     }, []);
 
     return (
         <AuthContext.Provider value={{ userLogin, setUserLogin, isAppLoading }}>
             {isAppLoading ? (
-                <div>Loading...</div> // Hiển thị loading cho đến khi kiểm tra token xong
+                <div>Loading...</div>
             ) : (
                 props.children
             )}
