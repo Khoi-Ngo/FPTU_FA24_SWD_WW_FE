@@ -16,9 +16,10 @@ export const LoginPage = () => {
     const [isEntered, setIsEntered] = useState(false);
     const { userLogin, setUserLogin } = useContext(AuthContext);
 
+    // Kiểm tra xem người dùng đã đăng nhập chưa
     useEffect(() => {
         if (userLogin) {
-            navigate('/app');
+            navigate('/app'); // Nếu đã đăng nhập, chuyển hướng đến /app
         }
     }, [userLogin, navigate]);
 
@@ -31,10 +32,10 @@ export const LoginPage = () => {
                 const res = await LoginAPI({ username: values.username, password: values.password });
 
                 if (res.data && res.status === 200) {
-
+                    // Lưu token và thông tin người dùng
                     localStorage.setItem("access_token", res.data.accessToken);
-                    localStorage.setItem("user_info", JSON.stringify(res.data.userInfo));
-                    setUserLogin(res.data.userInfo);
+                    localStorage.setItem("user_info", JSON.stringify(res.data.userInfo)); // Lưu thông tin người dùng vào localStorage
+                    setUserLogin(res.data.userInfo); // Set thông tin người dùng trong AuthContext
                     notification.info({
                         message: "Login successfully",
                     });
@@ -52,10 +53,10 @@ export const LoginPage = () => {
         }
     };
 
-
+    // Hiển thị modal quên mật khẩu
     const showForgotPasswordModal = () => setIsModalVisible(true);
 
-
+    // Xử lý khi nhấn OK trên modal
     const handleOk = async () => {
         try {
             setIsModalVisible(false);
@@ -82,6 +83,7 @@ export const LoginPage = () => {
         }
     };
 
+    // Đóng modal khi cancel
     const handleCancel = () => {
         setModalEmail("");
         setModalUsername("");
@@ -133,7 +135,7 @@ export const LoginPage = () => {
                 {/* Modal for password reset */}
                 <Modal
                     title="Forgot Password"
-                    open={isModalVisible}
+                    open={isModalVisible}  // Thay thế visible bằng open
                     onOk={handleOk}
                     onCancel={handleCancel}
                     okText="Send Reset Link"
