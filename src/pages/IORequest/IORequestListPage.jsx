@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   fetchIORequestApi,
   createIORequestApi,
@@ -107,7 +107,18 @@ export const IORequestListPage = () => {
   const handleOk = async (values) => {
     const requestPayload = {
       ...values,
+      // Sử dụng 'upIORequestDetails' nếu có 'currentRequest', ngược lại sử dụng 'ioRequestDetails'
+      [currentRequest ? 'upIORequestDetails' : 'ioRequestDetails']: values.upIORequestDetails.map(detail => {
+        if (currentRequest) {
+          // Nếu đang cập nhật, thêm id cho từng detail
+          return { ...detail, id: detail.id }; // Thêm id vào payload
+        }
+        return detail; // Đối với tạo mới không cần id
+      }),
+      status: currentRequest ? 'Done' : 'Pending', // Đặt status dựa trên hành động
     };
+
+    console.log("Payload gửi lên API:", requestPayload); // Ghi log payload để kiểm tra
 
     try {
       if (currentRequest) {
@@ -117,11 +128,13 @@ export const IORequestListPage = () => {
       }
       setIsModalVisible(false);
       setCurrentRequest(null);
-      fetchData(selectedIOType); // Refresh data after create/update
+      fetchData(selectedIOType); // Refresh dữ liệu sau khi tạo/cập nhật
     } catch (error) {
       console.error("Error creating/updating request:", error);
     }
   };
+
+
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -138,24 +151,26 @@ export const IORequestListPage = () => {
     <div style={{ padding: '24px' }}>
       <Card bordered={false}>
         <Title level={2}>I/O Request List</Title>
+        <Space size={'middle'}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleCreate}
+            style={{ marginBottom: 16 }}
+          >
+            Create New I/O Request
+          </Button>
 
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreate}
-          style={{ marginBottom: 16 }}
-        >
-          Create New I/O Request
-        </Button>
-        <Select
-          defaultValue="Show ALL"
-          style={{ width: 120, marginBottom: 16 }}
-          onChange={handleSelectChange}
-        >
-          <Option value="ALL">Show ALL</Option> {/* Tùy chọn ALL */}
-          <Option value="In">Input Type</Option>
-          <Option value="Out">Output Type</Option>
-        </Select>
+          <Select
+            defaultValue="Show ALL"
+            style={{ width: 120, marginBottom: 16 }}
+            onChange={handleSelectChange}
+          >
+            <Option value="ALL">Show ALL</Option> {/* Tùy chọn ALL */}
+            <Option value="In">Input Type</Option>
+            <Option value="Out">Output Type</Option>
+          </Select>
+        </Space>
         <Divider />
 
         <Table
@@ -194,13 +209,13 @@ export const IORequestListPage = () => {
               <Option value="Out">Out</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="comments" label="Comments" rules={[{ required: false }]}>
+          <Form.Item name="comments" label="Comments">
             <Input.TextArea placeholder="Enter your comments" />
           </Form.Item>
-          <Form.Item name="supplierName" label="Supplier Name" rules={[{ required: false }]}>
+          <Form.Item name="supplierName" label="Supplier Name">
             <Input placeholder="Enter Supplier Name" />
           </Form.Item>
-          <Form.Item name="customerName" label="Customer Name" rules={[{ required: false }]}>
+          <Form.Item name="customerName" label="Customer Name">
             <Input placeholder="Enter Customer Name" />
           </Form.Item>
           <Form.Item name="roomId" label="Room ID" rules={[{ required: true, message: 'Please enter RoomID!' }]}>
@@ -209,13 +224,45 @@ export const IORequestListPage = () => {
           <Form.Item name="checkerId" label="Checker ID" rules={[{ required: true, message: 'Please enter CheckerID!' }]}>
             <Input placeholder="Enter Checker ID" />
           </Form.Item>
-          {currentRequest && (
-            <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Please Select Status!' }]}>
-              <Select placeholder="Please Select Status">
-                <Option value="Active">Active</Option>
-                <Option value="InActive">InActive</Option>
-              </Select>
-            </Form.Item>)}
+
+          {/* IORequestDetails - Danh sách động */}
+          <Form.List name="upIORequestDetails">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                  <div key={key} style={{ display: 'flex', marginBottom: 8 }}>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'quantity']}
+                      fieldKey={[fieldKey, 'quantity']}
+                      rules={[{ required: true, message: 'Please enter quantity' }]}
+                    >
+                      <Input placeholder="Quantity" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'wineId']}
+                      fieldKey={[fieldKey, 'wineId']}
+                      rules={[{ required: true, message: 'Please enter Wine ID' }]}
+                    >
+                      <Input placeholder="Wine ID" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </div>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    icon={<PlusOutlined />}
+                  >
+                    Add IORequest Detail
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               {currentRequest ? "Update" : "Create"}
