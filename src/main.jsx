@@ -23,7 +23,7 @@ import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
 import { CheckRequestListPage } from './pages/CheckRequest/CheckRequestListPage.jsx';
 import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx';
-import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx';
+import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -81,13 +81,8 @@ const router = createBrowserRouter([
       },
       {
 
-        path: 'wine-categories',
+        path: 'wine-cates',
         element: <WineCateListPage />
-      },
-      {
-
-        path: 'wine-categories/:id/wines',
-        element: <WineCateDetailsPage />
 
       },
       {
@@ -99,7 +94,7 @@ const router = createBrowserRouter([
         element: <RoomDetails />
       },
       {
-        path: 'iorequests',
+        path: 'io-requests',
         element: <IORequestListPage />,
       },
 
@@ -117,14 +112,16 @@ const router = createBrowserRouter([
         element: <UpdateWinePage />,
       },
       {
-        path: "checkrequests",
+        path: "check-requests",
         element: <CheckRequestListPage />
       },
-
+      {
+        path: "create-check-request",
+        element: <CreateCheckRequestPage />
+      },
     ],
   },
 ]);
-
 
 // Render the application
 createRoot(document.getElementById('root')).render(

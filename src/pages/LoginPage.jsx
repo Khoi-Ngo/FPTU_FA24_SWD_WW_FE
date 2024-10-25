@@ -25,29 +25,32 @@ export const LoginPage = () => {
                 setIsEntered(true);
                 setIsLoading(true);
 
-
                 const res = await LoginAPI({ username: values.username, password: values.password });
 
-                if (res.data && res.status == 200) {
-                    //login ok
+                if (res.data && res.status === 200) {
+                    // login successful
                     localStorage.setItem("access_token", res.data.accessToken);
                     setUserLogin(res.data.userInfo);
 
+                    notification.info({
+                        message: "Login successfully",
+                    });
+
+                    setIsLoading(false);
+                    setIsEntered(false);
+                    navigate('/app');
                 }
-                notification.info({
-                    message: "Login successfully",
-                });
-
-
-                setIsLoading(false);
-                setIsEntered(false);
-                navigate('/app');
             }
         } catch (error) {
             notification.error({
-                message: "Login failed"
-            })
+                message: "Login failed",
+            });
+
+            // Reset form and reload the page
             form.resetFields();
+            setTimeout(() => {
+                window.location.reload(); // Reload the page after showing notification
+            }, 1000); // Adds a slight delay for the notification to be visible
         }
     };
 

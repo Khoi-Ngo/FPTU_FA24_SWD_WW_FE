@@ -40,6 +40,12 @@ const resetPasswordADMINApi = ({ username, newPass }) => {
     return axios.post(URL_BACKEND, { username, newPass });
 }
 
+const fetchAllStaffAPI = async () => {
+    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/staff`;
+    return axios.get(URL_BACKEND);
+}
+
+
 const uploadAvatarApi = () => {
     //TODO: implement later
 }
@@ -47,6 +53,6 @@ const uploadAvatarApi = () => {
 //TODO: reset pass by code mail + new pass
 
 export {
-    fetchAllUsersAPI, createUserApi, deleteUserApi, updateUserApi, updatePasswordApi, sendMailResetPassAPI, uploadAvatarApi, fetchUserDetail, resetPasswordADMINApi
+    fetchAllUsersAPI, createUserApi, deleteUserApi, updateUserApi, updatePasswordApi, sendMailResetPassAPI, uploadAvatarApi, fetchUserDetail, resetPasswordADMINApi, fetchAllStaffAPI
 }
 
