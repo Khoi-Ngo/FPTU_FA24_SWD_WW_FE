@@ -1,5 +1,5 @@
 import { Button, Form, Input, InputNumber } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function UpdateRoomForm({ setIsModalOpen, updateRoom, data, isModalOpen, setModalAction }) {
   const [form] = Form.useForm()

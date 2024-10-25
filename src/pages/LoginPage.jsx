@@ -144,7 +144,7 @@ export const LoginPage = () => {
                 {/* Modal for password reset */}
                 <Modal
                     title="Forgot Password"
-                    visible={isModalVisible}
+                    open={isModalVisible}
                     onOk={handleOk}
                     onCancel={handleCancel}
                     okText="Send Reset Link"

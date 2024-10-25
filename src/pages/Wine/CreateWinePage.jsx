@@ -181,6 +181,22 @@ export const CreateWinePage = () => {
                     </Col>
                     <Col span={12}>
                         <Form.Item
+                            name="importPrice"
+                            label="Import Price"
+                        >
+                            <Input type="number" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="exportPrice"
+                            label="Export Price"
+                        >
+                            <Input type="number" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
                             name="description"
                             label="Description"
                             rules={[{ message: 'Please input a description!' }]}
@@ -208,7 +224,7 @@ export const CreateWinePage = () => {
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="categoryId"
+                            name="wineCategoryId"
                             label="Wine Category"
                             rules={[{ required: true, message: 'Please select wine category!' }]}
                         >
