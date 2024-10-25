@@ -52,7 +52,7 @@ const router = createBrowserRouter([
         element: <MockDashboardPage />
       },
       {
-        path: 'iorequests/:id',
+        path: 'io-requests/:id',
         element: <IORequestDetailsPage />,
       },
       {
@@ -99,7 +99,7 @@ const router = createBrowserRouter([
         element: <RoomDetails />
       },
       {
-        path: 'iorequests',
+        path: 'io-requests',
         element: <IORequestListPage />,
       },
 
@@ -117,7 +117,7 @@ const router = createBrowserRouter([
         element: <UpdateWinePage />,
       },
       {
-        path: "checkrequests",
+        path: "check-requests",
         element: <CheckRequestListPage />
       },
 

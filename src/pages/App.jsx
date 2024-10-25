@@ -54,7 +54,7 @@ export const App = () => {
         ) return 'Wines';
         if (path.startsWith('/app/wine-categories')) return 'WineCates';
         if (path.startsWith('/app/rooms')) return 'Rooms';
-        if (path.startsWith('/app/iorequests')) return 'IORequests';
+        if (path.startsWith('/app/io-requests')) return 'IORequests';
         if (path.startsWith('/app/tasks')) return 'StaffTasks';
         return 'Overview';
     };
@@ -81,7 +81,7 @@ export const App = () => {
                 navigate('/app/rooms');
                 break;
             case 'IORequests':
-                navigate('/app/iorequests');
+                navigate('/app/io-requests');
                 break;
             case 'StaffTasks':
                 navigate('/app/tasks');
