@@ -4,6 +4,8 @@ import { PlusOutlined } from '@ant-design/icons'
 import PopupDialog from '~/components/PopupDialog'
 import { fetchRoomDetailsAPI, removeWineFromRoomAPI } from '~/services/api-service/RoomDetailsService'
 import RemoveWineFromRoom from './RemoveWineFromRoom'
+import { useParams } from 'react-router-dom'
+import { fetchWineRoomsByWineId } from '~/services/api-service/WineRoomeApiService'
 
 const { Title } = Typography
 
@@ -12,6 +14,7 @@ function RoomDetails() {
   const [modalAction, setModalAction] = useState('')
   const [content, setContent] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const roomId = useParams().roomId
   
   const columns = [
     {
@@ -26,33 +29,43 @@ function RoomDetails() {
     },
     {
       title: 'Current Quantity',
-      dataIndex: 'currQuantity',
-      key: 'currQuantity'
+      dataIndex: 'currrentQuantity',
+      key: 'currrentQuantity'
     },
     {
-      title: 'Actions',
-      key: 'actions',
-      render: record => (
-        <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
-          <Button type="default" onClick={() => handleUpdate(record)}>Update</Button>
-          <Button type="danger" onClick={() => handleDelete(record)}>Delete</Button>
-        </Space>
-      )
-    }
+      title: 'Import Quantity',
+      dataIndex: 'import',
+      key: 'import'
+    },
+    {
+      title: 'Export Quantity',
+      dataIndex: 'export',
+      key: 'export'
+    },
+    // {
+    //   title: 'Actions',
+    //   key: 'actions',
+    //   render: record => (
+    //     <Space size="middle">
+    //       <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
+    //       <Button type="default" onClick={() => handleUpdate(record)}>Update</Button>
+    //       <Button type="danger" onClick={() => handleDelete(record)}>Delete</Button>
+    //     </Space>
+    //   )
+    // }
   ]
   useEffect(() => {
-    fetchRoomDetailsData()
+    fetchRoomDetailsData(roomId)
   }, [])
   
-  const fetchRoomDetailsData = async () => {
-    const response = await fetchRoomDetailsAPI()
+  const fetchRoomDetailsData = async (id) => {
+    const response = await fetchRoomDetailsAPI(id)
     //const activeRooms = response.filter(room => room.status === 'Active')
-    const transformedData = response.map(item => ({
-      ...item,
-      wineName: item.wineId.length > 0 ? item.wineId[0]?.name : 'Unknown'
-    }))
-    setData(transformedData)
+    // const transformedData = response.map(item => ({
+    //   ...item,
+    //   wineName: item.wineId.length > 0 ? item.wineId[0]?.name : 'Unknown'
+    // }))
+    setData(response.wineRooms)
     //setData(response)
   }
   const handleCreate = () => {
@@ -87,14 +100,14 @@ function RoomDetails() {
     <div style={{ padding: '24px' }}>
       <Card bordered={false}>
         <Title level={2}>Room Details</Title>
-        <Button
+        {/* <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={handleCreate}
           style={{ marginBottom: 16 }}
         >
           Add Wine to this room
-        </Button>
+        </Button> */}
         <Divider />
         <Table
           columns={columns}

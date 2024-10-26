@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Input, Button, message, Select, DatePicker, Upload, Row, Col, notification } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, InboxOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { createWineAPI, fetchAlcoholVolumeAPI, fetchAllWineAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI } from '../../services/api-service/WineApiService';
+import { createWineAPI, fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI, uploadImageWineAPI } from '../../services/api-service/WineApiService';
 
 const { Dragger } = Upload;
 
@@ -18,9 +18,9 @@ export const CreateWinePage = () => {
     const [Corks, setCorks] = useState([]);
     const [Qualifications, setQualifications] = useState([]);
     const [Tastes, setTastes] = useState([]);
+    const [uploadedImage, setUploadedImage] = useState(null);
     const navigate = useNavigate();
 
-    //#region  fetch wine categories
     useEffect(() => {
         fetchWineCategories()
         fetchContries()
@@ -32,34 +32,6 @@ export const CreateWinePage = () => {
         fetchQualifications()
         fetchTastes()
     }, []);
-    // const fetchWineCategories = async () => {
-    //     try {
-    //         const response = await fetchAllWineAPI();
-    //         if (response.data) {
-    //             setWineCategories(response.data);
-    //             notification.success(
-    //                 {
-    //                     message: "Load cate ok"
-    //                 }
-    //             )
-    //         } else {
-    //             notification.warning({
-    //                 message: "Check cate list again"
-    //             })
-    //             setWineCategories([]);
-    //         }
-
-    //     } catch (error) {
-    //         notification.error(
-    //             {
-    //                 message: "Load cate fail",
-    //             }
-    //         )
-    //         navigate("/app/wines");
-    //     }
-    // }
-
-    //#endregion
 
 
 
@@ -71,11 +43,13 @@ export const CreateWinePage = () => {
     const onFinish = async (values) => {
         handleCreateWine(values);
         form.resetFields();
+        navigate('/app/wines');
     }
 
-    const uploadImage = async () => {
-        //TODO: implement later
-
+    const uploadImageWine = async (payload) => {
+        const response = await uploadImageWineAPI(payload)
+        setUploadedImage(response.downloadUrl)
+        console.log('uploadImageWineAPI has run')
     }
 
     //#endregion
@@ -83,7 +57,11 @@ export const CreateWinePage = () => {
     //#region API
     const handleCreateWine = async (createWineRequestDTO) => {
         try {
-            const response = await createWineAPI(createWineRequestDTO);
+            const payload = {
+                ...createWineRequestDTO,
+                imageUrl: uploadedImage
+            }
+            const response = await createWineAPI(payload);
             if (response.data && response.status === 200) {
                 notification.success({
                     message: "Create oke"
@@ -153,11 +131,43 @@ export const CreateWinePage = () => {
         form.resetFields();
         navigate('/app/wines');
     };
+    const uploadProps = {
+        name: 'file',
+        accept: 'image/png, image/jpeg',  // Accept only PNG and JPEG files
+        maxCount: 1,  // Limit to a single upload
+        beforeUpload: () => {
+            return false;  // Prevent automatic upload
+        },
+        onChange: (info) => {
+            if (info.file.status !== 'uploading') {
+                console.log('info.file.status: ', info.file.status)
+
+                const formData = new FormData();
+                formData.append('file', info.file)
+
+                // Upload the image and store the response
+                const uploadedImage = uploadImageWine(formData)
+                console.log(info.file, info.fileList);
+
+                console.log('uploadImageWine response: ', uploadedImage)
+            }
+            if (info.file.status === 'done') {
+                console.log('Temporary image URL:', uploadedImage)
+                // const url = URL.createObjectURL(info.file.originFileObj)
+                // await uploadImageWine(url)
+                console.log('Temporary image URL:', uploadedImage) // Debugging: log the temporary URL
+            } else if (info.file.status === 'removed') {
+                setUploadedImage(null);  // Clear uploaded image when removed
+                console.log('something here 12')
+            }
+            console.log('info.file.status2: ', info.file.status)
+        },
+    };
     return (
         <div style={{ maxWidth: '800px', margin: 'auto', padding: '40px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}>
             <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Create New Wine</h2>
-            <Button type="default" onClick={handleBackToList} style={{ width: '25%', height: '40px', backgroundColor: 'white' }}>
-                Back to list of wine
+            <Button type="default" onClick={handleBackToList} style={{ height: '50px', backgroundColor: 'white', borderRadius: '4px', borderColor: 'transparent' }}>
+                <ArrowLeftOutlined style={{ fontSize: '24px', color: '#1677ff' }} />
             </Button>
             <Form form={form} name="create_wine" onFinish={values => onFinish(values)} layout="vertical" style={{ width: '100%' }}>
                 <Row gutter={[16, 16]}>
@@ -170,7 +180,7 @@ export const CreateWinePage = () => {
                             <Input />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item
                             name="availableStock"
                             label="Available Stock"
@@ -178,7 +188,7 @@ export const CreateWinePage = () => {
                         >
                             <Input type="number" />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={12}>
                         <Form.Item
                             name="importPrice"
@@ -204,7 +214,7 @@ export const CreateWinePage = () => {
                             <Input.TextArea rows={4} />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item
                             name="supplier"
                             label="Supplier"
@@ -212,7 +222,7 @@ export const CreateWinePage = () => {
                         >
                             <Input />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={12}>
                         <Form.Item
                             name="mfd"
@@ -359,22 +369,24 @@ export const CreateWinePage = () => {
                     </Col>
 
                 </Row>
-                {/* <Row gutter={[16, 16]}>
+                <Row>
+                    <Form.Item
+                        name="imageUrl"
+                        label="Image"
+                        noStyle
+                    />
+                </Row>
+                <Row gutter={[16, 16]}>
                     <Col span={24}>
-                        <Form.Item
-                            name="imageUrl"
-                            label="Image"
-                            rules={[{ required: true, message: 'Please upload an image!' }]}
-                        >
-                            <Dragger {...uploadImage}>
-                                <p className="ant-upload-drag-icon">
-                                    <InboxOutlined />
-                                </p>
-                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                            </Dragger>
-                        </Form.Item>
+
+                        <Dragger {...uploadProps}>
+                            <p className="ant-upload-drag-icon">
+                                <InboxOutlined />
+                            </p>
+                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                        </Dragger>
                     </Col>
-                </Row> */}
+                </Row>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" style={{ width: '100%', height: '40px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>
                         Create Wine
