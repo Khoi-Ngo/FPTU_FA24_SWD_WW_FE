@@ -102,6 +102,59 @@ export const App = () => {
         await delay(500);
         SetIsAppLoading(false);
     };
+    const items = [
+        {
+            label: 'Profile',
+            icon: <RobotOutlined />,
+            key: 'Profile'
+        },
+        {
+            label: 'Overview',
+            icon: <PieChartOutlined />,
+            key: 'Overview'
+        },
+        {
+            label: 'Users',
+            icon: <UserOutlined />,
+            key: 'Users'
+        },
+        {
+            label: 'Wines',
+            icon: <UserOutlined />,
+            key: 'Wines'
+        },
+        {
+            label: 'Wine Category',
+            icon: <UserOutlined />,
+            key: 'WineCates'
+        },
+        {
+            label: 'Room',
+            icon: <UserOutlined />,
+            key: 'Rooms'
+        },
+        {
+            label: 'I/O Requests',
+            icon: <UserOutlined />,
+            key: 'IORequests'
+        },
+        {
+            label: 'Staff-Task',
+            icon: <UserOutlined />,
+            key: 'StaffTasks'
+        },
+        {
+            label: 'Check Requests',
+            icon: <UserOutlined />,
+            key: 'CheckRequests'
+        },
+        {
+            label: 'Logout',
+            icon: <UserOutlined />,
+            key: 'Logout',
+            onClick: { handleLogout }
+        }
+    ];
 
     useEffect(() => {
         fetchUserInfo();
@@ -127,15 +180,40 @@ export const App = () => {
                 <Layout style={{ minHeight: '100vh' }}>
                     <Sider>
                         <div className="logo">Dashboard</div>
-                        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <Menu
                                 theme="dark"
                                 selectedKeys={[selectedMenu]}
                                 mode="inline"
                                 onClick={({ key }) => handleMenuClick(key)}
                                 style={{ flex: 1 }}
+                                items={items}
+                            />
+
+                        </div>
+                        {/* <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end'}}>
+                            <Menu
+                                theme="dark"
+                                mode="inline"
                             >
-                                <Menu.Item key="Profile" icon={<RobotOutlined />}>
+                                <Menu.Item key="Logout" icon={<UserOutlined />} onClick={handleLogout}>
+                                    Logout
+                                </Menu.Item>
+                            </Menu>
+                        </div> */}
+                    </Sider>
+                    <Content style={{ margin: '0 ' }}>
+                        <div style={{ background: '#fff', minHeight: 360 }}>
+                            <Outlet fetchUserInfo={fetchUserInfo} />
+                        </div>
+                    </Content>
+                </Layout >
+            </>
+        )
+    );
+}
+
+{/* <Menu.Item key="Profile" icon={<RobotOutlined />}>
                                     Profile
                                 </Menu.Item>
                                 <Menu.Item key="Overview" icon={<PieChartOutlined />}>
@@ -161,25 +239,4 @@ export const App = () => {
                                 </Menu.Item>
                                 <Menu.Item key="CheckRequests" icon={<UserOutlined />}>
                                     Check Requests
-                                </Menu.Item>
-                            </Menu>
-                            <Menu
-                                theme="dark"
-                                mode="inline"
-                            >
-                                <Menu.Item key="Logout" icon={<UserOutlined />} onClick={handleLogout}>
-                                    Logout
-                                </Menu.Item>
-                            </Menu>
-                        </div>
-                    </Sider>
-                    <Content style={{ margin: '0 ' }}>
-                        <div style={{ background: '#fff', minHeight: 360 }}>
-                            <Outlet fetchUserInfo={fetchUserInfo} />
-                        </div>
-                    </Content>
-                </Layout >
-            </>
-        )
-    );
-}
+                                </Menu.Item> */}

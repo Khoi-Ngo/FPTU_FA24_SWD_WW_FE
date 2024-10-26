@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, DatePicker, Upload, Row, Col, notification, Image } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UploadOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI, fetchWineDetailAPI, updateWineAPI } from '~/services/api-service/WineApiService';
+import { fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI, fetchWineDetailAPI, updateWineAPI, uploadImageWineAPI } from '~/services/api-service/WineApiService';
 
 //TODO: replace curr image handling
 
@@ -39,7 +39,7 @@ const UpdateWinePage = () => {
     const [corks, setCorks] = useState([]);
     const [qualifications, setQualifications] = useState([]);
     const [tastes, setTastes] = useState([]);
-    const [uploadedImage, setUploadedImage] = useState(null); // State for uploaded image
+    const [uploadedImage, setUploadedImage] = useState(null);
     const { wineId } = useParams()
     const navigate = useNavigate()
     useEffect(() => {
@@ -54,7 +54,7 @@ const UpdateWinePage = () => {
         fetchWineCategories()
         fetchWineData(wineId)
     }, [wineId])
-    useEffect(() => {   
+    useEffect(() => {
         if (wine) {
             // Set form fields when wine data is available
             form.setFieldsValue({
@@ -89,19 +89,27 @@ const UpdateWinePage = () => {
             bottleSize: { id: values.bottleSizeId },
             alcoholByVolume: { id: values.alcoholByVolumeId },
             importPrice: values.importPrice,
-            exportPrice: values.exportPrice
+            exportPrice: values.exportPrice,
+            imageUrl: uploadedImage
         }
-        console.log('Payload:', payload)     
+        console.log('Payload:', payload)
         updateWine(payload)
+        navigate('/app/wines');
     }
     //#region API
+    const uploadImageWine = async (payload) => {
+        const response = await uploadImageWineAPI(payload)
+        setUploadedImage(response.downloadUrl)
+        console.log('uploadImageWineAPI has run')
+    }
     const fetchWineData = async (Id) => {
         try {
             // Simulate a failed API call
             const response = await fetchWineDetailAPI(Id)
             setWine(response)
-            console.log('wine ',wine)
-            console.log('ID ',Id)
+            console.log('wine ', wine)
+            console.log('ID ', Id)
+            console.log('wineImage while fetching ', uploadedImage)
             //throw new Error('API request failed')
         } catch (error) {
             console.error('Failed to fetch wine:', error);
@@ -152,7 +160,7 @@ const UpdateWinePage = () => {
 
     const updateWine = async (payload) => {
         try {
-            await updateWineAPI(wineId, payload); 
+            await updateWineAPI(wineId, payload);
             notification.success({
                 message: 'Wine updated successfully',
             });
@@ -177,17 +185,32 @@ const UpdateWinePage = () => {
         name: 'file',
         accept: 'image/png, image/jpeg',  // Accept only PNG and JPEG files
         maxCount: 1,  // Limit to a single upload
-        beforeUpload: (file) => {
+        beforeUpload: () => {
             return false;  // Prevent automatic upload
         },
         onChange: (info) => {
-            if (info.file.status === 'done' || info.file.status === 'uploading') {
-                const url = URL.createObjectURL(info.file.originFileObj);
-                setUploadedImage(url);
-                console.log('Temporary image URL:', url); // Debugging: log the temporary URL
+            if (info.file.status !== 'uploading') {
+                console.log('info.file.status: ', info.file.status)
+
+                const formData = new FormData();
+                formData.append('file', info.file)
+
+                // Upload the image and store the response
+                const uploadedImage = uploadImageWine(formData)
+                console.log(info.file, info.fileList);
+
+                console.log('uploadImageWine response: ', uploadedImage)
+            }
+            if (info.file.status === 'done') {
+                console.log('Temporary image URL:', uploadedImage)
+                // const url = URL.createObjectURL(info.file.originFileObj)
+                // await uploadImageWine(url)
+                console.log('Temporary image URL:', uploadedImage) // Debugging: log the temporary URL
             } else if (info.file.status === 'removed') {
                 setUploadedImage(null);  // Clear uploaded image when removed
+                console.log('something here 12')
             }
+            console.log('info.file.status2: ', info.file.status)
         },
     };
 
@@ -196,8 +219,8 @@ const UpdateWinePage = () => {
     return (
         <div style={{ maxWidth: '800px', margin: 'auto', padding: '40px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}>
             <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Update Wine</h2>
-            <Button type="default" onClick={handleBackToList} style={{ marginBottom: '20px' }}>
-                Back to Wine List
+            <Button type="default" onClick={handleBackToList} style={{ height: '50px', backgroundColor: 'white', borderRadius: '4px', borderColor: 'transparent' }}>
+                <ArrowLeftOutlined style={{ fontSize: '24px', color: '#1677ff' }} />
             </Button>
             <Form form={form} name="update_wine" onFinish={onFinish} layout="vertical">
                 <Row gutter={[16, 16]}>
@@ -206,7 +229,7 @@ const UpdateWinePage = () => {
                             <Input />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item
                             name="availableStock"
                             label="Available Stock"
@@ -214,7 +237,7 @@ const UpdateWinePage = () => {
                         >
                             <Input type="number" />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={12}>
                         <Form.Item
                             name="importPrice"
@@ -240,11 +263,11 @@ const UpdateWinePage = () => {
                             <Input.TextArea rows={4} />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Form.Item name="supplier" label="Supplier" rules={[{ required: true, message: 'Please input the supplier!' }]}>
                             <Input />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col span={12}>
                         <Form.Item name="mfd" label="Manufacture Date" rules={[{ required: true, message: 'Please select the manufacture date!' }]}>
                             <DatePicker style={{ width: '100%' }} />
@@ -385,11 +408,12 @@ const UpdateWinePage = () => {
                             />
                         </Form.Item>
                         {/* Upload new image */}
-                        <Form.Item name="ImageUrl" label="Upload New Image" style={{ marginBottom: '10px' }}>
-                            <Upload {...uploadProps}>
-                                <Button icon={<UploadOutlined />}>Click to Upload New Image</Button>
-                            </Upload>
+                        <Form.Item name="imageUrl" style={{ marginBottom: '10px' }}>
+                            <Input type="hidden" />
                         </Form.Item>
+                        <Upload {...uploadProps}>
+                            <Button icon={<UploadOutlined />}>Click to Upload New Image</Button>
+                        </Upload>
                     </Col>
                 </Row>
                 <Form.Item>

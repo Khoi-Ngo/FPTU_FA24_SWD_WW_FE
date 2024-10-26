@@ -1,7 +1,13 @@
 import axios from "axios"
-export const fetchRoomDetailsAPI = async () => {
+// export const fetchRoomDetailsAPI = async () => {
+//   const response = await axios.get(
+//     `https://6704dd95ab8a8f8927352836.mockapi.io/api/v1/WineRooms`
+//   )
+//   return response.data
+// }
+export const fetchRoomDetailsAPI = async (roomId) => {
   const response = await axios.get(
-    `https://6704dd95ab8a8f8927352836.mockapi.io/api/v1/WineRooms`
+    `${import.meta.env.VITE_BACKEND_URL}/rooms/${roomId}`
   )
   return response.data
 }

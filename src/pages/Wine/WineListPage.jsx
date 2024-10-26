@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Table, Button, Space, Modal, notification } from 'antd';
 import '../../styles/WineListStyle.css'; // Import custom styles
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { deleteWineAPI, fetchAllWineAPI } from '../../services/api-service/WineApiService';
 
 export const WineListPage = () => {
@@ -9,6 +9,7 @@ export const WineListPage = () => {
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [currentWineId, setCurrentWineId] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     //#region directly DELETE wine in the list
     const handleDeleteButtonClicked = (wineId) => {
@@ -58,11 +59,11 @@ export const WineListPage = () => {
             } else {
                 throw new Error('API request failed');
             }
-            notification.success(
-                {
-                    message: "Load oke"
-                }
-            )
+            // notification.success(
+            //     {
+            //         message: "Load oke"
+            //     }
+            // )
         } catch (error) {
             notification.error({
                 message: "Fail load" + error
@@ -72,7 +73,7 @@ export const WineListPage = () => {
 
     useEffect(() => {
         fetchAllWines();
-    }, [])
+    }, [location])
     //#endregion
 
     const columns = [
@@ -86,30 +87,30 @@ export const WineListPage = () => {
             dataIndex: 'wineName',
             key: 'wineName',
         },
-        {
-            title: 'Available Stock',
-            dataIndex: 'availableStock',
-            key: 'availableStock',
-        },
+        // {
+        //     title: 'Available Stock',
+        //     dataIndex: 'availableStock',
+        //     key: 'availableStock',
+        // },
         {
             title: 'MFD',
             dataIndex: 'mfd',
             key: 'mfd',
         },
-        {
-            title: 'Supplier',
-            dataIndex: 'supplier',
-            key: 'supplier',
-        },
+        // {
+        //     title: 'Supplier',
+        //     dataIndex: 'supplier',
+        //     key: 'supplier',
+        // },
         {
             title: 'Image',
-            dataIndex: 'imgUrl',
-            key: 'imgUrl',
+            dataIndex: 'imageUrl',
+            key: 'imageUrl',
             render: (text) => (
                 <img
                     src={text}
                     alt="wine"
-                    style={{ width: 50, height: 50, borderRadius: '5%' }}
+                    style={{ width: 100, height: 100, borderRadius: '5%' }}
                 />
             ),
         },

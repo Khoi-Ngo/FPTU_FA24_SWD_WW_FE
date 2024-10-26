@@ -76,16 +76,16 @@ export const RoomListPage = () => {
       dataIndex: 'currentOccupancy',
       key: 'currentOccupancy'
     },
-    {
-      title: 'Manager Name',
-      dataIndex: 'managerName',
-      key: 'managerName'
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status'
-    },
+    // {
+    //   title: 'Manager Name',
+    //   dataIndex: 'managerName',
+    //   key: 'managerName'
+    // },
+    // {
+    //   title: 'Status',
+    //   dataIndex: 'status',
+    //   key: 'status'
+    // },
     {
       title: 'Actions',
       key: 'actions',
