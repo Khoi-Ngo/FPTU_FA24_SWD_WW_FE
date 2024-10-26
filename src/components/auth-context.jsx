@@ -1,34 +1,38 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
-export const AuthWrapper = (props) => {
-
-    const [userLogin, setUserLogin] = useState(null); // Bắt đầu với null
-    const [isAppLoading, setIsAppLoading] = useState(true); // Trạng thái loading khi kiểm tra token
+export const AuthWrapper = ({ children }) => {
+    const [userLogin, setUserLogin] = useState(null);
+    const [isAppLoading, setIsAppLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem("access_token");
         if (token) {
-            const userInfo = JSON.parse(localStorage.getItem("user_info"));
-            if (userInfo) {
-                setUserLogin(userInfo); // Đặt thông tin người dùng từ localStorage
+            try {
+                const userInfo = JSON.parse(localStorage.getItem("user_info"));
+                setUserLogin(userInfo);
+            } catch (error) {
+                console.error("Failed to parse user info:", error);
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("user_info");
             }
         }
-        setIsAppLoading(false); // Sau khi kiểm tra xong, đặt loading thành false
+        setIsAppLoading(false);
     }, []);
 
     return (
         <AuthContext.Provider value={{ userLogin, setUserLogin, isAppLoading }}>
             {isAppLoading ? (
-                <div>Loading...</div> // Hiển thị loading cho đến khi kiểm tra token xong
+                <div>Loading...</div>
             ) : (
-                props.children
+                children
             )}
-        </AuthContext.Provider>
+        </AuthContext.Provider >
     );
 };
+
 
 AuthWrapper.propTypes = {
     children: PropTypes.node.isRequired,
