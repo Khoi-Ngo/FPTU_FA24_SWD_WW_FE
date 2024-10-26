@@ -19,37 +19,41 @@ export const LoginPage = () => {
 
     const { userLogin, setUserLogin } = useContext(AuthContext);
 
+
     const onFinish = async (values) => {
         try {
             if (!isEntered) {
                 setIsEntered(true);
                 setIsLoading(true);
 
-
                 const res = await LoginAPI({ username: values.username, password: values.password });
 
-                if (res.data && res.status == 200) {
-                    //login ok
+                if (res.data && res.status === 200) {
+                    // login successful
                     localStorage.setItem("access_token", res.data.accessToken);
                     setUserLogin(res.data.userInfo);
 
+                    notification.info({
+                        message: "Login successfully",
+                    });
+
+                    setIsLoading(false);
+                    setIsEntered(false);
+                    navigate('/app');
                 }
-                notification.info({
-                    message: "Login successfully",
-                });
-
-
-                setIsLoading(false);
-                setIsEntered(false);
-                navigate('/app');
             }
         } catch (error) {
             notification.error({
-                message: "Login failed"
-            })
+                message: "Login failed",
+            });
+
             form.resetFields();
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
         }
     };
+
 
     // Show the modal
     const showForgotPasswordModal = () => {

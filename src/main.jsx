@@ -21,9 +21,10 @@ import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
-import { CheckRequestListPage } from './pages/CheckRequest/CheckRequestListPage.jsx';
 import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx';
 import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx';
+import CheckRequestListPage from './pages/CheckRequest/CheckRequestListPage.jsx';
+import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -119,6 +120,11 @@ const router = createBrowserRouter([
       {
         path: "check-requests",
         element: <CheckRequestListPage />
+      },
+
+      {
+        path: "create-check-request",
+        element: <CreateCheckRequestPage />
       },
 
     ],

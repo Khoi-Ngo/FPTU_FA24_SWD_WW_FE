@@ -56,6 +56,10 @@ export const App = () => {
         if (path.startsWith('/app/rooms')) return 'Rooms';
         if (path.startsWith('/app/io-requests')) return 'IORequests';
         if (path.startsWith('/app/tasks')) return 'StaffTasks';
+        if (path.startsWith('/app/check-requests')
+            || path.startsWith('/app/create-check-request')
+        ) return 'CheckRequests';
+
         return 'Overview';
     };
 
@@ -85,6 +89,9 @@ export const App = () => {
                 break;
             case 'StaffTasks':
                 navigate('/app/tasks');
+                break;
+            case 'CheckRequests':
+                navigate('/app/check-requests');
                 break;
             default:
                 break;
@@ -151,6 +158,9 @@ export const App = () => {
                                 </Menu.Item>
                                 <Menu.Item key="StaffTasks" icon={<UserOutlined />}>
                                     Staff-Task
+                                </Menu.Item>
+                                <Menu.Item key="CheckRequests" icon={<UserOutlined />}>
+                                    Check Requests
                                 </Menu.Item>
                             </Menu>
                             <Menu
