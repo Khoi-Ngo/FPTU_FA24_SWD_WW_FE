@@ -25,6 +25,7 @@ import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx
 import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx';
 import CheckRequestListPage from './pages/CheckRequest/CheckRequestListPage.jsx';
 import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestPage.jsx';
+import ViewDetailCheckRequestPage from './pages/CheckRequest/ViewDetailCheckRequestPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -125,6 +126,11 @@ const router = createBrowserRouter([
       {
         path: "create-check-request",
         element: <CreateCheckRequestPage />
+      },
+
+      {
+        path: "check-requests/:requestId",
+        element: <ViewDetailCheckRequestPage />
       },
 
     ],

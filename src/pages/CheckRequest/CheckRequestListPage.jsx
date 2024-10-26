@@ -42,7 +42,8 @@ const CheckRequestListPage = () => {
 
     // Handle view details
     const handleViewDetails = (requestId) => {
-        notification.info({ message: "View details clicked" });
+        //redirect to view detail page with request id
+        navigate(`/app/check-requests/${requestId}`);
     };
 
     // Handle edit

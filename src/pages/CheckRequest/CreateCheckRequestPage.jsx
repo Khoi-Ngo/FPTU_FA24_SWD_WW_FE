@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Form, Input, Button, DatePicker, Select, notification, Divider } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { fetchAllActiveWineRoomNameAPI } from '~/services/api-service/WineRoomeApiService';
 import { createCheckRequestAPI } from '~/services/api-service/CR-FLOW/CheckRequestApiService';
 import { fetchAllStaffAPI } from '~/services/api-service/UserApiService';
+import { AuthContext } from '~/components/auth-context';
 
 const priorityOptions = [
     { label: 'Low', value: 'Low' },
@@ -15,6 +16,8 @@ export const CreateCheckRequestPage = () => {
     const [form] = Form.useForm();
     const [staffOptions, setStaffOptions] = useState([]);
     const [wineRoomOptions, setWineRoomOptions] = useState([]);
+    const { userLogin, setUserLogin } = useContext(AuthContext);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,14 +39,13 @@ export const CreateCheckRequestPage = () => {
             notification.error({ message: 'Failed to fetch staff', description: error.message });
         }
     };
-
     const populateWineRoomOptions = async () => {
         try {
             const response = await fetchAllActiveWineRoomNameAPI();
             if (response.data) {
                 const wineRooms = response.data.map(room => ({
-                    label: `WRID: ${room.Id} - RID: ${room.RoomId} - RName: ${room.RoomName} - WID: ${room.WineId} - WName: ${room.WineName}`,
-                    value: room.Id,
+                    label: `WRID: ${room.id} - RID: ${room.roomId} - RName: ${room.roomName} - WID: ${room.wineId} - WName: ${room.wineName}`,
+                    value: room.id,  // Ensure this matches the key used in the data source
                 }));
                 setWineRoomOptions(wineRooms);
             }
@@ -52,18 +54,30 @@ export const CreateCheckRequestPage = () => {
         }
     };
 
-    const handleSubmit = async (values) => {
+
+    const handleSubmit = async () => {
+        const formValues = form.getFieldsValue();
+
         const payload = {
-            ...values,
-            createCheckRequestDetailRequests: values.details.map(detail => ({
-                purpose: detail.purpose,
-                startDate: detail.startDate,
-                dueDate: detail.dueDate,
-                comments: detail.comments,
-                checkerId: detail.checker,
-                wineRoomId: detail.wineRoom,
-            })),
+            purpose: formValues.purpose,
+            startDate: formValues.startDate ? formValues.startDate.toISOString() : null,
+            dueDate: formValues.endDate ? formValues.endDate.toISOString() : null,
+            comments: formValues.comments,
+            priorityLevel: formValues.priorityLevel,
+            requesterId: userLogin.id,
+            requesterName: userLogin.username,
+            createCheckRequestDetailRequests: formValues.details
+                .map(detail => ({
+                    purpose: detail.purpose,
+                    startDate: detail.startDate ? detail.startDate.toISOString() : null,
+                    dueDate: detail.dueDate ? detail.dueDate.toISOString() : null,
+                    comments: detail.comments,
+                    checkerId: detail.checker,
+                    wineRoomId: detail.wineRoom,
+                }))
+                .filter(detail => detail.purpose || detail.startDate || detail.dueDate),
         };
+        console.log(payload);
 
         try {
             const response = await createCheckRequestAPI(payload);
@@ -77,6 +91,9 @@ export const CreateCheckRequestPage = () => {
             notification.error({ message: 'Error', description: error.message });
         }
     };
+
+
+
 
     const handleReset = () => {
         form.resetFields();
