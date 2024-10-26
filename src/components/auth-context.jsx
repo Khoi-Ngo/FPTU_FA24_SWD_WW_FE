@@ -33,7 +33,7 @@ export const AuthWrapper = ({ children }) => {
         </AuthContext.Provider >
 
     );
-
+};
 
 
 AuthWrapper.propTypes = {
