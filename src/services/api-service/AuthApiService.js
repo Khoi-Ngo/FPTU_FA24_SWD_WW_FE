@@ -1,7 +1,11 @@
-import axiosInstance from "../axios-customize";
+import axios from "axios";
 
 const LoginAPI = async ({ username, password }) => {
+
     return axiosInstance.post('/auth/sign-in', { username, password });
 };
 
-export { LoginAPI };
+
+
+
+export {LoginAPI, }

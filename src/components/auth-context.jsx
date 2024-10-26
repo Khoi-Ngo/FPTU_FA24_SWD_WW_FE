@@ -1,3 +1,4 @@
+
 import PropTypes from "prop-types";
 import { createContext, useState, useEffect } from 'react';
 
@@ -30,10 +31,13 @@ export const AuthWrapper = ({ children }) => {
                 children
             )}
         </AuthContext.Provider >
+
     );
-};
+
 
 
 AuthWrapper.propTypes = {
     children: PropTypes.node.isRequired,
+
+
 };

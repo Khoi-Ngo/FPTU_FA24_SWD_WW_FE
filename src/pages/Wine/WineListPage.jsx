@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Button, Space, Modal, notification } from 'antd';
 import '../../styles/WineListStyle.css'; // Import custom styles
 import { useNavigate } from 'react-router-dom';
@@ -75,9 +75,6 @@ export const WineListPage = () => {
     }, [])
     //#endregion
 
-
-
-
     const columns = [
         {
             title: 'ID',
@@ -116,11 +113,11 @@ export const WineListPage = () => {
                 />
             ),
         },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-        },
+        // {
+        //     title: 'Status',
+        //     dataIndex: 'status',
+        //     key: 'status',
+        // },
         {
             title: 'Actions',
             key: 'actions',

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { Form, Input, Button, notification, Modal } from 'antd';
 import { useNavigate } from "react-router-dom";
 import '../styles/LoginStyle.css';
@@ -8,11 +8,13 @@ import { sendMailResetPassAPI } from '~/services/api-service/UserApiService';
 
 export const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false); // For modal visibility
     const [modalEmail, setModalEmail] = useState("");
     const [modalUsername, setModalUsername] = useState("");
+
     const navigate = useNavigate();
     const [form] = Form.useForm();
+
     const { userLogin, setUserLogin } = useContext(AuthContext);
 
     useEffect(() => {
@@ -21,9 +23,11 @@ export const LoginPage = () => {
         }
     }, [userLogin, navigate]);
 
+
     const onFinish = async (values) => {
         setIsLoading(true);
         try {
+
             const res = await LoginAPI({ username: values.username, password: values.password });
             if (res.data && res.status === 200) {
                 localStorage.setItem("access_token", res.data.accessToken);
@@ -40,12 +44,15 @@ export const LoginPage = () => {
     };
 
     const showForgotPasswordModal = () => setIsModalVisible(true);
+
     const handleOk = async () => {
+
         try {
             const response = await sendMailResetPassAPI({ username: modalUsername, email: modalEmail });
             if (response.data && response.status === 200) {
                 notification.success({ message: "Recovery link sent" });
                 navigate("/reset-password");
+
             } else {
                 notification.warning({ message: "Check the input information" });
             }
@@ -55,11 +62,15 @@ export const LoginPage = () => {
             setIsModalVisible(false);
             setModalEmail("");
             setModalUsername("");
+
         }
+
     };
+
     const handleCancel = () => {
         setIsModalVisible(false);
         setModalEmail("");
+
         setModalUsername("");
     };
 
@@ -68,8 +79,10 @@ export const LoginPage = () => {
             <div className="login-form-container">
                 <Form form={form} name="login" onFinish={onFinish} className="login-form">
                     <h2>Login</h2>
+
                     <Form.Item name="username" rules={[{ required: true, message: 'Enter username!' }]}>
                         <Input placeholder="Username" />
+
                     </Form.Item>
                     <Form.Item name="password" rules={[{ required: true, message: 'Enter password!' }]}>
                         <Input.Password
@@ -83,6 +96,8 @@ export const LoginPage = () => {
                     <Form.Item>
                         <Button type="primary" htmlType="submit" className="login-form-button" loading={isLoading}>Login</Button>
                     </Form.Item>
+
+
                     <Form.Item>
                         <Button type="link" onClick={showForgotPasswordModal} className="forgot-password-link">Forgot password?</Button>
                     </Form.Item>
@@ -94,10 +109,14 @@ export const LoginPage = () => {
                     onCancel={handleCancel}
                     okText="Send recovery link"
                 >
+
                     <Input placeholder="Enter email" value={modalEmail} onChange={(e) => setModalEmail(e.target.value)} />
                     <Input placeholder="Enter username" value={modalUsername} onChange={(e) => setModalUsername(e.target.value)} />
+
                 </Modal>
             </div>
         </div>
     );
 };
+
+

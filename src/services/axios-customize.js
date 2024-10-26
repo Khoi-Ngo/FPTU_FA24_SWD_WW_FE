@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios from "axios";
+
 
 const axiosInstance = axios.create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
@@ -7,13 +8,17 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
+
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  function (error) {
+    return Promise.reject(error);
+  }
 );
+
 
 axiosInstance.interceptors.response.use(
   (response) => response,
@@ -35,3 +40,4 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+

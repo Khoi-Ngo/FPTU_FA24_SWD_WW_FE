@@ -5,7 +5,7 @@
     align-items: center;
     height: 100vh;
     background-color: #f0f2f5; /* Light background */
-    background-image: url('../../public/login-bg.jpg'); /* Background image from public folder */
+    background-image: url('../../login-bg.jpg'); /* Background image from public folder */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

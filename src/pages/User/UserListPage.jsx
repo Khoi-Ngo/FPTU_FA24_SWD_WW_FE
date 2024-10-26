@@ -88,9 +88,11 @@ const UserListPage = () => {
 
   //#region update user
   const handleUpdate = async () => {
-    notification.warning({
-      message: 'Click update',
-    });
+    // try {
+
+    // } catch (e) {
+    //   notification.
+    // }
   };
   //#endregion
 
@@ -177,9 +179,9 @@ const UserListPage = () => {
   ];
 
   //#endregion
- 
+
   return (
-    <div>
+    <div style={{ minHeight: '100vh' }}>
       <h1 style={{ textAlign: 'center' }}>User List</h1>
       {error && <Alert message="Error" description={error} type="error" showIcon />}
       <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ margin: '20px' }}>

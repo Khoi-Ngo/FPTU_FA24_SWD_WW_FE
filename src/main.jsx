@@ -21,9 +21,10 @@ import { AuthRoutes } from './components/AuthRoutes.jsx';
 import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
 import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
 import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
-import { CheckRequestListPage } from './pages/CheckRequest/CheckRequestListPage.jsx';
 import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx';
 import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx';
+import CheckRequestListPage from './pages/CheckRequest/CheckRequestListPage.jsx';
+import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
         element: <MockDashboardPage />
       },
       {
-        path: 'iorequests/:id',
+        path: 'io-requests/:id',
         element: <IORequestDetailsPage />,
       },
       {
@@ -99,7 +100,7 @@ const router = createBrowserRouter([
         element: <RoomDetails />
       },
       {
-        path: 'iorequests',
+        path: 'io-requests',
         element: <IORequestListPage />,
       },
 
@@ -117,8 +118,13 @@ const router = createBrowserRouter([
         element: <UpdateWinePage />,
       },
       {
-        path: "checkrequests",
+        path: "check-requests",
         element: <CheckRequestListPage />
+      },
+
+      {
+        path: "create-check-request",
+        element: <CreateCheckRequestPage />
       },
 
     ],

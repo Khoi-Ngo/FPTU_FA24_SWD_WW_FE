@@ -20,17 +20,17 @@ const deleteWineAPI = async (wineId) => {
 }
 
 
-const updateWineAPI = (updatedWineData) => {
-    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/wines`;
-    return axios.put(URL_BACKEND, updatedWineData);
+export const updateWineAPI = async (wineId, payload) => {
+    const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/wines/${wineId}`, payload)
+    return response.data
 }
 
 const uploadWineImage = () =>{
     //TODO: implement later
 }
-const fetchWineDetailAPI = (wineId) =>{
-    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/wines/${wineId}`;
-    return axios.delete(URL_BACKEND)
+export const fetchWineDetailAPI = async (wineId) => {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/wines/${wineId}`)
+    return response.data
 }
 export const fetchWineCategoriesAPI = async () => {
     const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/wine-categories`)
@@ -71,5 +71,5 @@ export const fetchAlcoholVolumeAPI = async () => {
 }
 
 
-export {fetchWineDetailAPI, deleteWineAPI, updateWineAPI, uploadWineImage, createWineAPI, 
+export {deleteWineAPI, uploadWineImage, createWineAPI, 
 }
