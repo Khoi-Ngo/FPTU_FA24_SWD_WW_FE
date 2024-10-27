@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { Children, useContext, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/auth-context";
 import { Layout, Menu, notification, Spin } from "antd";
@@ -6,10 +6,13 @@ import Footer from "../components/Footer";
 import { PieChartOutlined, DesktopOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
+import { fetchWineCategoriesAPI } from "~/services/api-service/WineApiService";
+import DynamicMenu from "~/components/Antd_Custom/DynamicMenu";
 
 export const App = () => {
     const { isAppLoading, SetIsAppLoading, setUserLogin } = useContext(AuthContext);
     const [selectedMenu, setSelectedMenu] = useState('Overview');
+    const [wineCategories, setWineCategories] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
     const delay = (milSeconds) => {
@@ -102,6 +105,18 @@ export const App = () => {
         await delay(500);
         SetIsAppLoading(false);
     };
+    const fetchWineCategories = async () => {
+        const data = await fetchWineCategoriesAPI()
+        if (data) setWineCategories(data)
+    }
+    const wineCategoryItems = wineCategories.map(category => ({
+        key: category.id,          
+        label: category.categoryName
+    }));
+    const handleParentClick = (key) => {
+        console.log('Parent item clicked')
+      };
+    
     const items = [
         {
             label: 'Profile',
@@ -152,12 +167,14 @@ export const App = () => {
             label: 'Logout',
             icon: <UserOutlined />,
             key: 'Logout',
-            onClick: { handleLogout }
+            onClick: () => handleLogout(),
+            danger: 'true'
         }
     ];
 
     useEffect(() => {
         fetchUserInfo();
+        fetchWineCategories();
     }, []);
 
     useEffect(() => {
