@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Card, Divider, message } from 'antd';
+import { Table, Button, Space, Typography, Card, Divider, message, Modal, Form, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
@@ -9,6 +9,8 @@ const { Title } = Typography;
 export const WineCateListPage = () => {
   const [wineCategories, setWineCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false); // State cho modal
+  const [form] = Form.useForm(); // Form instance để quản lý form
   const navigate = useNavigate(); // Khởi tạo useNavigate
 
   // Fetch all categories from the API
@@ -28,9 +30,22 @@ export const WineCateListPage = () => {
     fetchWineCategories();
   }, []);
 
-  // Hàm xử lý khi bấm vào nút "Detail"
+
   const handleDetail = (id) => {
-    navigate(`/app/wine-categories/${id}/wines`); // Điều hướng đến trang chi tiết
+    navigate(`/app/wine-categories/${id}/wines`);
+  };
+
+
+  const handleCreateCategory = async (values) => {
+    try {
+      await axios.post('https://winewarehousesystem.azurewebsites.net/api/v1/wine-categories', values);
+      message.success('Category created successfully!');
+      fetchWineCategories();
+      setIsModalVisible(false);
+      form.resetFields();
+    } catch (error) {
+      message.error('Failed to create category.');
+    }
   };
 
   const columns = [
@@ -49,7 +64,7 @@ export const WineCateListPage = () => {
       key: 'actions',
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button> {/* Gọi hàm handleDetail */}
+          <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button> {/* call handleDetail */}
         </Space>
       ),
     },
@@ -62,7 +77,7 @@ export const WineCateListPage = () => {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => setIsModalVisible(true)}
+          onClick={() => setIsModalVisible(true)} // show modal
           style={{ marginBottom: 16 }}
         >
           Create New Wine Category
@@ -77,6 +92,25 @@ export const WineCateListPage = () => {
           pagination={{ pageSize: 5 }}
         />
       </Card>
+
+      {/* Modal create */}
+      <Modal
+        title="Create New Wine Category"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        onOk={() => form.submit()}
+        okText="Create"
+      >
+        <Form form={form} layout="vertical" onFinish={handleCreateCategory}>
+          <Form.Item
+            name="categoryName"
+            label="Category Name"
+            rules={[{ required: true, message: 'Please input the category name!' }]}
+          >
+            <Input placeholder="Enter category name" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
