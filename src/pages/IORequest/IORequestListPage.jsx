@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select } from 'antd';
+import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,8 +8,10 @@ import {
   updateIORequestApi,
   handleDisableStatus,
   fetchIORequestTypeApi,
+  handleDoneStatus
 } from '../../services/api-service/IORequestApiService';
-
+import { fetchRoomsAPI } from '~/services/api-service/RoomApiService';
+import { fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest';
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -18,26 +20,59 @@ export const IORequestListPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRequest, setCurrentRequest] = useState(null);
   const [ioRequests, setIORequests] = useState([]);
-  const [selectedIOType, setSelectedIOType] = useState('ALL'); // Trạng thái mặc định là 'ALL'
+  const [selectedIOType, setSelectedIOType] = useState('ALL');
   const [form] = Form.useForm();
+
+  const [rooms, setRooms] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [checkers, setCheckers] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [wines, setWines] = useState([]);
 
   const fetchData = async (ioType) => {
     try {
       let requests;
       if (ioType === 'ALL') {
-        requests = await fetchIORequestApi(); // Lấy tất cả
+        requests = await fetchIORequestApi();
       } else {
-        requests = await fetchIORequestTypeApi(ioType); // Lấy theo loại
+        requests = await fetchIORequestTypeApi(ioType);
       }
-      setIORequests(requests); // Cập nhật danh sách yêu cầu
+      setIORequests(requests);
     } catch (error) {
       console.error("Error fetching IO Requests:", error);
     }
   };
 
   useEffect(() => {
-    fetchData(selectedIOType); // Fetch data khi loại IO được chọn
+    fetchData(selectedIOType);
+
+    const fetchDropdownData = async () => {
+      try {
+        const [roomData, supplierData, checkerData, customerData, wineData] = await Promise.all([
+          fetchRoomsAPI(),
+          fetchSuppliersApi(),
+          fetchCheckersApi(),
+          fetchCustomersApi(),
+          fetchWineIDApi()
+        ]);
+        setRooms(roomData);
+        setSuppliers(supplierData);
+        setCheckers(checkerData);
+        setCustomers(customerData);
+        setWines(wineData);
+        console.log("Rooms:", roomData);
+        console.log("Suppliers:", supplierData);
+        console.log("Checkers:", checkerData);
+        console.log("Customers:", customerData);
+        console.log("Wines:", wineData);
+      } catch (error) {
+        console.error("Error fetching dropdown data:", error);
+      }
+    };
+
+    fetchDropdownData();
   }, [selectedIOType]);
+
 
   const columns = [
     {
@@ -75,25 +110,38 @@ export const IORequestListPage = () => {
           <Button type="danger" onClick={() => confirmDelete(record.id)}>
             Disable
           </Button>
+          <Button type="danger" onClick={() => confirmDone(record.id)}>
+            Done
+          </Button>
         </Space>
       ),
     },
   ];
 
   const handleDetail = (record) => {
-    navigate(`/app/iorequests/${record.id}`);
+    navigate(`/app/io-requests/${record.id}`);
   };
 
   const handleUpdate = (record) => {
     setCurrentRequest(record);
-    form.setFieldsValue(record);
+    form.setFieldsValue({
+      ...record,
+      ioRequestDetails: record.ioRequestDetails || [],
+    });
     setIsModalVisible(true);
   };
 
   const confirmDelete = (id) => {
     if (window.confirm("Are you sure you want to disable this request?")) {
       handleDisableStatus(id).then(() => {
-        fetchData(selectedIOType); // Refresh data after delete
+        fetchData(selectedIOType);
+      });
+    }
+  };
+  const confirmDone = (id) => {
+    if (window.confirm("Are you sure you want to done this request?")) {
+      handleDoneStatus(id).then(() => {
+        fetchData(selectedIOType);
       });
     }
   };
@@ -107,6 +155,7 @@ export const IORequestListPage = () => {
   const handleOk = async (values) => {
     const requestPayload = {
       ...values,
+      ioRequestDetails: values.ioRequestDetails || [],
     };
 
     try {
@@ -117,7 +166,7 @@ export const IORequestListPage = () => {
       }
       setIsModalVisible(false);
       setCurrentRequest(null);
-      fetchData(selectedIOType); // Refresh data after create/update
+      fetchData(selectedIOType);
     } catch (error) {
       console.error("Error creating/updating request:", error);
     }
@@ -131,7 +180,7 @@ export const IORequestListPage = () => {
 
   const handleSelectChange = (value) => {
     setSelectedIOType(value);
-    fetchData(value); // Fetch data based on selected IO type
+    fetchData(value);
   };
 
   return (
@@ -152,7 +201,7 @@ export const IORequestListPage = () => {
           style={{ width: 120, marginBottom: 16 }}
           onChange={handleSelectChange}
         >
-          <Option value="ALL">Show ALL</Option> {/* Tùy chọn ALL */}
+          <Option value="ALL">Show ALL</Option>
           <Option value="In">Input Type</Option>
           <Option value="Out">Output Type</Option>
         </Select>
@@ -183,10 +232,11 @@ export const IORequestListPage = () => {
             <Input placeholder="Enter the request code" />
           </Form.Item>
           <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Please enter start date!' }]}>
-            <Input placeholder="Enter the Start Date" />
+            <DatePicker placeholder="Select Start Date" format="YYYY-MM-DD" />
           </Form.Item>
+
           <Form.Item name="dueDate" label="Due Date" rules={[{ required: true, message: 'Please enter due date!' }]}>
-            <Input placeholder="Enter the Due Date" />
+            <DatePicker placeholder="Select Due Date" format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item name="ioType" label="IO Type" rules={[{ required: true, message: 'Please select IO type!' }]}>
             <Select placeholder="Select IO type">
@@ -197,25 +247,81 @@ export const IORequestListPage = () => {
           <Form.Item name="comments" label="Comments" rules={[{ required: false }]}>
             <Input.TextArea placeholder="Enter your comments" />
           </Form.Item>
-          <Form.Item name="supplierName" label="Supplier Name" rules={[{ required: false }]}>
-            <Input placeholder="Enter Supplier Name" />
+          <Form.Item name="suplierId" label="Supplier ID" rules={[{ required: true, message: 'Please enter Supplier ID!' }]}>
+            <Select placeholder="Select Supplier" showSearch>
+              {suppliers.map(supplier => (
+                <Option key={supplier.id} value={supplier.id}>{supplier.suplierName}</Option>
+              ))}
+            </Select>
           </Form.Item>
-          <Form.Item name="customerName" label="Customer Name" rules={[{ required: false }]}>
-            <Input placeholder="Enter Customer Name" />
+
+          <Form.Item name="roomId" label="Room ID" rules={[{ required: true, message: 'Please enter Room ID!' }]}>
+            <Select placeholder="Select Room" showSearch>
+              {rooms.map(room => (
+                <Option key={room.id} value={room.id}>{room.roomName}</Option>
+              ))}
+            </Select>
           </Form.Item>
-          <Form.Item name="roomId" label="Room ID" rules={[{ required: true, message: 'Please enter RoomID!' }]}>
-            <Input placeholder="Enter Room ID" />
+
+          <Form.Item name="checkerId" label="Checker ID" rules={[{ required: true, message: 'Please enter Checker ID!' }]}>
+            <Select placeholder="Select Checker" showSearch>
+              {checkers.map(checker => (
+                <Option key={checker.id} value={checker.id}>{checker.username}</Option>
+              ))}
+            </Select>
           </Form.Item>
-          <Form.Item name="checkerId" label="Checker ID" rules={[{ required: true, message: 'Please enter CheckerID!' }]}>
-            <Input placeholder="Enter Checker ID" />
+
+          <Form.Item name="customerId" label="Customer ID" rules={[{ required: true, message: 'Please enter Customer ID!' }]}>
+            <Select placeholder="Select Customer" showSearch>
+              {customers.map(customer => (
+                <Option key={customer.id} value={customer.id}>{customer.customerName}</Option>
+              ))}
+            </Select>
           </Form.Item>
-          {currentRequest && (
-            <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Please Select Status!' }]}>
-              <Select placeholder="Please Select Status">
-                <Option value="Active">Active</Option>
-                <Option value="InActive">InActive</Option>
-              </Select>
-            </Form.Item>)}
+
+          {!currentRequest && (
+            <Form.List name="ioRequestDetails">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, fieldKey, ...restField }) => (
+                    <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'quantity']}
+                        fieldKey={[fieldKey, 'quantity']}
+                        rules={[{ required: true, message: 'Missing quantity' }]}
+                      >
+                        <Input placeholder="Quantity" />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'wineId']}
+                        fieldKey={[fieldKey, 'wineId']}
+                        rules={[{ required: true, message: 'Missing wine ID' }]}
+                      >
+                        <Select placeholder="Select Wine">
+                          {wines.map(wine => (
+                            <Option key={wine.id} value={wine.id}>
+                              {wine.wineName} {/* Show wineName */}
+                            </Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                      <Button type="danger" onClick={() => remove(name)}>
+                        Remove
+                      </Button>
+                    </Space>
+                  ))}
+                  <Form.Item>
+                    <Button type="dashed" onClick={() => add()} block>
+                      Add IO Request Detail
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          )}
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               {currentRequest ? "Update" : "Create"}

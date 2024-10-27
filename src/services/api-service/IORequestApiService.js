@@ -45,6 +45,18 @@ export const handleDisableStatus = async (id) => {
         }
     }
 };
+export const handleDoneStatus = async (id) => {
+    try {
+        await axios.put(`${BASE_URL}/done/${id}`);
+    } catch (error) {
+        if (error.response) {
+            console.error('Error Done IO Request:', error.response.data);
+            console.error('Status code:', error.response.status);
+        } else {
+            console.error('Error Done IO Request:', error.message);
+        }
+    }
+};
 
 export const fetchIORequestByIdApi = async (id) => {
     try {
