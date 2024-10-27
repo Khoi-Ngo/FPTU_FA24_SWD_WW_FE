@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Descriptions, message, Row, Col, Table, notification } from 'antd';
 import moment from 'moment';
-import { fetchWineDetailAPI } from '../../services/api-service/WineApiService';
-import { fetchWineRoomsByWineId } from '../../services/api-service/WineRoomeApiService';
+import { fetchWineDetailAPI } from '~/services/api-service/WineApiService';
+import { fetchWineRoomsByWineId } from '~/services/api-service/WineRoomeApiService';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 
 export const DetailWinePage = () => {
@@ -17,13 +18,14 @@ export const DetailWinePage = () => {
     //#region wine detail
     useEffect(() => {
         fetchWineDetail(wineId);
+        console.log('wine: ', wine);
     }, [wineId]);
 
     const fetchWineDetail = async (wineId) => {
         try {
-            const response = fetchWineDetailAPI(wineId);
-            if (response.data && response.status === 200) {
-                setWine(response.data);
+            const response = await fetchWineDetailAPI(wineId);
+            if (response) {
+                setWine(response);
                 notification.success(
                     {
                         message: "OK"
@@ -105,13 +107,21 @@ export const DetailWinePage = () => {
 
 
     const columns = [
-        { title: 'Room Name', dataIndex: ['Room', 'RoomName'], key: 'roomName' },
-        { title: 'Current Quantity', dataIndex: 'CurrQuantity', key: 'currQuantity' },
-        { title: 'Total Quantity', dataIndex: 'TotalQuantity', key: 'totalQuantity' },
-        { title: 'Location', dataIndex: ['Room', 'LocationAddress'], key: 'location' },
-        { title: 'Capacity', dataIndex: ['Room', 'Capacity'], key: 'capacity' },
-        { title: 'Current Occupancy', dataIndex: ['Room', 'CurrentOccupancy'], key: 'currentOccupancy' },
-        { title: 'Manager Name', dataIndex: ['Room', 'ManagerName'], key: 'managerName' },
+        { title: 'Wine Name', dataIndex: 'wineName', key: 'wineName' },
+        { title: 'Description', dataIndex: 'description', key: 'description' },
+        { title: 'Manufacture Date', dataIndex: 'mfd', key: 'mfd' },
+        { title: 'Import Price', dataIndex: 'importPrice', key: 'importPrice' },
+        { title: 'Export Price', dataIndex: 'exportPrice', key: 'exportPrice' },
+        { title: 'Wine Category', dataIndex: 'wineCategory', key: 'wineCategory' },
+        { title: 'Country', dataIndex: 'country', key: 'country' },
+        { title: 'Taste', dataIndex: 'taste', key: 'taste' },
+        { title: 'Class', dataIndex: 'class', key: 'class' },
+        { title: 'Qualification', dataIndex: 'qualification', key: 'qualification' },
+        { title: 'Cork', dataIndex: 'cork', key: 'cork' },
+        { title: 'Brand', dataIndex: 'brand', key: 'brand' },
+        { title: 'Bottle Size', dataIndex: 'bottleSize', key: 'bottleSize' },
+        { title: 'Alcohol Volume', dataIndex: 'alcoholByVolume', key: 'alcoholByVolume' },
+        { title: 'Image', dataIndex: 'imageUrl', key: 'imageUrl' },
     ];
 
     if (!wine) return null;
@@ -119,24 +129,30 @@ export const DetailWinePage = () => {
     return (
         <div style={{ width: '100%', height: '100%', margin: 'auto', padding: '40px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}>
             <h2 style={{ textAlign: 'center', marginBottom: '24px' }}>Wine Details</h2>
-            <Button type="default" onClick={handleBackToList} style={{ width: '20%', height: '40px', backgroundColor: 'white', marginBottom: '24px' }}>
-                Back to list of wine
+            <Button type="default" onClick={handleBackToList} style={{ height: '50px', backgroundColor: 'white', borderRadius: '4px', borderColor: 'transparent' }}>
+                <ArrowLeftOutlined style={{ fontSize: '24px', color: '#1677ff' }} />
             </Button>
             <Row>
                 <Col span={24}>
                     <Descriptions bordered column={2}>
-                        <Descriptions.Item label="Wine Name">{wine.WineName}</Descriptions.Item>
-                        <Descriptions.Item label="Alcohol Content">{wine.AlcoholContent}%</Descriptions.Item>
-                        <Descriptions.Item label="Bottle Size">{wine.BottleSize}</Descriptions.Item>
-                        <Descriptions.Item label="Available Stock">{wine.AvailableStock}</Descriptions.Item>
-                        <Descriptions.Item label="Description">{wine.Description}</Descriptions.Item>
-                        <Descriptions.Item label="Supplier">{wine.Supplier}</Descriptions.Item>
-                        <Descriptions.Item label="Manufacture Date">{moment(wine.MFD).format('YYYY-MM-DD')}</Descriptions.Item>
-                        <Descriptions.Item label="Category">{wine.WineCategory.CategoryName}</Descriptions.Item>
+                        <Descriptions.Item label="Wine Name">{wine.wineName}</Descriptions.Item>
+                        <Descriptions.Item label="Description">{wine.description}</Descriptions.Item>
+                        <Descriptions.Item label="Country">{wine.country?.countryName}</Descriptions.Item>
+                        <Descriptions.Item label="Import Price">{wine.importPrice}</Descriptions.Item>
+                        <Descriptions.Item label="Export Price">{wine.exportPrice}</Descriptions.Item>
+                        <Descriptions.Item label="Wine Category">{wine.wineCategory?.categoryName}</Descriptions.Item>
+                        <Descriptions.Item label="Manufacture Date">{moment(wine.mfd).format('YYYY-MM-DD')}</Descriptions.Item>
+                        <Descriptions.Item label="Taste">{wine.taste?.tasteType}</Descriptions.Item>
+                        <Descriptions.Item label="Class">{wine.class?.classType}</Descriptions.Item>
+                        <Descriptions.Item label="Qualification">{wine.qualification?.qualificationType}</Descriptions.Item>
+                        <Descriptions.Item label="Cork">{wine.cork?.corkType}</Descriptions.Item>
+                        <Descriptions.Item label="Brand">{wine.brand?.brandName}</Descriptions.Item>
+                        <Descriptions.Item label="Bottle Size">{wine.bottleSize?.bottleSizeType}</Descriptions.Item>
+                        <Descriptions.Item label="Alcohol Volume">{wine.alcoholByVolume?.alcoholByVolumeType}</Descriptions.Item>
                         <Descriptions.Item label="Image">
-                            <img src={wine.ImageUrl} alt="wine" style={{ width: '150px', height: '150px', borderRadius: '5%' }} />
+                            <img src={wine.imageUrl} alt="wine" style={{ width: '150px', height: '150px', borderRadius: '5%' }} />
                         </Descriptions.Item>
-                        <Descriptions.Item label="Status">{wine.Status}</Descriptions.Item>
+                        {/* <Descriptions.Item label="Status">{wine.status}</Descriptions.Item> */}
                     </Descriptions>
                 </Col>
             </Row>
