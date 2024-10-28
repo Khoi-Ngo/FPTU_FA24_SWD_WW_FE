@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
+
 import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -37,6 +39,7 @@ export const IORequestListPage = () => {
       } else {
         requests = await fetchIORequestTypeApi(ioType);
       }
+      console.log("Fetched IO Requests:", requests);
       setIORequests(requests);
     } catch (error) {
       console.error("Error fetching IO Requests:", error);
@@ -84,11 +87,13 @@ export const IORequestListPage = () => {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : 'N/A'),
     },
     {
       title: 'Due Date',
       dataIndex: 'dueDate',
       key: 'dueDate',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : 'N/A'),
     },
     {
       title: 'IO Type',
@@ -106,11 +111,25 @@ export const IORequestListPage = () => {
       render: (text, record) => (
         <Space size="middle">
           <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
-          <Button type="default" onClick={() => handleUpdate(record)}>Update</Button>
-          <Button type="danger" onClick={() => confirmDelete(record.id)}>
+          <Button
+            type="default"
+            onClick={() => handleUpdate(record)}
+            disabled={record.status !== 'Pending'}
+          >
+            Update
+          </Button>
+          <Button style={{ backgroundColor: 'red', borderColor: 'black' }}
+            type="primary"
+            onClick={() => confirmDelete(record.id)}
+            disabled={record.status !== 'Pending'}
+          >
             Disable
           </Button>
-          <Button type="danger" onClick={() => confirmDone(record.id)}>
+          <Button style={{ backgroundColor: '#4CAF50', borderColor: '#4CAF50' }}
+            type="primary"
+            onClick={() => confirmDone(record.id)}
+            disabled={record.status !== 'Pending'}
+          >
             Done
           </Button>
         </Space>
@@ -123,10 +142,13 @@ export const IORequestListPage = () => {
   };
 
   const handleUpdate = (record) => {
+    console.log("Updating record:", record);
     setCurrentRequest(record);
     form.setFieldsValue({
       ...record,
       ioRequestDetails: record.ioRequestDetails || [],
+      startDate: moment(record.startDate),
+      dueDate: moment(record.dueDate),
     });
     setIsModalVisible(true);
   };
@@ -153,15 +175,20 @@ export const IORequestListPage = () => {
   };
 
   const handleOk = async (values) => {
+    console.log("Submitted values:", values);
     const requestPayload = {
       ...values,
+      startDate: values.startDate ? values.startDate.format('YYYY-MM-DD') : null,
+      dueDate: values.dueDate ? values.dueDate.format('YYYY-MM-DD') : null,
       ioRequestDetails: values.ioRequestDetails || [],
     };
-
+    console.log("Request Payload:", requestPayload);
     try {
       if (currentRequest) {
+        console.log("Updating request with ID:", currentRequest.id);
         await updateIORequestApi(currentRequest.id, requestPayload);
       } else {
+        console.log("Creating new request");
         await createIORequestApi(requestPayload);
       }
       setIsModalVisible(false);
@@ -196,6 +223,7 @@ export const IORequestListPage = () => {
         >
           Create New I/O Request
         </Button>
+
         <Select
           defaultValue="Show ALL"
           style={{ width: 120, marginBottom: 16 }}
@@ -226,7 +254,12 @@ export const IORequestListPage = () => {
           form={form}
           layout="vertical"
           onFinish={handleOk}
-          initialValues={currentRequest || {}}
+          initialValues={{
+            ...currentRequest,
+            startDate: currentRequest ? moment(currentRequest.startDate) : null,
+            dueDate: currentRequest ? moment(currentRequest.dueDate) : null,
+            ioRequestDetails: currentRequest ? currentRequest.ioRequestDetails : [],
+          }}
         >
           <Form.Item name="requestCode" label="Request Code" rules={[{ required: true, message: 'Please enter the request code!' }]}>
             <Input placeholder="Enter the request code" />
@@ -289,9 +322,9 @@ export const IORequestListPage = () => {
                         {...restField}
                         name={[name, 'quantity']}
                         fieldKey={[fieldKey, 'quantity']}
-                        rules={[{ required: true, message: 'Missing quantity' }]}
+                        rules={[{ required: true, message: 'Enter Number Quantity' }]}
                       >
-                        <Input placeholder="Quantity" />
+                        <Input type="number" placeholder="Quantity" />
                       </Form.Item>
                       <Form.Item
                         {...restField}
