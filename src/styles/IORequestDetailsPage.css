@@ -12,15 +12,21 @@
     margin-bottom: 20px;
 }
 
-.request-status-active {
-    color: #52c41a;
+.request-status-pending {
+    color: gold;
     font-weight: bold;
 }
 
-.request-status-inactive {
-    color: #ff4d4f;
+.request-status-done {
+    color: green;
     font-weight: bold;
 }
+
+.request-status-cancle {
+    color: red;
+    font-weight: bold;
+}
+
 
 .details-title {
     margin-bottom: 10px;
