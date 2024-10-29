@@ -214,7 +214,7 @@ export const IORequestListPage = () => {
     <div style={{ padding: '24px' }}>
       <Card bordered={false}>
         <Title level={2}>I/O Request List</Title>
-
+        <Space size="middle">
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -233,6 +233,7 @@ export const IORequestListPage = () => {
           <Option value="In">Input Type</Option>
           <Option value="Out">Output Type</Option>
         </Select>
+        </Space>
         <Divider />
 
         <Table

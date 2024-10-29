@@ -28,18 +28,18 @@ const mockWine = {
 };
 
 const UpdateWinePage = () => {
-    const [form] = Form.useForm();
-    const [wine, setWine] = useState(null);
-    const [wineCategories, setWineCategories] = useState([]);
-    const [countries, setCountries] = useState([]);
-    const [alcoholVolume, setAlcoholVolume] = useState([]);
-    const [bottleSizes, setBottleSizes] = useState([]);
-    const [classes, setClasses] = useState([]);
-    const [brands, setBrands] = useState([]);
-    const [corks, setCorks] = useState([]);
-    const [qualifications, setQualifications] = useState([]);
-    const [tastes, setTastes] = useState([]);
-    const [uploadedImage, setUploadedImage] = useState(null);
+    const [form] = Form.useForm()
+    const [wine, setWine] = useState(null)
+    const [wineCategories, setWineCategories] = useState([])
+    const [countries, setCountries] = useState([])
+    const [alcoholVolume, setAlcoholVolume] = useState([])
+    const [bottleSizes, setBottleSizes] = useState([])
+    const [classes, setClasses] = useState([])
+    const [brands, setBrands] = useState([])
+    const [corks, setCorks] = useState([])
+    const [qualifications, setQualifications] = useState([])
+    const [tastes, setTastes] = useState([])
+    const [uploadedImage, setUploadedImage] = useState(null)
     const { wineId } = useParams()
     const navigate = useNavigate()
     useEffect(() => {
