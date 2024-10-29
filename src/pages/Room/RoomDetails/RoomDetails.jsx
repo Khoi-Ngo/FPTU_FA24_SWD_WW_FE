@@ -23,22 +23,22 @@ function RoomDetails() {
       key: 'wineName'
     },
     {
-      title: 'Total Quantity',
-      dataIndex: 'totalQuantity',
-      key: 'totalQuantity'
+      title: 'Initial Quantity',
+      dataIndex: 'initialQuantity',
+      key: 'initialQuantity'
     },
     {
       title: 'Current Quantity',
-      dataIndex: 'currrentQuantity',
-      key: 'currrentQuantity'
+      dataIndex: 'currentQuantity',
+      key: 'currentQuantity'
     },
     {
-      title: 'Import Quantity',
+      title: 'Total Import Quantity',
       dataIndex: 'import',
       key: 'import'
     },
     {
-      title: 'Export Quantity',
+      title: 'Total Export Quantity',
       dataIndex: 'export',
       key: 'export'
     },

@@ -1,4 +1,4 @@
-import { Children, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/auth-context";
 import { Layout, Menu, notification, Spin } from "antd";
@@ -6,15 +6,17 @@ import Footer from "../components/Footer";
 import { PieChartOutlined, DesktopOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
-import { fetchWineCategoriesAPI } from "~/services/api-service/WineApiService";
+import { fetchAllWineAPI, fetchWineCategoriesAPI, getWineByCategoryAPI } from "~/services/api-service/WineApiService";
 import DynamicMenu from "~/components/Antd_Custom/DynamicMenu";
 
 export const App = () => {
-    const { isAppLoading, SetIsAppLoading, setUserLogin } = useContext(AuthContext);
-    const [selectedMenu, setSelectedMenu] = useState('Overview');
-    const [wineCategories, setWineCategories] = useState([]);
-    const navigate = useNavigate();
-    const location = useLocation();
+    const { isAppLoading, SetIsAppLoading, setUserLogin } = useContext(AuthContext)
+    const [selectedMenu, setSelectedMenu] = useState('Overview')
+    const [wineCategories, setWineCategories] = useState([])
+    const [selectedCategory, setSelectedCategory] = useState(null)
+    const [wine, setWine] = useState(null)
+    const navigate = useNavigate()
+    const location = useLocation()
     const delay = (milSeconds) => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -109,14 +111,33 @@ export const App = () => {
         const data = await fetchWineCategoriesAPI()
         if (data) setWineCategories(data)
     }
+    const getWineByCategory = async (categoryId) => {
+        try {
+            const response = await getWineByCategoryAPI(categoryId);           
+            if (response) {
+                setWine(response)
+            } else {
+                throw new Error('API request failed');
+            }
+        } catch (error) {
+            notification.error({
+                message: "Fail load" + error
+            })
+        }
+    }
     const wineCategoryItems = wineCategories.map(category => ({
-        key: category.id,          
-        label: category.categoryName
+        key: category.id,
+        label: category.categoryName,
+        onClick: () => { getWineByCategory(category.id), setSelectedCategory(category.categoryName) },
     }));
-    const handleParentClick = (key) => {
+    const handleParentWineClick = (key) => {
         console.log('Parent item clicked')
-      };
-    
+        navigate(`/app/wines`)
+    };
+    const handleChildWineClick = (key) => {
+        console.log('Child item clicked')
+    };
+
     const items = [
         {
             label: 'Profile',
@@ -136,7 +157,9 @@ export const App = () => {
         {
             label: 'Wines',
             icon: <UserOutlined />,
-            key: 'Wines'
+            key: 'Wines',
+            onTitleClick: () => handleParentWineClick(),
+            children: wineCategoryItems
         },
         {
             label: 'Wine Category',
