@@ -1,8 +1,12 @@
 import axios from "axios";
 
-const fetchAllUsersAPI = () => {
+const fetchAllUsersAPI = (token) => {
     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users`;
-    return axios.get(URL_BACKEND);
+    return axios.get(URL_BACKEND, {
+        headers: {
+            Authorization: token
+        }
+    });
 }
 
 const fetchUserDetail = (userId) => {

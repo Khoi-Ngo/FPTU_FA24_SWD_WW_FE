@@ -14,7 +14,7 @@ export const TaskHome = () => {
               <Link to="/io-request">IO Request</Link>
             </Button>
             <Button type="primary" style={{ width: '200px', height: '80px', fontSize: '20px' }}>
-              <Link to="/inventory-check">Inventory Check</Link>
+              <Link to="/app/check-request-details">Inventory Check</Link>
             </Button>
           </Space>
         </Content>

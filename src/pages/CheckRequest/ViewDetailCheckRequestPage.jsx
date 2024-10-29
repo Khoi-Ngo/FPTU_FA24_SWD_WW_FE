@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Descriptions, Spin, notification, Button, Modal, Input, Select, DatePicker } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeftOutlined, EditFilled, SaveOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, EditFilled, SaveOutlined, CloseOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
     fetchViewDetailCheckRequestAPI,
     updateCheckRequestAPI,
@@ -9,7 +9,7 @@ import {
 } from '~/services/api-service/CR-FLOW/CheckRequestApiService';
 import { fetchAllActiveWineRoomNameAPI } from '~/services/api-service/WineRoomeApiService';
 import { fetchAllStaffAPI } from '~/services/api-service/UserApiService';
-import { createAddCheckRequestAPI } from '~/services/api-service/CR-FLOW/CheckRequestDetailApiService';
+import { createAddCheckRequestAPI, disableCheckRequestDetailAPI } from '~/services/api-service/CR-FLOW/CheckRequestDetailApiService';
 
 const { Option } = Select;
 
@@ -21,6 +21,7 @@ const priorityOptions = [
 
 const ViewDetailCheckRequestPage = () => {
 
+    //#region handle create additional check request detail
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [formData, setFormData] = useState({
         purpose: '',
@@ -56,7 +57,7 @@ const ViewDetailCheckRequestPage = () => {
 
     // Show/Hide Modal
     const showModal = () => setIsModalVisible(true);
-    const hideModal = () =>{
+    const hideModal = () => {
         setIsModalVisible(false);
         setFormData(initialFormData);
     };
@@ -83,6 +84,42 @@ const ViewDetailCheckRequestPage = () => {
             });
         }
     };
+    //#endregion
+
+    //#region handle disable check request detail direct in the detail
+    const handleDeleteSubCR = async (id) => {
+        Modal.confirm({
+            title: `Disable Check Request Detail ID : ${id}`,
+            content: <p>Are you sure you want to disable this check request detail ?</p>,
+            onOk: async () => {
+                try {
+                    await disableCheckRequestDetailAPI(id);
+                    notification.success({
+                        message: 'Disable Successful',
+                        description: 'The check request detail has been disabled.',
+                    });
+
+                } catch (error) {
+                    notification.error({
+                        message: 'Disable Failed',
+                        description: 'Could not disable check request detail.',
+                    });
+                } finally {
+                    //fetching all the list again
+                    fetchDetails();
+                }
+            }
+        });
+    }
+    //#endregion
+
+    //#region view detail CR detail
+    const handleViewDetailCRDetail = async (id) => {
+        //redirect to the detail page
+        navigate(`/app/check-request-details/${id}`);
+    }
+    //#endregion
+
 
     //#region init + load data
     const { requestId } = useParams();
@@ -165,6 +202,27 @@ const ViewDetailCheckRequestPage = () => {
         { title: 'Wine Room ID', dataIndex: 'wineRoomId', key: 'wineRoomId', align: 'center' },
         { title: 'Expected Current Quantity', dataIndex: 'expectedCurrQuantity', key: 'expectedCurrQuantity', align: 'center' },
         { title: 'Status', dataIndex: 'status', key: 'status', align: 'center' },
+        {
+            title: 'Actions',
+            key: 'action',
+            align: 'center',
+            render: (text, record) => (
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                    <Button
+                        style={styles.deleteButton}
+                        onClick={() => handleDeleteSubCR(record.id)}
+                    >
+                        <DeleteOutlined />
+                    </Button>
+                    <Button
+                        style={styles.viewButton}
+                        onClick={() => handleViewDetailCRDetail(record.id)}
+                    >
+                        <EditOutlined />
+                    </Button>
+                </div>
+            ),
+        },
     ];
     //#endregion
 

@@ -27,6 +27,8 @@ import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx';
 import CheckRequestListPage from './pages/CheckRequest/CheckRequestListPage.jsx';
 import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestPage.jsx';
 import ViewDetailCheckRequestPage from './pages/CheckRequest/ViewDetailCheckRequestPage.jsx';
+import { CheckRequestDetailListPage } from './pages/CheckRequestDetail/CheckRequestDetailListPage.jsx';
+import { ViewDetailCRDetailPage } from './pages/CheckRequestDetail/ViewDetailCRDetailPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -132,6 +134,14 @@ const router = createBrowserRouter([
       {
         path: "check-requests/:requestId",
         element: <ViewDetailCheckRequestPage />
+      },
+      {
+        path: "check-request-details",
+        element: <CheckRequestDetailListPage />
+      },
+      {
+        path: "check-request-details/:id",
+        element: <ViewDetailCRDetailPage />
       },
 
     ],

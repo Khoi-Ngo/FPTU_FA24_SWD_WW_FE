@@ -35,7 +35,8 @@ const UserListPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetchAllUsersAPI();
+      const token = window?.localStorage?.getItem("access_token");
+      const response = await fetchAllUsersAPI(`Bearer ${token}`);
       if (response.data) {
         setUsers(response.data);
       } else {

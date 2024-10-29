@@ -26,11 +26,11 @@ export const AddUserForm = ({ setIsModalVisible, fetchUsers }) => {
 
     // Define the options based on user role
     const roleOptions = userLogin.role === "MANAGER"
-        ? [<Select.Option key="2" value="2">STAFF</Select.Option>]
+        ? [<Select.Option key="3" value="3">STAFF</Select.Option>]
         : [
-            <Select.Option key="1" value="1">MANAGER</Select.Option>,
-            <Select.Option key="2" value="2">STAFF</Select.Option>,
-            <Select.Option key="3" value="3">ADMIN</Select.Option>
+            <Select.Option key="1" value="1">ADMIN</Select.Option>,
+            <Select.Option key="2" value="2">MANAGER</Select.Option>,
+            <Select.Option key="3" value="3">STAFF</Select.Option>
         ];
 
     return (
