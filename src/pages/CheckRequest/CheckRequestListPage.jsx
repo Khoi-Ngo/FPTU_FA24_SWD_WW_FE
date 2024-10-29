@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Spin, Button, notification } from 'antd';
+import { Table, Spin, Button, notification, Modal } from 'antd';
 import { EditOutlined, EyeOutlined, UserDeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { fetchCheckRequestsAPI } from '~/services/api-service/CR-FLOW/CheckRequestApiService';
+import { disableCheckRequestAPI, fetchCheckRequestsAPI } from '~/services/api-service/CR-FLOW/CheckRequestApiService';
 
 const CheckRequestListPage = () => {
+
+
+    //#region init + load data
     const [checkRequests, setCheckRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -30,29 +33,9 @@ const CheckRequestListPage = () => {
         fetchRequests();
     }, []);
 
-    // Handle create request
-    const handleCreate = () => {
-        navigate(`/app/create-check-request`);
-    };
 
-    // Handle delete
-    const handleDelete = (id) => {
-        notification.info({ message: "Delete request clicked" });
-    };
-
-    // Handle view details
-    const handleViewDetails = (requestId) => {
-        //redirect to view detail page with request id
-        navigate(`/app/check-requests/${requestId}`);
-    };
-
-    // Handle edit
-    const handleEdit = (requestId) => {
-        notification.info({ message: "Edit request clicked" });
-    };
-
-    // Table columns definition
-    const columns = [
+       // Table columns definition
+       const columns = [
         {
             title: 'Request ID',
             dataIndex: 'id',
@@ -116,21 +99,58 @@ const CheckRequestListPage = () => {
                         <UserDeleteOutlined />
                     </Button>
                     <Button
-                        style={styles.editButton}
-                        onClick={() => handleEdit(record.id)}
-                    >
-                        <EditOutlined />
-                    </Button>
-                    <Button
                         style={styles.viewButton}
                         onClick={() => handleViewDetails(record.id)}
                     >
-                        <EyeOutlined /> View
+                        <EditOutlined />
                     </Button>
                 </div>
             ),
         },
     ];
+
+    //#endregion
+
+    //#region Handle create request
+    const handleCreate = () => {
+        navigate(`/app/create-check-request`);
+    };
+
+    //#endregion
+
+    //#region handle delete
+    const handleDelete = (id) => {
+        Modal.confirm({
+            title: 'Disable Check Request',
+            content: <p>Are you sure you want to disable this check request?</p>,
+            onOk: async () => {
+                try {
+                    await disableCheckRequestAPI({ requestId: id });
+                    notification.success({
+                        message: 'Disable Successful',
+                        description: 'The check request has been disabled.',
+                    });
+
+                } catch (error) {
+                    notification.error({
+                        message: 'Disable Failed',
+                        description: 'Could not disable check request.',
+                    });
+                } finally {
+                    //fetching all the list again
+                    fetchRequests();
+                }
+            }
+        });
+    };
+    //#endregion
+
+    //#region Handle view details
+    const handleViewDetails = (requestId) => {
+        //redirect to view detail page with request id
+        navigate(`/app/check-requests/${requestId}`);
+    };
+    //#endregion
 
     return (
         <div style={styles.pageContainer}>
@@ -158,7 +178,7 @@ const CheckRequestListPage = () => {
     );
 };
 
-// Inline styles
+//#region Inline styles
 const styles = {
     pageContainer: {
         padding: '40px',
@@ -210,5 +230,7 @@ const styles = {
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     },
 };
+
+//#endregion
 
 export default CheckRequestListPage;
