@@ -11,12 +11,11 @@ const priorityOptions = [
     { label: 'Medium', value: 'Medium' },
     { label: 'High', value: 'High' }
 ];
-
 export const CreateCheckRequestPage = () => {
     const [form] = Form.useForm();
     const [staffOptions, setStaffOptions] = useState([]);
     const [wineRoomOptions, setWineRoomOptions] = useState([]);
-    const { userLogin, setUserLogin } = useContext(AuthContext);
+    const { userLogin} = useContext(AuthContext);
     const token = window?.localStorage?.getItem("access_token");
     const authToken = `Bearer ${token}`;
 
@@ -36,6 +35,11 @@ export const CreateCheckRequestPage = () => {
                     value: staff.id,
                 }));
                 setStaffOptions(staffList);
+                notification.success(
+                    {
+                        message: "Load active staff ok"
+                    }
+                )
             }
         } catch (error) {
             notification.error({ message: 'Failed to fetch staff', description: error.message });
@@ -43,13 +47,18 @@ export const CreateCheckRequestPage = () => {
     };
     const populateWineRoomOptions = async () => {
         try {
-            const response = await fetchAllActiveWineRoomNameAPI();
+            const response = await fetchAllActiveWineRoomNameAPI(authToken);
             if (response.data) {
                 const wineRooms = response.data.map(room => ({
                     label: `WRID: ${room.id} - RID: ${room.roomId} - RName: ${room.roomName} - WID: ${room.wineId} - WName: ${room.wineName}`,
-                    value: room.id,  // Ensure this matches the key used in the data source
+                    value: room.id,
                 }));
                 setWineRoomOptions(wineRooms);
+                notification.success(
+                    {
+                        message: "Load wineroom ok!"
+                    }
+                )
             }
         } catch (error) {
             notification.error({ message: 'Failed to fetch wine rooms', description: error.message });
@@ -62,12 +71,8 @@ export const CreateCheckRequestPage = () => {
 
         const payload = {
             purpose: formValues.purpose,
-            startDate: formValues.startDate ? formValues.startDate.toISOString() : null,
-            dueDate: formValues.endDate ? formValues.endDate.toISOString() : null,
             comments: formValues.comments,
             priorityLevel: formValues.priorityLevel,
-            requesterId: userLogin.id,
-            requesterName: userLogin.username,
             createCheckRequestDetailRequests: formValues.details
                 .map(detail => ({
                     purpose: detail.purpose,
@@ -79,10 +84,9 @@ export const CreateCheckRequestPage = () => {
                 }))
                 .filter(detail => detail.purpose || detail.startDate || detail.dueDate),
         };
-        console.log(payload);
 
         try {
-            const response = await createCheckRequestAPI(payload);
+            const response = await createCheckRequestAPI(payload, authToken);
             if (response.status === 200) {
                 notification.success({ message: 'Check Request Created Successfully' });
                 navigate('/app/check-requests');
@@ -114,12 +118,6 @@ export const CreateCheckRequestPage = () => {
                 {/* Form fields for main request info */}
                 <Form.Item name="comments" label="Main Request Comments" rules={[{ required: true, message: 'Comments are required' }]}>
                     <Input placeholder="Enter comments" style={{ borderRadius: '4px', borderColor: '#d9d9d9' }} />
-                </Form.Item>
-                <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Start date is required' }]}>
-                    <DatePicker style={{ borderRadius: '4px', width: '100%' }} />
-                </Form.Item>
-                <Form.Item name="endDate" label="End Date" rules={[{ required: true, message: 'End date is required' }]}>
-                    <DatePicker style={{ borderRadius: '4px', width: '100%' }} />
                 </Form.Item>
                 <Form.Item name="purpose" label="Purpose" rules={[{ required: true, message: 'Purpose is required' }]}>
                     <Input placeholder="Enter purpose" style={{ borderRadius: '4px', borderColor: '#d9d9d9' }} />

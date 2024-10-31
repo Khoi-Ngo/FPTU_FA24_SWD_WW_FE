@@ -18,10 +18,9 @@ const priorityOptions = [
     { label: 'Medium', value: 'Medium' },
     { label: 'High', value: 'High' }
 ];
-
+//TODO: Refer check request detail list page
 const ViewDetailCheckRequestPage = () => {
-    const token = window?.localStorage?.getItem("access_token");
-    const authToken = `Bearer ${token}`;
+
     //#region handle create additional check request detail
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [formData, setFormData] = useState({
@@ -37,8 +36,6 @@ const ViewDetailCheckRequestPage = () => {
 
     const initialFormData = {
         purpose: '',
-        startDate: null,
-        dueDate: null,
         comments: '',
         wineRoomId: null,
         checkerId: null,
@@ -85,6 +82,22 @@ const ViewDetailCheckRequestPage = () => {
             });
         }
     };
+
+    const handleCreateAdditional = async () => {
+        try {
+            await handleSaveCreateAdditional();
+        } catch (error) {
+            notification.error({
+                message: "Cannot create",
+                description: "Fail to create additional detail for this check request"
+            })
+        } finally {
+            //fetch all check request details again
+            fetchDetails();
+            setFormData(initialFormData);
+        }
+    }
+
     //#endregion
 
     //#region handle disable check request detail direct in the detail
@@ -121,7 +134,6 @@ const ViewDetailCheckRequestPage = () => {
     }
     //#endregion
 
-
     //#region init + load data
     const { requestId } = useParams();
     const [checkRequestDetails, setCheckRequestDetails] = useState(null);
@@ -130,6 +142,8 @@ const ViewDetailCheckRequestPage = () => {
     const [newData, setNewData] = useState({});
     const [comments, setComments] = useState('');
     const navigate = useNavigate();
+    const token = window?.localStorage?.getItem("access_token");
+    const authToken = `Bearer ${token}`;
 
     const fetchAllStaffActive = async () => {
         try {
@@ -147,7 +161,7 @@ const ViewDetailCheckRequestPage = () => {
     };
     const populateWineRoomOptions = async () => {
         try {
-            const response = await fetchAllActiveWineRoomNameAPI();
+            const response = await fetchAllActiveWineRoomNameAPI(authToken);
             if (response.data) {
                 const wineRooms = response.data.map(room => ({
                     label: `WRID: ${room.id} - RID: ${room.roomId} - RName: ${room.roomName} - WID: ${room.wineId} - WName: ${room.wineName}`,
@@ -163,7 +177,7 @@ const ViewDetailCheckRequestPage = () => {
 
     const fetchDetails = async () => {
         try {
-            const response = await fetchViewDetailCheckRequestAPI({ requestId });
+            const response = await fetchViewDetailCheckRequestAPI(requestId, authToken);
             setCheckRequestDetails(response.data);
             setNewData(response.data); // Initialize newData with current data
             setReqCode(response.data.requestCode);
@@ -248,7 +262,14 @@ const ViewDetailCheckRequestPage = () => {
 
     const handleSave = async () => {
         try {
-            await updateCheckRequestAPI(newData);
+            await updateCheckRequestAPI(
+                {
+                    Id: requestId,
+                    comments: newData.comments,
+                    purpose: newData.purpose,
+                    priorityLevel: newData.priorityLevel
+                }, authToken
+            );
             notification.success({
                 message: 'Update Successful',
                 description: 'The check request has been updated.',
@@ -271,7 +292,7 @@ const ViewDetailCheckRequestPage = () => {
             content: <p>Are you sure you want to disable this check request?</p>,
             onOk: async () => {
                 try {
-                    await disableCheckRequestAPI({ requestId });
+                    await disableCheckRequestAPI(requestId, authToken);
                     notification.success({
                         message: 'Disable Successful',
                         description: 'The check request has been disabled.',
@@ -289,20 +310,6 @@ const ViewDetailCheckRequestPage = () => {
     //#endregion
 
     //#region Handle create additional check request details
-    const handleCreateAdditional = async () => {
-        try {
-            await handleSaveCreateAdditional();
-        } catch (error) {
-            notification.error({
-                message: "Cannot create",
-                description: "Fail to create additional detail for this check request"
-            })
-        } finally {
-            //fetch all check request details again
-            fetchDetails();
-            setFormData(initialFormData);
-        }
-    }
 
     //#endregion
 
@@ -335,20 +342,9 @@ const ViewDetailCheckRequestPage = () => {
                             purpose
                         )}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Start Date">
-                        {isEditing ? (
-                            <Input name="startDate" type="date" value={new Date(newData.startDate).toISOString().split('T')[0]} onChange={handleInputChange} />
-                        ) : (
-                            new Date(startDate).toLocaleDateString()
-                        )}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Due Date">
-                        {isEditing ? (
-                            <Input name="dueDate" type="date" value={new Date(newData.dueDate).toISOString().split('T')[0]} onChange={handleInputChange} />
-                        ) : (
-                            new Date(dueDate).toLocaleDateString()
-                        )}
-                    </Descriptions.Item>
+                    <Descriptions.Item label="Request Code">{startDate}</Descriptions.Item>
+
+                    <Descriptions.Item label="Request Code">{dueDate}</Descriptions.Item>
                     <Descriptions.Item label="Priority Level">
                         {isEditing ? (
                             <Select value={newData.priorityLevel} onChange={handleSelectChange} style={{ width: '100%' }}>

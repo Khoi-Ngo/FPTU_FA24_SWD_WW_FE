@@ -4,7 +4,8 @@ import { Card, Typography, Button, Space, Descriptions, Divider } from 'antd';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
-
+//TODO: update CR DETAIL, disable CR DETAIL, CREATE REPORT, UPDATE REPORT
+//TODO: Check fetch detail of CR DETAIL
 export const ViewDetailCRDetailPage = () => {
     const { id } = useParams();
     const [data, setData] = useState(null);

@@ -9,7 +9,7 @@ import { fetchAllActiveWineRoomNameAPI } from '~/services/api-service/WineRoomeA
 import { Option } from 'antd/es/mentions';
 
 const { Text } = Typography;
-
+//TODO: check again -> Create CR DETAIL, VIEW DETAIL OF CR DETAIL, DISABLE CR DETAIL, FETCH ALL CR DETAIL
 export const CheckRequestDetailListPage = () => {
 
     const token = window?.localStorage?.getItem("access_token");

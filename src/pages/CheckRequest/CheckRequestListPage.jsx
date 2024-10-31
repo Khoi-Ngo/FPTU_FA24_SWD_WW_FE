@@ -11,11 +11,14 @@ const CheckRequestListPage = () => {
     const [checkRequests, setCheckRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+    const token = window?.localStorage?.getItem("access_token");
+    const authToken = `Bearer ${token}`;
+  
 
     // Fetch data
     const fetchRequests = async () => {
         try {
-            const response = await fetchCheckRequestsAPI();
+            const response = await fetchCheckRequestsAPI(authToken);
             setCheckRequests(response.data);
             setIsLoading(false);
             notification.success({
@@ -125,7 +128,7 @@ const CheckRequestListPage = () => {
             content: <p>Are you sure you want to disable this check request?</p>,
             onOk: async () => {
                 try {
-                    await disableCheckRequestAPI({ requestId: id });
+                    await disableCheckRequestAPI(id, authToken);
                     notification.success({
                         message: 'Disable Successful',
                         description: 'The check request has been disabled.',
@@ -147,7 +150,6 @@ const CheckRequestListPage = () => {
 
     //#region Handle view details
     const handleViewDetails = (requestId) => {
-        //redirect to view detail page with request id
         navigate(`/app/check-requests/${requestId}`);
     };
     //#endregion
