@@ -148,14 +148,14 @@ const UserProfilePage = () => {
             <Card className="user-card">
                 <Avatar
                     size={64}
-                    src={user.profileImageUrl}
+                    src={user.Avatar}
                     alt="User Avatar"
                     style={{
                         borderRadius: '50%',
                         border: '0.3px solid black',
                     }}
                 />
-                <label style={{ marginTop: 10, cursor: 'pointer', color: 'gray' }} htmlFor="btnUpload">
+                <label style={{ marginTop: 10, cursor: 'pointer', color: 'gray', display: 'block'}} htmlFor="btnUpload">
                     Change avatar
                 </label>
                 <input type="file" hidden id="btnUpload" onChange={handleUploadAvatar} />
