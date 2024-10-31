@@ -5,7 +5,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI, fetchWineDetailAPI, updateWineAPI, uploadImageWineAPI } from '~/services/api-service/WineApiService';
 
-//TODO: replace curr image handling
 
 const mockWineCategories = [
     { id: 1, categoryName: 'Red Wine', wineType: 'Cabernet Sauvignon' },

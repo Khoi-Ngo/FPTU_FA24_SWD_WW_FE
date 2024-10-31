@@ -32,7 +32,6 @@ export const LoginPage = () => {
                     // login successful
                     localStorage.setItem("access_token", res.data.accessToken);
                     setUserLogin(res.data.userInfo);
-
                     notification.info({
                         message: "Login successfully",
                     });

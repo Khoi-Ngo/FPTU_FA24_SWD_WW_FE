@@ -4,7 +4,7 @@ import { UserOutlined } from '@ant-design/icons';
 import '../../styles/UserDetailStyle.css';
 import { AuthContext } from '../../components/auth-context';
 
-import { fetchUserDetail, updatePasswordApi, updateUserApi } from '~/services/api-service/UserApiService';
+import { fetchUserDetail, updatePasswordApi, updateUserApi, uploadAvatarApi } from '~/services/api-service/UserApiService';
 
 const UserProfilePage = () => {
     const [user, setUser] = useState(null);
@@ -14,8 +14,10 @@ const UserProfilePage = () => {
     const { userLogin, setUserLogin } = useContext(AuthContext);
     const [passwordform] = Form.useForm(); // Initialize the form instance here
     const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+    const [tempAvatar, setTempAvatar] = useState(null);
     const token = window?.localStorage?.getItem("access_token");
     const authToken = `Bearer ${token}`;
+    const [fileAvatar, setFileAvatar] = useState(null);
 
     //#region fetch user profile
     useEffect(() => {
@@ -43,7 +45,6 @@ const UserProfilePage = () => {
                 {
                     newPass: values.newPass,
                     oldPass: values.oldPass,
-                    username: userLogin.username
                 }, authToken
             );
             if (response.data && response.status === 200) {
@@ -82,11 +83,47 @@ const UserProfilePage = () => {
     //#endregion
 
     //#region upload image
-    const handleUploadAvatar = (event) => {
-        notification.info({
-            message: 'Clicked upload avatar',
-        });
-        // TODO: Implement later
+    const handleSaveUploadAvatar = async () => {
+
+        try {
+            const newImgURL = (await uploadAvatarApi(fileAvatar, authToken)).data;
+            if (newImgURL) {
+                setUser({ ...user, avatar: newImgURL });
+                setUserLogin({ ...userLogin, avatar: newImgURL });
+                console.log(">>>>NEW IMAGE: ", newImgURL);
+                notification.success(
+                    {
+                        message: "Upload ok"
+                    }
+                )
+            } else {
+                notification.warning({
+                    message: "Something wrong",
+                });
+            }
+        } catch (error) {
+            setTempAvatar(null);
+            notification.error({
+                message: 'An error occurred while uploading',
+                description: error.message,
+            });
+        } finally {
+            setTempAvatar(null);
+        }
+    }
+
+
+    const handleUploadAvatar = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setFileAvatar(file);
+            const tempUrl = URL.createObjectURL(file);
+            setTempAvatar(tempUrl);
+        }
+    };
+
+    const handleCancelAvatarChange = () => {
+        setTempAvatar(null);
     };
     //#endregion
 
@@ -148,17 +185,29 @@ const UserProfilePage = () => {
             <Card className="user-card">
                 <Avatar
                     size={64}
-                    src={user.Avatar}
+                    src={tempAvatar || user.avatar}
                     alt="User Avatar"
                     style={{
                         borderRadius: '50%',
                         border: '0.3px solid black',
                     }}
                 />
-                <label style={{ marginTop: 10, cursor: 'pointer', color: 'gray', display: 'block'}} htmlFor="btnUpload">
+                <label style={{ marginTop: 10, cursor: 'pointer', color: 'gray', display: 'block' }} htmlFor="btnUpload">
                     Change avatar
                 </label>
                 <input type="file" hidden id="btnUpload" onChange={handleUploadAvatar} />
+
+                {tempAvatar && (
+                    <>
+                        <Button onClick={handleCancelAvatarChange} style={{ marginTop: 8 }}>
+                            Cancel Change
+                        </Button>
+                        <Button onClick={handleSaveUploadAvatar} style={{ marginTop: 8 }}>
+                            Save
+                        </Button>
+                    </>
+                )}
+
                 <h2>{user.firstName} {user.lastName}</h2>
                 <p className="user-role">{user.role}</p>
                 <Descriptions bordered column={1} className="user-descriptions">

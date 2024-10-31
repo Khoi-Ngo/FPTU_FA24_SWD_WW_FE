@@ -74,10 +74,19 @@ const fetchAllStaffAPI = async (token) => {
 }
 
 
-//TODO: implement later
-const uploadAvatarApi = () => {
-    
-}
+const uploadAvatarApi = (file, token) => {
+    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/upload-profile-image`;
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return axios.post(URL_BACKEND, formData, {
+        headers: {
+            Authorization: token,
+            "Content-Type": "multipart/form-data"
+        }
+    });
+};
+
 
 const sendMailResetPassAPI = ({ username, email }) => {
     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/mail-forget-pass`;
