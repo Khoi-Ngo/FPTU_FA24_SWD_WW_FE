@@ -14,6 +14,8 @@ const UserProfilePage = () => {
     const { userLogin, setUserLogin } = useContext(AuthContext);
     const [passwordform] = Form.useForm(); // Initialize the form instance here
     const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+    const token = window?.localStorage?.getItem("access_token");
+    const authToken = `Bearer ${token}`;
 
     //#region fetch user profile
     useEffect(() => {
@@ -42,7 +44,7 @@ const UserProfilePage = () => {
                     newPass: values.newPass,
                     oldPass: values.oldPass,
                     username: userLogin.username
-                }
+                }, authToken
             );
             if (response.data && response.status === 200) {
                 passwordform.resetFields(); // Reset the form when canceled
@@ -95,7 +97,7 @@ const UserProfilePage = () => {
 
     const handleSave = async () => {
         try {
-            const response = await updateUserApi(editableUser, userLogin.id);
+            const response = await updateUserApi(editableUser, userLogin.id, authToken);
             if (response.data && response.status === 200) {
                 setUser(editableUser);
                 setUserLogin(editableUser);

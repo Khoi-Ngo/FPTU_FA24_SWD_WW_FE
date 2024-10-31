@@ -3,14 +3,14 @@ import { createUserApi } from "../../services/api-service/UserApiService";
 import { useContext } from "react";
 import { AuthContext } from "../auth-context";
 
-export const AddUserForm = ({ setIsModalVisible, fetchUsers }) => {
+export const AddUserForm = ({ setIsModalVisible, fetchUsers, token }) => {
     const [form] = Form.useForm();
     const { userLogin, setUserLogin } = useContext(AuthContext);
 
     const handleAddUser = async (values) => {
         try {
             setIsModalVisible(false);
-            await createUserApi(values);
+            await createUserApi(values, token);
             await fetchUsers();
             notification.success({
                 message: "Created user!"

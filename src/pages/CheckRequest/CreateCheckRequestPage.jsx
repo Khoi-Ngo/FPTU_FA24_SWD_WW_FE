@@ -17,6 +17,8 @@ export const CreateCheckRequestPage = () => {
     const [staffOptions, setStaffOptions] = useState([]);
     const [wineRoomOptions, setWineRoomOptions] = useState([]);
     const { userLogin, setUserLogin } = useContext(AuthContext);
+    const token = window?.localStorage?.getItem("access_token");
+    const authToken = `Bearer ${token}`;
 
     const navigate = useNavigate();
 
@@ -27,7 +29,7 @@ export const CreateCheckRequestPage = () => {
 
     const fetchAllStaffActive = async () => {
         try {
-            const response = await fetchAllStaffAPI();
+            const response = await fetchAllStaffAPI(authToken);
             if (response.data) {
                 const staffList = response.data.map(staff => ({
                     label: `${staff.firstName} ${staff.lastName} (${staff.username})`,

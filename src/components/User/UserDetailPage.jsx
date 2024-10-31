@@ -13,6 +13,8 @@ export const UserDetailPage = () => {
     const navigate = useNavigate();
     const [passwordform] = Form.useForm();
     const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+    const token = window?.localStorage?.getItem("access_token");
+    const authToken = `Bearer ${token}`;
 
     //#region update password
     const handleUpdatePassword = () => {
@@ -25,7 +27,7 @@ export const UserDetailPage = () => {
             const response = await resetPasswordADMINApi({
                 username: userDetail.username,
                 newPass: values.newPass,
-            });
+            }, authToken);
 
             if (response.data && response.status === 200) {
                 passwordform.resetFields();
@@ -57,9 +59,9 @@ export const UserDetailPage = () => {
             cancelText: 'No',
             onOk: async () => {
                 try {
-                    await deleteUserApi(userId);
+                    await deleteUserApi(userId, authToken);
                     notification.success({ message: "User disabled" });
-                    const response = await fetchUserDetail(userId);
+                    const response = await fetchUserDetail(userId, authToken);
                     setUserDetail(response.data);
                 } catch (ex) {
                     notification.error({ message: ex.message });
@@ -77,7 +79,7 @@ export const UserDetailPage = () => {
 
     const handleSave = async () => {
         try {
-            const response = await updateUserApi(editableUser, userId);
+            const response = await updateUserApi(editableUser, userId, authToken);
             if (response.data && response.status === 200) {
                 setUserDetail(editableUser);
                 notification.success({ message: "Profile updated successfully" });
@@ -110,7 +112,7 @@ export const UserDetailPage = () => {
     useEffect(() => {
         const getUserDetail = async () => {
             try {
-                const response = await fetchUserDetail(userId);
+                const response = await fetchUserDetail(userId, authToken);
                 setUserDetail(response.data);
             } catch (err) {
                 setError(err);

@@ -20,7 +20,8 @@ const priorityOptions = [
 ];
 
 const ViewDetailCheckRequestPage = () => {
-
+    const token = window?.localStorage?.getItem("access_token");
+    const authToken = `Bearer ${token}`;
     //#region handle create additional check request detail
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [formData, setFormData] = useState({
@@ -132,7 +133,7 @@ const ViewDetailCheckRequestPage = () => {
 
     const fetchAllStaffActive = async () => {
         try {
-            const response = await fetchAllStaffAPI();
+            const response = await fetchAllStaffAPI(authToken);
             if (response.data) {
                 const staffList = response.data.map(staff => ({
                     label: `${staff.firstName} ${staff.lastName} (${staff.username})`,

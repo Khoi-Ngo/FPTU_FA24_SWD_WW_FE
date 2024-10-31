@@ -12,6 +12,8 @@ const { Text } = Typography;
 
 export const CheckRequestDetailListPage = () => {
 
+    const token = window?.localStorage?.getItem("access_token");
+    const authToken = `Bearer ${token}`;
     //#region init + load data
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [formData, setFormData] = useState({
@@ -52,7 +54,7 @@ export const CheckRequestDetailListPage = () => {
     };
     const fetchAllStaffActive = async () => {
         try {
-            const response = await fetchAllStaffAPI();
+            const response = await fetchAllStaffAPI(authToken);
             if (response.data) {
                 const staffList = response.data.map(staff => ({
                     label: `${staff.firstName} ${staff.lastName} (${staff.username})`,

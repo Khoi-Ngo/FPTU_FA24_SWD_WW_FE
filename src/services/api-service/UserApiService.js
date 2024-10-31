@@ -9,29 +9,73 @@ const fetchAllUsersAPI = (token) => {
     });
 }
 
-const fetchUserDetail = (userId) => {
+const fetchUserDetail = (userId, token) => {
     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/${userId}`;
-    return axios.get(URL_BACKEND);
+    return axios.get(URL_BACKEND, {
+        headers: {
+            Authorization: token
+        }
+    });
 }
 
-const createUserApi = (newUserData) => {
+const createUserApi = (newUserData, token) => {
     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users`;
-    return axios.post(URL_BACKEND, newUserData);
+    return axios.post(URL_BACKEND, newUserData, {
+        headers: {
+            Authorization: token
+        }
+    });
 }
 
-const deleteUserApi = async (userId) => {
+const deleteUserApi = async (userId, token) => {
     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/${userId}`;
-    return axios.delete(URL_BACKEND);
+    return axios.delete(URL_BACKEND, {
+        headers: {
+            Authorization: token
+        }
+    });
 };
 
-const updateUserApi = (updatedUserData, userId) => {
+const updateUserApi = (updatedUserData, userId, token) => {
+    updatedUserData.profileImageUrl = "temp N/A";
     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/${userId}`;
-    return axios.put(URL_BACKEND, updatedUserData);
+    return axios.put(URL_BACKEND, updatedUserData, {
+        headers: {
+            Authorization: token
+        }
+    });
 }
 
-const updatePasswordApi = ({ newPass, oldPass, username }) => {
+const updatePasswordApi = ({ newPass, oldPass, username }, token) => {
     const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/update-password`;
-    return axios.post(URL_BACKEND, { newPass, oldPass, username })
+    return axios.post(URL_BACKEND, { newPass, oldPass, username }, {
+        headers: {
+            Authorization: token
+        }
+    })
+}
+
+const resetPasswordADMINApi = ({ username, newPass }, token) => {
+    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/auth/reset-password`;
+    return axios.post(URL_BACKEND, { username, newPass }, {
+        headers: {
+            Authorization: token
+        }
+    });
+}
+const fetchAllStaffAPI = async (token) => {
+    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/staff`;
+    return axios.get(URL_BACKEND, {
+        headers: {
+            Authorization: token
+        }
+    });
+}
+
+
+//TODO: implement later
+const uploadAvatarApi = () => {
+    
 }
 
 const sendMailResetPassAPI = ({ username, email }) => {
@@ -39,20 +83,6 @@ const sendMailResetPassAPI = ({ username, email }) => {
     return axios.post(URL_BACKEND, { username, email });
 }
 
-const resetPasswordADMINApi = ({ username, newPass }) => {
-    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/auth/reset-password`;
-    return axios.post(URL_BACKEND, { username, newPass });
-}
-const fetchAllStaffAPI = async () => {
-    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/users/staff`;
-    return axios.get(URL_BACKEND);
-}
-
-const uploadAvatarApi = () => {
-    //TODO: implement later
-}
-
-//TODO: reset pass by code mail + new pass
 
 export {
     fetchAllUsersAPI, createUserApi, deleteUserApi, updateUserApi, updatePasswordApi, sendMailResetPassAPI, uploadAvatarApi, fetchUserDetail, resetPasswordADMINApi, fetchAllStaffAPI
