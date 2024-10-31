@@ -29,6 +29,7 @@ import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestP
 import ViewDetailCheckRequestPage from './pages/CheckRequest/ViewDetailCheckRequestPage.jsx';
 import { CheckRequestDetailListPage } from './pages/CheckRequestDetail/CheckRequestDetailListPage.jsx';
 import { ViewDetailCRDetailPage } from './pages/CheckRequestDetail/ViewDetailCRDetailPage.jsx';
+import FilteredWineListPage from './pages/Wine/FilteredWineListPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -82,7 +83,14 @@ const router = createBrowserRouter([
       },
       {
         path: 'wines',
-        element: <WineListPage />
+        element: <WineListPage />,
+        children: [
+          
+        ]
+      },
+      {
+        path: 'filtered-wine',
+        element: <FilteredWineListPage />
       },
       {
 
