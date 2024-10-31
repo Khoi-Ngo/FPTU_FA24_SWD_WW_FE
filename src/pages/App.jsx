@@ -8,15 +8,15 @@ import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { fetchAllWineAPI, fetchWineCategoriesAPI, getWineByCategoryAPI } from "~/services/api-service/WineApiService";
 import DynamicMenu from "~/components/Antd_Custom/DynamicMenu";
+import useBearStore from "~/services/zustand";
 
 export const App = () => {
     const { isAppLoading, SetIsAppLoading, setUserLogin } = useContext(AuthContext)
     const [selectedMenu, setSelectedMenu] = useState('Overview')
     const [wineCategories, setWineCategories] = useState([])
-    const [selectedCategory, setSelectedCategory] = useState(null)
-    const [wine, setWine] = useState(null)
     const navigate = useNavigate()
     const location = useLocation()
+    const filteredWine = useBearStore((state) => state.setWine)
     const delay = (milSeconds) => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -51,22 +51,23 @@ export const App = () => {
         }
     }
     const getMenuKeyFromPath = (path) => {
-        if (path.startsWith('/app/users')) return 'Users';
-        if (path.startsWith('/app/profile')) return 'Profile';
+        if (path.startsWith('/app/users')) return 'Users'
+        if (path.startsWith('/app/profile')) return 'Profile'
         if (path.startsWith('/app/wines')
             || path.startsWith('/app/create-wine')
             || path.startsWith('/app/update-wine')
-        ) return 'Wines';
-        if (path.startsWith('/app/wine-categories')) return 'WineCates';
-        if (path.startsWith('/app/rooms')) return 'Rooms';
-        if (path.startsWith('/app/io-requests')) return 'IORequests';
-        if (path.startsWith('/app/tasks')) return 'StaffTasks';
+        ) return 'Wines'
+        if (path.startsWith('/app/wine-categories')) return 'WineCates'
+        if (path.startsWith('/app/rooms')) return 'Rooms'
+        if (path.startsWith('/app/io-requests')) return 'IORequests'
+        if (path.startsWith('/app/tasks')) return 'StaffTasks'
         if (path.startsWith('/app/check-requests')
             || path.startsWith('/app/create-check-request')
-        ) return 'CheckRequests';
+        ) return 'CheckRequests'
+        if (path.startsWith('/app/filtered-wine')) return 'Wines'
 
-        return 'Overview';
-    };
+        return 'Overview'
+    }
 
     const handleMenuClick = (menuKey) => {
         setSelectedMenu(menuKey);
@@ -115,7 +116,10 @@ export const App = () => {
         try {
             const response = await getWineByCategoryAPI(categoryId);           
             if (response) {
-                setWine(response)
+                const filter = response.wines.filter(wine => wine.status === 'Active')
+                filteredWine(filter)
+                console.log('getWineByCategoryAPI: ', response.wines)
+                navigate('/app/filtered-wine')
             } else {
                 throw new Error('API request failed');
             }
@@ -128,14 +132,11 @@ export const App = () => {
     const wineCategoryItems = wineCategories.map(category => ({
         key: category.id,
         label: category.categoryName,
-        onClick: () => { getWineByCategory(category.id), setSelectedCategory(category.categoryName) },
+        onClick: () => { getWineByCategory(category.id) },
     }));
     const handleParentWineClick = (key) => {
         console.log('Parent item clicked')
         navigate(`/app/wines`)
-    };
-    const handleChildWineClick = (key) => {
-        console.log('Child item clicked')
     };
 
     const items = [
