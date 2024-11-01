@@ -18,7 +18,7 @@ const priorityOptions = [
     { label: 'Medium', value: 'Medium' },
     { label: 'High', value: 'High' }
 ];
-//TODO: Refer check request detail list page
+
 const ViewDetailCheckRequestPage = () => {
 
     //#region handle create additional check request detail
@@ -64,11 +64,8 @@ const ViewDetailCheckRequestPage = () => {
     // Submit form data to create additional request
     const handleSaveCreateAdditional = async () => {
         try {
-            //set some more fields here
-            console.log(formData);
-            formData.checkRequestCode = reqCode;
             formData.checkRequestId = requestId;
-            await createAddCheckRequestAPI(formData);
+            await createAddCheckRequestAPI(formData, authToken);
             notification.success({
                 message: 'Additional Created',
                 description: 'The additional check request detail was successfully created.',
@@ -107,19 +104,13 @@ const ViewDetailCheckRequestPage = () => {
             content: <p>Are you sure you want to disable this check request detail ?</p>,
             onOk: async () => {
                 try {
-                    await disableCheckRequestDetailAPI(id);
-                    notification.success({
-                        message: 'Disable Successful',
-                        description: 'The check request detail has been disabled.',
-                    });
-
+                    await disableCheckRequestDetailAPI(id, authToken);
                 } catch (error) {
                     notification.error({
                         message: 'Disable Failed',
                         description: 'Could not disable check request detail.',
                     });
                 } finally {
-                    //fetching all the list again
                     fetchDetails();
                 }
             }

@@ -15,63 +15,58 @@ import StoreIcon from '@mui/icons-material/Store'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 
 export const App = () => {
-    const { isAppLoading, SetIsAppLoading, setUserLogin } = useContext(AuthContext)
-    const [selectedMenu, setSelectedMenu] = useState('Overview')
-    const [wineCategories, setWineCategories] = useState([])
-    const navigate = useNavigate()
-    const location = useLocation()
-    const filteredWine = useBearStore((state) => state.setWine)
+    const { isAppLoading, SetIsAppLoading, setUserLogin, userLogin } = useContext(AuthContext);
+    const [selectedMenu, setSelectedMenu] = useState('Overview');
+    const [wineCategories, setWineCategories] = useState([]);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const filteredWine = useBearStore((state) => state.setWine);
+
     const delay = (milSeconds) => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             setTimeout(() => {
-                resolve()
-            }, milSeconds)
-        })
-    }
+                resolve();
+            }, milSeconds);
+        });
+    };
+
     const handleLogout = async () => {
         try {
             localStorage.removeItem("access_token");
-            setUserLogin(
-                {
-                    email: "",
-                    phone: "",
-                    firstName: "",
-                    lastName: "",
-                    username: "",
-                    role: "",
-                    avatar: "",
-                    id: "",
-                    status: "",
-                }
-            )
+            setUserLogin({
+                email: "",
+                phone: "",
+                firstName: "",
+                lastName: "",
+                username: "",
+                role: "",
+                avatar: "",
+                id: "",
+                status: "",
+            });
             notification.success({
-                message: "Logout ok"
+                message: "Logout successful"
             });
             navigate("/");
         } catch (error) {
             notification.error({
-                message: "Logout fail"
-            })
+                message: "Logout failed"
+            });
         }
-    }
-    const getMenuKeyFromPath = (path) => {
-        if (path.startsWith('/app/users')) return 'Users'
-        if (path.startsWith('/app/profile')) return 'Profile'
-        if (path.startsWith('/app/wines')
-            || path.startsWith('/app/create-wine')
-            || path.startsWith('/app/update-wine')
-        ) return 'Wines'
-        if (path.startsWith('/app/wine-categories')) return 'WineCates'
-        if (path.startsWith('/app/rooms')) return 'Rooms'
-        if (path.startsWith('/app/io-requests')) return 'IORequests'
-        if (path.startsWith('/app/tasks')) return 'StaffTasks'
-        if (path.startsWith('/app/check-requests')
-            || path.startsWith('/app/create-check-request')
-        ) return 'CheckRequests'
-        if (path.startsWith('/app/filtered-wine')) return 'Wines'
+    };
 
-        return 'Overview'
-    }
+    const getMenuKeyFromPath = (path) => {
+        if (path.startsWith('/app/users')) return 'Users';
+        if (path.startsWith('/app/profile')) return 'Profile';
+        if (path.startsWith('/app/wines') || path.startsWith('/app/create-wine') || path.startsWith('/app/update-wine')) return 'Wines';
+        if (path.startsWith('/app/wine-categories')) return 'WineCates';
+        if (path.startsWith('/app/rooms')) return 'Rooms';
+        if (path.startsWith('/app/io-requests')) return 'IORequests';
+        if (path.startsWith('/app/tasks')) return 'StaffTasks';
+        if (path.startsWith('/app/check-requests') || path.startsWith('/app/create-check-request')) return 'CheckRequests';
+
+        return 'Overview';
+    };
 
     const handleMenuClick = (menuKey) => {
         setSelectedMenu(menuKey);
@@ -112,93 +107,138 @@ export const App = () => {
         await delay(500);
         SetIsAppLoading(false);
     };
+
     const fetchWineCategories = async () => {
-        const data = await fetchWineCategoriesAPI()
-        if (data) setWineCategories(data)
-    }
+        const data = await fetchWineCategoriesAPI();
+        if (data) setWineCategories(data);
+    };
+
     const getWineByCategory = async (categoryId) => {
         try {
-            const response = await getWineByCategoryAPI(categoryId);           
+            const response = await getWineByCategoryAPI(categoryId);
             if (response) {
-                const filter = response.wines.filter(wine => wine.status === 'Active')
-                filteredWine(filter)
-                console.log('getWineByCategoryAPI: ', response.wines)
-                navigate('/app/filtered-wine')
+                const filter = response.wines.filter(wine => wine.status === 'Active');
+                filteredWine(filter);
+                navigate('/app/filtered-wine');
             } else {
                 throw new Error('API request failed');
             }
         } catch (error) {
             notification.error({
-                message: "Fail load" + error
-            })
+                message: "Failed to load: " + error.message
+            });
         }
-    }
+    };
+
     const wineCategoryItems = wineCategories.map(category => ({
         key: category.id,
         label: category.categoryName,
-        onClick: () => { getWineByCategory(category.id) },
+        onClick: () => { getWineByCategory(category.id); },
     }));
-    const handleParentWineClick = (key) => {
-        console.log('Parent item clicked')
-        navigate(`/app/wines`)
-    };
 
-    const items = [
-        {
-            label: 'Profile',
-            icon: <RobotOutlined />,
-            key: 'Profile'
-        },
-        {
-            label: 'Statistic',
-            icon: <PieChartOutlined />,
-            key: 'Overview'
-        },
-        {
-            label: 'Users',
-            icon: <UserOutlined />,
-            key: 'Users'
-        },
-        {
-            label: 'Wines',
-            icon: <LocalBarIcon />,
-            key: 'Wines',
-            onTitleClick: () => handleParentWineClick(),
-            children: wineCategoryItems
-        },
-        {
-            label: 'Wine Category',
-            icon: <LiquorIcon />,
-            key: 'WineCates'
-        },
-        {
-            label: 'Room',
-            icon: <StoreIcon />,
-            key: 'Rooms'
-        },
-        {
-            label: 'I/O Requests',
-            icon: <InsertDriveFileIcon />,
-            key: 'IORequests'
-        },
-        {
-            label: 'Staff-Task',
-            icon: <UserOutlined />,
-            key: 'StaffTasks'
-        },
-        {
-            label: 'Check Requests',
-            icon: <InsertDriveFileIcon />,
-            key: 'CheckRequests'
-        },
-        {
-            label: 'Logout',
-            icon: <UserOutlined />,
-            key: 'Logout',
-            onClick: () => handleLogout(),
-            danger: 'true'
+    const getMenuItems = () => {
+        const commonItems = [
+            {
+                label: 'Profile',
+                icon: <RobotOutlined />,
+                key: 'Profile'
+            },
+
+        ];
+
+        if (userLogin.role === 'ADMIN') {
+            return [
+                ...commonItems,
+
+                {
+                    label: 'Users',
+                    icon: <UserOutlined />,
+                    key: 'Users'
+                },
+                {
+                    label: 'Statistic',
+                    icon: <PieChartOutlined />,
+                    key: 'Overview'
+                },
+                {
+                    label: 'Logout',
+                    icon: <UserOutlined />,
+                    key: 'Logout',
+                    onClick: handleLogout,
+                    danger: true
+                }
+            ];
         }
-    ];
+
+        if (userLogin.role === 'MANAGER') {
+            return [
+                ...commonItems,
+                {
+                    label: 'Overview',
+                    icon: <PieChartOutlined />,
+                    key: 'Overview'
+                },
+                {
+                    label: 'Wines',
+                    icon: <LocalBarIcon />,
+                    key: 'Wines',
+                    children: wineCategoryItems
+                },
+                {
+                    label: 'Wine Category',
+                    icon: <LiquorIcon />,
+                    key: 'WineCates'
+                },
+                {
+                    label: 'Room',
+                    icon: <StoreIcon />,
+                    key: 'Rooms'
+                },
+                {
+                    label: 'I/O Requests',
+                    icon: <InsertDriveFileIcon />,
+                    key: 'IORequests'
+                },
+                {
+                    label: 'Staff-Task',
+                    icon: <UserOutlined />,
+                    key: 'StaffTasks'
+                },
+                {
+                    label: 'Check Requests',
+                    icon: <InsertDriveFileIcon />,
+                    key: 'CheckRequests'
+                },
+                {
+                    label: 'Logout',
+                    icon: <UserOutlined />,
+                    key: 'Logout',
+                    onClick: handleLogout,
+                    danger: true
+                }
+            ];
+        }
+
+        if (userLogin.role === 'STAFF') {
+            return [
+                ...commonItems,
+                {
+                    label: 'Staff-Task',
+                    icon: <UserOutlined />,
+                    key: 'StaffTasks'
+                },
+                {
+                    label: 'Logout',
+                    icon: <UserOutlined />,
+                    key: 'Logout',
+                    onClick: handleLogout,
+                    danger: true
+                }
+            ];
+        }
+
+        return commonItems; // Default case
+    };
 
     useEffect(() => {
         fetchUserInfo();
@@ -221,67 +261,26 @@ export const App = () => {
                 <Spin />
             </div>
         ) : (
-            <>
-                <Layout style={{ minHeight: '100vh' }}>
-                    <Sider>
-                        <div className="logo"><AppstoreOutlined /> WWMS</div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Menu
-                                theme="dark"
-                                selectedKeys={[selectedMenu]}
-                                mode="inline"
-                                onClick={({ key }) => handleMenuClick(key)}
-                                style={{ flex: 1 }}
-                                items={items}
-                            />
-
-                        </div>
-                        {/* <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end'}}>
-                            <Menu
-                                theme="dark"
-                                mode="inline"
-                            >
-                                <Menu.Item key="Logout" icon={<UserOutlined />} onClick={handleLogout}>
-                                    Logout
-                                </Menu.Item>
-                            </Menu>
-                        </div> */}
-                    </Sider>
-                    <Content style={{ margin: '0 ' }}>
-                        <div style={{ background: '#fff', minHeight: 360 }}>
-                            <Outlet fetchUserInfo={fetchUserInfo} />
-                        </div>
-                    </Content>
-                </Layout >
-            </>
+            <Layout style={{ minHeight: '100vh' }}>
+                <Sider>
+                    <div className="logo"><AppstoreOutlined /> WWMS</div>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Menu
+                            theme="dark"
+                            selectedKeys={[selectedMenu]}
+                            mode="inline"
+                            onClick={({ key }) => handleMenuClick(key)}
+                            style={{ flex: 1 }}
+                            items={getMenuItems()} // Get menu items based on user role
+                        />
+                    </div>
+                </Sider>
+                <Content style={{ margin: '0 ' }}>
+                    <div style={{ background: '#fff', minHeight: 360 }}>
+                        <Outlet fetchUserInfo={fetchUserInfo} />
+                    </div>
+                </Content>
+            </Layout>
         )
     );
 }
-
-{/* <Menu.Item key="Profile" icon={<RobotOutlined />}>
-                                    Profile
-                                </Menu.Item>
-                                <Menu.Item key="Overview" icon={<PieChartOutlined />}>
-                                    Overview
-                                </Menu.Item>
-                                <Menu.Item key="Users" icon={<UserOutlined />}>
-                                    Users
-                                </Menu.Item>
-                                <Menu.Item key="Wines" icon={<UserOutlined />}>
-                                    Wines
-                                </Menu.Item>
-                                <Menu.Item key="WineCates" icon={<UserOutlined />}>
-                                    Wine Category
-                                </Menu.Item>
-                                <Menu.Item key="Rooms" icon={<UserOutlined />}>
-                                    Room
-                                </Menu.Item>
-                                <Menu.Item key="IORequests" icon={<UserOutlined />}>
-                                    I/O Requests
-                                </Menu.Item>
-                                <Menu.Item key="StaffTasks" icon={<UserOutlined />}>
-                                    Staff-Task
-                                </Menu.Item>
-                                <Menu.Item key="CheckRequests" icon={<UserOutlined />}>
-                                    Check Requests
-                                </Menu.Item> */}
