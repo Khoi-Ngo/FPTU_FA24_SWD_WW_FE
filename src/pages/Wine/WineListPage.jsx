@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, Space, Modal, notification } from 'antd';
-import '../../styles/WineListStyle.css'; // Import custom styles
-import { useLocation, useNavigate } from 'react-router-dom';
-import { deleteWineAPI, fetchAllWineAPI } from '../../services/api-service/WineApiService';
+import { useEffect, useState } from 'react'
+import { Table, Button, Space, Modal, notification } from 'antd'
+import '../../styles/WineListStyle.css' // Import custom styles
+import { useLocation, useNavigate } from 'react-router-dom'
+import { deleteWineAPI, fetchAllWineAPI } from '../../services/api-service/WineApiService'
+import DeleteIcon from '@mui/icons-material/Delete'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import EditIcon from '@mui/icons-material/Edit'
+import AddIcon from '@mui/icons-material/Add'
+import Title from 'antd/es/skeleton/Title'
 
 export const WineListPage = () => {
     const [wines, setWines] = useState(null);
@@ -124,9 +129,9 @@ export const WineListPage = () => {
             key: 'actions',
             render: record => (
                 <Space size="middle">
-                    <Button type="default" onClick={() => handleUpdateButtonClicked(record)}>Update</Button>
-                    <Button danger onClick={() => handleDeleteButtonClicked(record.id)}>Delete</Button>
-                    <Button type="link" onClick={() => handleDetailButtonClicked(record)}>View Details</Button>
+                    <Button type="default" color='primary' variant='solid' onClick={() => handleUpdateButtonClicked(record)}><EditIcon /></Button>
+                    <Button color='danger' variant='solid' onClick={() => handleDeleteButtonClicked(record.id)}><DeleteIcon /></Button>
+                    <Button type="default" variant='solid' style={{ background: 'orange', color: 'white' }} onClick={() => handleDetailButtonClicked(record)}><ArrowForwardIosIcon /></Button>
                 </Space>
             ),
         },
@@ -134,13 +139,14 @@ export const WineListPage = () => {
 
     return (
         <div className="wine-list-container">
-            <h1 className="wine-list-title">Wine List</h1>
+            <Title level={2} className="wine-list-title" >Wine List</Title>
             <Button
                 type="primary"
                 className="create-wine-button"
                 onClick={handleCreateButtonClicked}
+                shape="round"
             >
-                Create New Wine
+                <AddIcon /> Add new wine
             </Button>
             <Table
                 dataSource={wines}

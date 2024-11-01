@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchIORequestByIdApi } from '../../services/api-service/IORequestApiService';
-import { Card, Descriptions, Spin, Divider, Typography, Table, Button, Modal, Form, Input, Select } from 'antd';
+import { Card, Descriptions, Spin, Divider, Typography, Table, Button, Modal, Form, Input, Select, Space } from 'antd';
 import '../../styles/IORequestDetailsPage.css';
 const { Title } = Typography;
 import { fetchRoomsAPI } from '~/services/api-service/RoomApiService';
 import { fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest';
 import { addIORequestDetail, deleteIORequestDetail, updateIORequestDetail } from '~/services/api-service/DetailsApiService';
+import { PlusOutlined } from '@ant-design/icons'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
 
 export const IORequestDetailsPage = () => {
     const { id } = useParams();
@@ -155,10 +158,10 @@ export const IORequestDetailsPage = () => {
             title: 'Actions',
             key: 'actions',
             render: (text, record) => (
-                <span>
-                    <Button onClick={() => { setIsModalVisible(true); setCurrentDetail(record); form.setFieldsValue({ quantity: record.quantity, wineId: record.wineId }); }} type="link">Edit</Button>
-                    <Button onClick={() => handleDeleteDetail(record.id)} type="link" danger>Delete</Button>
-                </span>
+                <Space size="middle">
+                    <Button type="default" color='primary' variant='solid' onClick={() => { setIsModalVisible(true); setCurrentDetail(record); form.setFieldsValue({ quantity: record.quantity, wineId: record.wineId }); }} ><EditIcon /></Button>
+                    <Button color='danger' variant='solid' onClick={() => handleDeleteDetail(record.id)} type="link" danger><DeleteIcon /></Button>
+                </Space>
             ),
         },
     ];
@@ -193,7 +196,7 @@ export const IORequestDetailsPage = () => {
                 <Divider />
 
                 <Title level={4} className="details-title">Request Details</Title>
-                <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginBottom: '16px' }}>
+                <Button type="primary" shape="round" icon={<PlusOutlined />} onClick={() => setIsModalVisible(true)} style={{ marginBottom: '16px' }}>
                     Add New Details
                 </Button>
                 <Table

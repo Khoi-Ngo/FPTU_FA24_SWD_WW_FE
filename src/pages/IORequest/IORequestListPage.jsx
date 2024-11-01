@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import React, { useEffect, useState } from 'react'
+import moment from 'moment'
 
-import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import {
   fetchIORequestApi,
   createIORequestApi,
@@ -11,43 +11,48 @@ import {
   handleDisableStatus,
   fetchIORequestTypeApi,
   handleDoneStatus
-} from '../../services/api-service/IORequestApiService';
-import { fetchRoomsAPI } from '~/services/api-service/RoomApiService';
-import { fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest';
-const { Title } = Typography;
-const { Option } = Select;
+} from '../../services/api-service/IORequestApiService'
+import { fetchRoomsAPI } from '~/services/api-service/RoomApiService'
+import { fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest'
+import DeleteIcon from '@mui/icons-material/Delete'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import EditIcon from '@mui/icons-material/Edit'
+import CheckIcon from '@mui/icons-material/Check'
+
+const { Title } = Typography
+const { Option } = Select
 
 export const IORequestListPage = () => {
-  const navigate = useNavigate();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentRequest, setCurrentRequest] = useState(null);
-  const [ioRequests, setIORequests] = useState([]);
-  const [selectedIOType, setSelectedIOType] = useState('ALL');
-  const [form] = Form.useForm();
+  const navigate = useNavigate()
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [currentRequest, setCurrentRequest] = useState(null)
+  const [ioRequests, setIORequests] = useState([])
+  const [selectedIOType, setSelectedIOType] = useState('ALL')
+  const [form] = Form.useForm()
 
-  const [rooms, setRooms] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [checkers, setCheckers] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [wines, setWines] = useState([]);
+  const [rooms, setRooms] = useState([])
+  const [suppliers, setSuppliers] = useState([])
+  const [checkers, setCheckers] = useState([])
+  const [customers, setCustomers] = useState([])
+  const [wines, setWines] = useState([])
 
   const fetchData = async (ioType) => {
     try {
-      let requests;
+      let requests
       if (ioType === 'ALL') {
-        requests = await fetchIORequestApi();
+        requests = await fetchIORequestApi()
       } else {
-        requests = await fetchIORequestTypeApi(ioType);
+        requests = await fetchIORequestTypeApi(ioType)
       }
-      console.log("Fetched IO Requests:", requests);
-      setIORequests(requests);
+      console.log("Fetched IO Requests:", requests)
+      setIORequests(requests)
     } catch (error) {
-      console.error("Error fetching IO Requests:", error);
+      console.error("Error fetching IO Requests:", error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchData(selectedIOType);
+    fetchData(selectedIOType)
 
     const fetchDropdownData = async () => {
       try {
@@ -57,24 +62,24 @@ export const IORequestListPage = () => {
           fetchCheckersApi(),
           fetchCustomersApi(),
           fetchWineIDApi()
-        ]);
-        setRooms(roomData);
-        setSuppliers(supplierData);
-        setCheckers(checkerData);
-        setCustomers(customerData);
-        setWines(wineData);
-        console.log("Rooms:", roomData);
-        console.log("Suppliers:", supplierData);
-        console.log("Checkers:", checkerData);
-        console.log("Customers:", customerData);
-        console.log("Wines:", wineData);
+        ])
+        setRooms(roomData)
+        setSuppliers(supplierData)
+        setCheckers(checkerData)
+        setCustomers(customerData)
+        setWines(wineData)
+        console.log("Rooms:", roomData)
+        console.log("Suppliers:", supplierData)
+        console.log("Checkers:", checkerData)
+        console.log("Customers:", customerData)
+        console.log("Wines:", wineData)
       } catch (error) {
-        console.error("Error fetching dropdown data:", error);
+        console.error("Error fetching dropdown data:", error)
       }
-    };
+    }
 
-    fetchDropdownData();
-  }, [selectedIOType]);
+    fetchDropdownData()
+  }, [selectedIOType])
 
 
   const columns = [
@@ -110,105 +115,107 @@ export const IORequestListPage = () => {
       key: 'actions',
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
           <Button
-            type="default"
+            type="primary"
             onClick={() => handleUpdate(record)}
             disabled={record.status !== 'Pending'}
           >
-            Update
+            <EditIcon />
           </Button>
-          <Button style={{ backgroundColor: 'red', borderColor: 'black' }}
-            type="primary"
+          <Button 
+            type="danger"
+            color='danger' 
+            variant='solid'
             onClick={() => confirmDelete(record.id)}
             disabled={record.status !== 'Pending'}
           >
-            Disable
+            <DeleteIcon />
           </Button>
+          <Button type="default" variant='solid' style={{background: 'orange', color: 'white'}} onClick={() => handleDetail(record)}><ArrowForwardIosIcon /></Button>
           <Button style={{ backgroundColor: '#4CAF50', borderColor: '#4CAF50' }}
             type="primary"
             onClick={() => confirmDone(record.id)}
             disabled={record.status !== 'Pending'}
           >
-            Done
+            <CheckIcon />
           </Button>
         </Space>
       ),
     },
-  ];
+  ]
 
   const handleDetail = (record) => {
-    navigate(`/app/io-requests/${record.id}`);
-  };
+    navigate(`/app/io-requests/${record.id}`)
+  }
 
   const handleUpdate = (record) => {
-    console.log("Updating record:", record);
-    setCurrentRequest(record);
+    console.log("Updating record:", record)
+    setCurrentRequest(record)
     form.setFieldsValue({
       ...record,
       ioRequestDetails: record.ioRequestDetails || [],
       startDate: moment(record.startDate),
       dueDate: moment(record.dueDate),
-    });
-    setIsModalVisible(true);
-  };
+    })
+    setIsModalVisible(true)
+  }
 
   const confirmDelete = (id) => {
     if (window.confirm("Are you sure you want to disable this request?")) {
       handleDisableStatus(id).then(() => {
-        fetchData(selectedIOType);
-      });
+        fetchData(selectedIOType)
+      })
     }
-  };
+  }
   const confirmDone = (id) => {
     if (window.confirm("Are you sure you want to done this request?")) {
       handleDoneStatus(id).then(() => {
-        fetchData(selectedIOType);
-      });
+        fetchData(selectedIOType)
+      })
     }
-  };
+  }
 
   const handleCreate = () => {
-    setCurrentRequest(null);
-    form.resetFields();
-    setIsModalVisible(true);
-  };
+    setCurrentRequest(null)
+    form.resetFields()
+    setIsModalVisible(true)
+  }
 
   const handleOk = async (values) => {
-    console.log("Submitted values:", values);
+    console.log("Submitted values:", values)
     const requestPayload = {
       ...values,
       startDate: values.startDate ? values.startDate.format('YYYY-MM-DD') : null,
       dueDate: values.dueDate ? values.dueDate.format('YYYY-MM-DD') : null,
       ioRequestDetails: values.ioRequestDetails || [],
-    };
-    console.log("Request Payload:", requestPayload);
+    }
+    console.log("Request Payload:", requestPayload)
     try {
       if (currentRequest) {
-        console.log("Updating request with ID:", currentRequest.id);
-        await updateIORequestApi(currentRequest.id, requestPayload);
+        console.log("Updating request with ID:", currentRequest.id)
+        await updateIORequestApi(currentRequest.id, requestPayload)
       } else {
-        console.log("Creating new request");
-        await createIORequestApi(requestPayload);
+        console.log("Creating new request")
+        await createIORequestApi(requestPayload)
       }
-      setIsModalVisible(false);
-      setCurrentRequest(null);
-      fetchData(selectedIOType);
+      setIsModalVisible(false)
+      setCurrentRequest(null)
+      fetchData(selectedIOType)
     } catch (error) {
-      console.error("Error creating/updating request:", error);
+      console.error("Error creating/updating request:", error)
     }
-  };
+  }
 
   const handleCancel = () => {
-    setIsModalVisible(false);
-    setCurrentRequest(null);
-    form.resetFields();
-  };
+    setIsModalVisible(false)
+    setCurrentRequest(null)
+    form.resetFields()
+  }
 
   const handleSelectChange = (value) => {
-    setSelectedIOType(value);
-    fetchData(value);
-  };
+    setSelectedIOType(value)
+    fetchData(value)
+  }
 
   return (
     <div style={{ padding: '24px' }}>
@@ -220,6 +227,7 @@ export const IORequestListPage = () => {
           icon={<PlusOutlined />}
           onClick={handleCreate}
           style={{ marginBottom: 16 }}
+          shape='round'
         >
           Create New I/O Request
         </Button>
@@ -364,7 +372,7 @@ export const IORequestListPage = () => {
         </Form>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default IORequestListPage;
+export default IORequestListPage

@@ -7,6 +7,10 @@ import { createRoomAPI, deleteRoomAPI, fetchRoomsAPI, updateRoomAPI } from '~/se
 import DeleteRoom from './DeleteRoom'
 import UpdateRoomForm from './UpdateRoomForm'
 import { useNavigate } from 'react-router-dom'
+import DeleteIcon from '@mui/icons-material/Delete'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import EditIcon from '@mui/icons-material/Edit'
+import AddIcon from '@mui/icons-material/Add'
 
 const { Title } = Typography
 
@@ -91,9 +95,9 @@ export const RoomListPage = () => {
       key: 'actions',
       render: record => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record.id)}>Detail</Button>
-          <Button type="default" onClick={() => handleUpdate(record)}>Update</Button>
-          <Button type="danger" onClick={() => handleDelete(record)}>Delete</Button>
+          <Button type="default" color='primary' variant='solid' onClick={() => handleUpdate(record)}><EditIcon /></Button>
+          <Button type="danger" color='danger' variant='solid' onClick={() => handleDelete(record)}><DeleteIcon /></Button>
+          <Button type="default" variant='solid' style={{ background: 'orange', color: 'white' }}  onClick={() => handleDetail(record.id)}><ArrowForwardIosIcon /></Button>
         </Space>
       )
     }
@@ -153,6 +157,7 @@ export const RoomListPage = () => {
           icon={<PlusOutlined />}
           onClick={handleCreate}
           style={{ marginBottom: 16 }}
+          shape='round'
         >
           Create New Room
         </Button>

@@ -133,10 +133,10 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
       </Form.Item>
 
       <Form.Item wrapperCol={{ span: 24, offset: 6 }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" color='primary' shape='round' htmlType="submit">
           Submit
         </Button>
-        <Button style={{ marginLeft: 8 }} onClick={() => handleCancle()}>
+        <Button style={{ marginLeft: 8 }} shape='round' onClick={() => handleCancle()}>
           Cancel
         </Button>
       </Form.Item>
