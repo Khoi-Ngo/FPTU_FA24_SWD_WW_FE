@@ -132,7 +132,6 @@ export const ViewDetailCRDetailPage = () => {
                     <Descriptions.Item label="Requester ID">{data.requesterId || "N/A"}</Descriptions.Item>
                     <Descriptions.Item label="Requester Name">{data.requesterName || "N/A"}</Descriptions.Item>
                     <Descriptions.Item label="Wine ID">{data.wineId || "N/A"}</Descriptions.Item>
-                    <Descriptions.Item label="Supplier">{data.supplier || "N/A"}</Descriptions.Item>
                     <Descriptions.Item label="Wine Name">{data.wineName || "N/A"}</Descriptions.Item>
                     <Descriptions.Item label="Manufacture Date">{data.mfd ? new Date(data.mfd).toLocaleDateString() : "N/A"}</Descriptions.Item>
                     <Descriptions.Item label="Room ID">{data.roomId || "N/A"}</Descriptions.Item>
