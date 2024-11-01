@@ -1,83 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Spin, Alert, Button, Modal, notification, Input, Form } from 'antd';
-import { EditOutlined, UserDeleteOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { fetchAllUsersAPI, deleteUserApi, updateUserApi, fetchUserDetail } from '../../services/api-service/UserApiService';
-import { AddUserForm } from '~/components/User/AddUserForm';
+import React, { useState, useEffect } from 'react'
+import { Table, Spin, Alert, Button, Modal, notification, Input, Form } from 'antd'
+import { EditOutlined, PlusOutlined, UserDeleteOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
+import { fetchAllUsersAPI, deleteUserApi, updateUserApi, fetchUserDetail } from '../../services/api-service/UserApiService'
+import { AddUserForm } from '~/components/User/AddUserForm'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 
-const tempConstAvt = 'https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png';
-const mockData = [ /* mock data if needed */];
+const tempConstAvt = 'https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png'
+const mockData = [ /* mock data if needed */]
 
 const UserListPage = () => {
-  const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
-  const [error, setError] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalUpdateVisible, setIsModalUpdateVisible] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedId, setSelectedId] = useState(0);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const token = window?.localStorage?.getItem("access_token");
-  const authToken = `Bearer ${token}`;
+  const navigate = useNavigate()
+  const [users, setUsers] = useState([])
+  const [error, setError] = useState(null)
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isModalUpdateVisible, setIsModalUpdateVisible] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
+  const [selectedId, setSelectedId] = useState(0)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const token = window?.localStorage?.getItem("access_token")
+  const authToken = `Bearer ${token}`
+  
 
   //#region fetch all users
   const fetchUsers = async () => {
     try {
-      const token = window?.localStorage?.getItem("access_token");
-      const response = await fetchAllUsersAPI(`Bearer ${token}`);
+      const token = window?.localStorage?.getItem("access_token")
+      const response = await fetchAllUsersAPI(`Bearer ${token}`)
       if (response.data) {
-        setUsers(response.data);
+        setUsers(response.data)
       } else {
-        setUsers(mockData);
+        setUsers(mockData)
       }
     } catch (err) {
-      setError(err.message);
-      console.error('Error fetching users:', err);
+      setError(err.message)
+      console.error('Error fetching users:', err)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers()
+  }, [])
   //#endregion
 
   //#region update user
   const handleUpdate = async (userId) => {
 
     try {
-      setSelectedId(userId);
-      const response = await fetchUserDetail(userId, authToken);
-      setSelectedUser(response.data);
-      setIsModalUpdateVisible(true);
+      setSelectedId(userId)
+      const response = await fetchUserDetail(userId, authToken)
+      setSelectedUser(response.data)
+      setIsModalUpdateVisible(true)
     } catch (error) {
-      notification.error({ message: 'Error fetching user data', description: error.message });
+      notification.error({ message: 'Error fetching user data', description: error.message })
     }
-  };
+  }
 
   const handleSave = async (values) => {
     try {
-      await updateUserApi(values, selectedId, authToken);
-      notification.success({ message: 'User updated successfully' });
-      setIsModalVisible(false);
-      setSelectedUser(null);
-      fetchUsers(); // Refresh the user list after updating
+      await updateUserApi(values, selectedId, authToken)
+      notification.success({ message: 'User updated successfully' })
+      setIsModalVisible(false)
+      setSelectedUser(null)
+      fetchUsers() // Refresh the user list after updating
     } catch (error) {
-      notification.error({ message: 'Failed to update user', description: error.message });
+      notification.error({ message: 'Failed to update user', description: error.message })
     } finally {
-      await fetchUsers();
-      hiddenModalUpdate();
+      await fetchUsers()
+      hiddenModalUpdate()
     }
-  };
+  }
 
   const hiddenModalUpdate = () => {
-    selectedUser.firstName = "";
-    selectedUser.lastName = "";
-    selectedUser.email = "";
-    selectedUser.phoneNumber = "";
+    selectedUser.firstName = ""
+    selectedUser.lastName = ""
+    selectedUser.email = ""
+    selectedUser.phoneNumber = ""
 
 
 
-    setIsModalUpdateVisible(false);
+    setIsModalUpdateVisible(false)
   }
   //#endregion
 
@@ -91,15 +95,15 @@ const UserListPage = () => {
       cancelText: 'No',
       onOk: async () => {
         try {
-          await deleteUserApi(userId, authToken);
-          notification.success({ message: 'User deleted successfully' });
-          fetchUsers();
+          await deleteUserApi(userId, authToken)
+          notification.success({ message: 'User deleted successfully' })
+          fetchUsers()
         } catch (error) {
-          notification.error({ message: 'Failed to delete user', description: error.message });
+          notification.error({ message: 'Failed to delete user', description: error.message })
         }
       },
-    });
-  };
+    })
+  }
   //#endregion
 
   const columns = [
@@ -122,25 +126,25 @@ const UserListPage = () => {
     {
       title: '', key: 'action', render: (text, record) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button style={{ margin: 10 }} onClick={() => handleDelete(record.id)}>
-            <UserDeleteOutlined />
+          <Button type="default" color='primary' variant='solid' style={{ margin: 10 }} onClick={() => handleUpdate(record.id)}>
+            <EditIcon />
           </Button>
-          <Button style={{ margin: 10 }} onClick={() => handleUpdate(record.id)}>
-            <EditOutlined />
+          <Button color='danger' variant='solid' style={{ margin: 10 }} onClick={() => handleDelete(record.id)}>
+            <DeleteIcon />
           </Button>
-          <Button style={{ margin: 10 }} onClick={() => navigate(`/app/users/${record.id}`)}>
-            View Details
+          <Button type="default" variant='solid' style={{background: 'orange', color: 'white', margin: 10}} onClick={() => navigate(`/app/users/${record.id}`)}>
+          <ArrowForwardIosIcon />
           </Button>
         </div>
       ),
     },
-  ];
+  ]
 
   return (
     <div style={{ minHeight: '100vh' }}>
       <h1 style={{ textAlign: 'center' }}>User List</h1>
       {error && <Alert message="Error" description={error} type="error" showIcon />}
-      <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ margin: '20px' }}>
+      <Button type="primary" icon={<PlusOutlined />} shape='round' onClick={() => setIsModalVisible(true)} style={{ margin: '20px' }}>
         Add User
       </Button>
       <Table dataSource={Array.isArray(users) ? users : []} columns={columns} rowKey="id" pagination={{ pageSize: 20 }} />
@@ -184,7 +188,7 @@ const UserListPage = () => {
         <AddUserForm fetchUsers={fetchUsers} setIsModalVisible={setIsModalVisible} token={authToken} />
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default UserListPage;
+export default UserListPage

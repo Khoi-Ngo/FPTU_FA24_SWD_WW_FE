@@ -1,13 +1,18 @@
-import { useContext, useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../components/auth-context";
-import { Layout, Menu, notification, Spin } from "antd";
-import Footer from "../components/Footer";
-import { PieChartOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
-import Sider from "antd/es/layout/Sider";
-import { Content } from "antd/es/layout/layout";
-import { fetchWineCategoriesAPI, getWineByCategoryAPI } from "~/services/api-service/WineApiService";
-import useBearStore from "~/services/zustand";
+import { useContext, useEffect, useState } from "react"
+import { Outlet, useLocation, useNavigate } from "react-router-dom"
+import { AuthContext } from "../components/auth-context"
+import { Layout, Menu, notification, Spin } from "antd"
+import Footer from "../components/Footer"
+import { PieChartOutlined, DesktopOutlined, UserOutlined, RobotOutlined, AppstoreOutlined } from '@ant-design/icons'
+import Sider from "antd/es/layout/Sider"
+import { Content } from "antd/es/layout/layout"
+import { fetchAllWineAPI, fetchWineCategoriesAPI, getWineByCategoryAPI } from "~/services/api-service/WineApiService"
+import DynamicMenu from "~/components/Antd_Custom/DynamicMenu"
+import useBearStore from "~/services/zustand"
+import LocalBarIcon from '@mui/icons-material/LocalBar'
+import LiquorIcon from '@mui/icons-material/Liquor'
+import StoreIcon from '@mui/icons-material/Store'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 
 export const App = () => {
     const { isAppLoading, SetIsAppLoading, setUserLogin, userLogin } = useContext(AuthContext);
@@ -151,7 +156,7 @@ export const App = () => {
                     key: 'Users'
                 },
                 {
-                    label: 'Overview',
+                    label: 'Statistic',
                     icon: <PieChartOutlined />,
                     key: 'Overview'
                 },
@@ -175,23 +180,23 @@ export const App = () => {
                 },
                 {
                     label: 'Wines',
-                    icon: <UserOutlined />,
+                    icon: <LocalBarIcon />,
                     key: 'Wines',
                     children: wineCategoryItems
                 },
                 {
                     label: 'Wine Category',
-                    icon: <UserOutlined />,
+                    icon: <LiquorIcon />,
                     key: 'WineCates'
                 },
                 {
                     label: 'Room',
-                    icon: <UserOutlined />,
+                    icon: <StoreIcon />,
                     key: 'Rooms'
                 },
                 {
                     label: 'I/O Requests',
-                    icon: <UserOutlined />,
+                    icon: <InsertDriveFileIcon />,
                     key: 'IORequests'
                 },
                 {
@@ -201,7 +206,7 @@ export const App = () => {
                 },
                 {
                     label: 'Check Requests',
-                    icon: <UserOutlined />,
+                    icon: <InsertDriveFileIcon />,
                     key: 'CheckRequests'
                 },
                 {
@@ -258,7 +263,7 @@ export const App = () => {
         ) : (
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider>
-                    <div className="logo">Dashboard</div>
+                    <div className="logo"><AppstoreOutlined /> WWMS</div>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <Menu
                             theme="dark"
@@ -278,4 +283,4 @@ export const App = () => {
             </Layout>
         )
     );
-};
+}

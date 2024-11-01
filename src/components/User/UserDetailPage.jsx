@@ -199,7 +199,7 @@ export const UserDetailPage = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                             <Button type="primary" onClick={handleUpdateProfile}>Update Profile</Button>
                             <Button type="default" onClick={handleUpdatePassword}>Update Password</Button>
-                            <Button type="default" onClick={handleDisableUser}>Disable</Button>
+                            <Button type="dange" color='danger' variant='solid' onClick={handleDisableUser}>Disable</Button>
                         </div>
                     ) : (
                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>

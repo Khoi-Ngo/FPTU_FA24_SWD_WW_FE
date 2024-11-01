@@ -162,6 +162,7 @@ const CheckRequestListPage = () => {
                 icon={<PlusOutlined />}
                 style={styles.createButton}
                 onClick={handleCreate}
+                shape='round'
             >
                 Create a New Check Request
             </Button>

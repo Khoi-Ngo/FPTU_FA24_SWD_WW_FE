@@ -79,6 +79,7 @@ export const WineCateListPage = () => {
           icon={<PlusOutlined />}
           onClick={() => setIsModalVisible(true)} // show modal
           style={{ marginBottom: 16 }}
+          shape='round'
         >
           Create New Wine Category
         </Button>

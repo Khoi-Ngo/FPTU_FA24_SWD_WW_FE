@@ -85,7 +85,7 @@ export const AddUserForm = ({ setIsModalVisible, fetchUsers, token }) => {
             </Form.Item>
             <Form.Item>
                 <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <Button type="primary" htmlType="submit" style={{ marginRight: '8px' }}>
+                    <Button type="primary" shape="round" htmlType="submit" style={{ marginRight: '8px' }}>
                         Save
                     </Button>
                     <Button onClick={() => { setIsModalVisible(false); form.resetFields(); }}>
