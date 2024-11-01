@@ -122,16 +122,16 @@ export const IORequestListPage = () => {
           >
             <EditIcon />
           </Button>
-          <Button 
+          <Button
             type="danger"
-            color='danger' 
+            color='danger'
             variant='solid'
             onClick={() => confirmDelete(record.id)}
             disabled={record.status !== 'Pending'}
           >
             <DeleteIcon />
           </Button>
-          <Button type="default" variant='solid' style={{background: 'orange', color: 'white'}} onClick={() => handleDetail(record)}><ArrowForwardIosIcon /></Button>
+          <Button type="default" variant='solid' style={{ background: 'orange', color: 'white' }} onClick={() => handleDetail(record)}><ArrowForwardIosIcon /></Button>
           <Button style={{ backgroundColor: '#4CAF50', borderColor: '#4CAF50' }}
             type="primary"
             onClick={() => confirmDone(record.id)}
@@ -356,6 +356,7 @@ export const IORequestListPage = () => {
                         name={[name, 'quantity']}
                         fieldKey={[fieldKey, 'quantity']}
                         rules={[{ required: true, message: 'Enter Number Quantity' }
+
                         ]}
                       >
                         <Input type="number" placeholder="Quantity" />
