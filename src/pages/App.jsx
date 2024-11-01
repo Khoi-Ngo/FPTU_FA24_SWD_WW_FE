@@ -135,6 +135,10 @@ export const App = () => {
         label: category.categoryName,
         onClick: () => { getWineByCategory(category.id); },
     }));
+    const handleParentWineClick = (key) => {
+        console.log('Parent item clicked')
+        navigate(`/app/wines`)
+    };
 
     const getMenuItems = () => {
         const commonItems = [
@@ -174,7 +178,7 @@ export const App = () => {
             return [
                 ...commonItems,
                 {
-                    label: 'Overview',
+                    label: 'Statistic',
                     icon: <PieChartOutlined />,
                     key: 'Overview'
                 },
@@ -182,6 +186,7 @@ export const App = () => {
                     label: 'Wines',
                     icon: <LocalBarIcon />,
                     key: 'Wines',
+                    onTitleClick: () => handleParentWineClick(),
                     children: wineCategoryItems
                 },
                 {
