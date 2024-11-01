@@ -77,3 +77,12 @@ export const fetchIORequestTypeApi = async (ioType) => {
         throw error;
     }
 };
+export const fetchRoomById = async (roomId) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/rooms/${roomId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching room by ID:", error);
+        throw error;
+    }
+};

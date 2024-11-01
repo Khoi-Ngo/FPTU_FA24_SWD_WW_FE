@@ -3,7 +3,7 @@ import axios from "axios";
 // Lấy dữ liệu nhà cung cấp
 export const fetchSuppliersApi = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/supliers`); // Sửa lỗi chính tả thành 'suppliers'
+        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/supliers`); // Sửa lỗi chính tả thành 'suppliers'
         return response.data; // Trả về dữ liệu
     } catch (error) {
         console.error('Error fetching suppliers:', error);
@@ -24,12 +24,19 @@ export const fetchCustomersApi = async () => {
 
 // Lấy dữ liệu người kiểm tra
 export const fetchCheckersApi = async () => {
+    const token = localStorage.getItem('access_token'); // Lấy token từ localStorage
+
     try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/staff`);
-        return response.data; // Trả về dữ liệu
+        const response = await axios.get('https://winewarehousesystem.azurewebsites.net/api/v1/users/staff', {
+            headers: {
+                Authorization: `Bearer ${token}`, // Thêm token vào header
+            },
+        });
+        // Xử lý dữ liệu trả về
+        return response.data;
     } catch (error) {
         console.error('Error fetching checkers:', error);
-        throw error; // Ném lỗi để xử lý ở nơi gọi
+        throw error; // Ném lỗi để xử lý ở nơi khác nếu cần
     }
 };
 export const fetchWineIDApi = async () => {

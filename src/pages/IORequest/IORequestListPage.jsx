@@ -10,7 +10,7 @@ import {
   updateIORequestApi,
   handleDisableStatus,
   fetchIORequestTypeApi,
-  handleDoneStatus
+  handleDoneStatus,
 } from '../../services/api-service/IORequestApiService';
 import { fetchRoomsAPI } from '~/services/api-service/RoomApiService';
 import { fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest';
@@ -168,9 +168,10 @@ export const IORequestListPage = () => {
     }
   };
 
-  const handleCreate = () => {
+  const handleCreate = (ioType) => {
     setCurrentRequest(null);
     form.resetFields();
+    setSelectedIOType(ioType);
     setIsModalVisible(true);
   };
 
@@ -181,6 +182,7 @@ export const IORequestListPage = () => {
       startDate: values.startDate ? values.startDate.format('YYYY-MM-DD') : null,
       dueDate: values.dueDate ? values.dueDate.format('YYYY-MM-DD') : null,
       ioRequestDetails: values.ioRequestDetails || [],
+      ioType: selectedIOType
     };
     console.log("Request Payload:", requestPayload);
     try {
@@ -210,29 +212,55 @@ export const IORequestListPage = () => {
     fetchData(value);
   };
 
+  const handleRoomChange = async (roomId) => {
+    try {
+      const wineData = await fetchWineIDApi(roomId);
+      setWines(wineData);
+
+      const ioRequestDetails = wineData.map(wine => ({
+        wineId: wine.id,
+        quantity: 0
+      }));
+
+      form.setFieldsValue({
+        ioRequestDetails: ioRequestDetails
+      });
+    } catch (error) {
+      console.error("Error fetching wines for room:", error);
+    }
+  };
+
   return (
     <div style={{ padding: '24px' }}>
       <Card bordered={false}>
         <Title level={2}>I/O Request List</Title>
         <Space size="middle">
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreate}
-          style={{ marginBottom: 16 }}
-        >
-          Create New I/O Request
-        </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => handleCreate('In')}
+            style={{ marginBottom: 16 }}
+          >
+            Create Import Request
+          </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => handleCreate('Out')}
+            style={{ marginBottom: 16 }}
+          >
+            Create Export Request
+          </Button>
 
-        <Select
-          defaultValue="Show ALL"
-          style={{ width: 120, marginBottom: 16 }}
-          onChange={handleSelectChange}
-        >
-          <Option value="ALL">Show ALL</Option>
-          <Option value="In">Input Type</Option>
-          <Option value="Out">Output Type</Option>
-        </Select>
+          <Select
+            defaultValue="Show ALL"
+            style={{ width: 120, marginBottom: 16 }}
+            onChange={handleSelectChange}
+          >
+            <Option value="ALL">Show ALL</Option>
+            <Option value="In">Input Type</Option>
+            <Option value="Out">Output Type</Option>
+          </Select>
         </Space>
         <Divider />
 
@@ -246,8 +274,8 @@ export const IORequestListPage = () => {
       </Card>
 
       <Modal
-        title={currentRequest ? "Update request" : "Create new request"}
-        visible={isModalVisible}
+        title={currentRequest ? "Update request" : `Create new request (${selectedIOType})`}
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
       >
@@ -260,6 +288,7 @@ export const IORequestListPage = () => {
             startDate: currentRequest ? moment(currentRequest.startDate) : null,
             dueDate: currentRequest ? moment(currentRequest.dueDate) : null,
             ioRequestDetails: currentRequest ? currentRequest.ioRequestDetails : [],
+            ioType: selectedIOType
           }}
         >
           <Form.Item name="requestCode" label="Request Code" rules={[{ required: true, message: 'Please enter the request code!' }]}>
@@ -271,12 +300,6 @@ export const IORequestListPage = () => {
 
           <Form.Item name="dueDate" label="Due Date" rules={[{ required: true, message: 'Please enter due date!' }]}>
             <DatePicker placeholder="Select Due Date" format="YYYY-MM-DD" />
-          </Form.Item>
-          <Form.Item name="ioType" label="IO Type" rules={[{ required: true, message: 'Please select IO type!' }]}>
-            <Select placeholder="Select IO type">
-              <Option value="In">In</Option>
-              <Option value="Out">Out</Option>
-            </Select>
           </Form.Item>
           <Form.Item name="comments" label="Comments" rules={[{ required: false }]}>
             <Input.TextArea placeholder="Enter your comments" />
@@ -290,7 +313,7 @@ export const IORequestListPage = () => {
           </Form.Item>
 
           <Form.Item name="roomId" label="Room ID" rules={[{ required: true, message: 'Please enter Room ID!' }]}>
-            <Select placeholder="Select Room" showSearch>
+            <Select placeholder="Select Room" showSearch onChange={handleRoomChange}>
               {rooms.map(room => (
                 <Option key={room.id} value={room.id}>{room.roomName}</Option>
               ))}
@@ -323,7 +346,9 @@ export const IORequestListPage = () => {
                         {...restField}
                         name={[name, 'quantity']}
                         fieldKey={[fieldKey, 'quantity']}
-                        rules={[{ required: true, message: 'Enter Number Quantity' }]}
+                        rules={[{ required: true, message: 'Enter Number Quantity' },
+                        { type: 'number', min: 1, message: 'Quantity must be a positive number!' }
+                        ]}
                       >
                         <Input type="number" placeholder="Quantity" />
                       </Form.Item>
@@ -336,7 +361,7 @@ export const IORequestListPage = () => {
                         <Select placeholder="Select Wine">
                           {wines.map(wine => (
                             <Option key={wine.id} value={wine.id}>
-                              {wine.wineName} {/* Show wineName */}
+                              {wine.wineName}
                             </Option>
                           ))}
                         </Select>
@@ -348,7 +373,7 @@ export const IORequestListPage = () => {
                   ))}
                   <Form.Item>
                     <Button type="dashed" onClick={() => add()} block>
-                      Add IO Request Detail
+                      Add Wine
                     </Button>
                   </Form.Item>
                 </>
