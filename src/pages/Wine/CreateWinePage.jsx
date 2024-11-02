@@ -3,8 +3,10 @@ import { Form, Input, Button, message, Select, DatePicker, Upload, Row, Col, not
 import { ArrowLeftOutlined, InboxOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { createWineAPI, fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI } from '../../services/api-service/WineApiService'
+import dayjs from 'dayjs'
 
 const { Dragger } = Upload
+let currentDate = new Date().toJSON().slice(0, 10)
 
 
 export const CreateWinePage = () => {
@@ -216,7 +218,7 @@ export const CreateWinePage = () => {
                             label="Manufacture Date"
                             rules={[{ required: true, message: 'Please select the manufacture date!' }]}
                         >
-                            <DatePicker style={{ width: '100%' }} />
+                            <DatePicker style={{ width: '100%' }} maxDate={dayjs(currentDate)}/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>

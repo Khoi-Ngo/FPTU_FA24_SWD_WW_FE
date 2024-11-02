@@ -22,7 +22,7 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
     locationAddress: '',
     capacity: 0
   })
-  const handleCancle = () => {
+  const handleCancel = () => {
     setIsModalOpen(false)
     clearForm()
   }
@@ -95,7 +95,7 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
         <Button type="primary" color='primary' shape='round' htmlType="submit">
           Submit
         </Button>
-        <Button style={{ marginLeft: 8 }} shape='round' onClick={() => handleCancle()}>
+        <Button style={{ marginLeft: 8 }} shape='round' onClick={() => handleCancel()}>
           Cancel
         </Button>
       </Form.Item>
