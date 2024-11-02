@@ -1,31 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Descriptions, message, Row, Col, Table, notification } from 'antd';
-import moment from 'moment';
-import { fetchWineDetailAPI } from '~/services/api-service/WineApiService';
-import { fetchWineRoomsByWineId } from '~/services/api-service/WineRoomeApiService';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Button, Descriptions, message, Row, Col, Table, notification } from 'antd'
+import { fetchWineDetailAPI } from '~/services/api-service/WineApiService'
+import { fetchWineRoomsByWineId } from '~/services/api-service/WineRoomeApiService'
+import { ArrowLeftOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 
 
 export const DetailWinePage = () => {
-    const [wine, setWine] = useState(null);
-    const [wineRooms, setWineRooms] = useState([]);
-    const [showWineRooms, setShowWineRooms] = useState(false);
-    const { wineId } = useParams();
-    const navigate = useNavigate();
+    const [wine, setWine] = useState(null)
+    const [wineRooms, setWineRooms] = useState([])
+    const [showWineRooms, setShowWineRooms] = useState(false)
+    const { wineId } = useParams()
+    const navigate = useNavigate()
 
 
     //#region wine detail
     useEffect(() => {
-        fetchWineDetail(wineId);
-        console.log('wine: ', wine);
-    }, [wineId]);
+        fetchWineDetail(wineId)
+        console.log('wine: ', wine)
+    }, [wineId])
 
     const fetchWineDetail = async (wineId) => {
         try {
-            const response = await fetchWineDetailAPI(wineId);
+            const response = await fetchWineDetailAPI(wineId)
             if (response) {
-                setWine(response);
+                setWine(response)
                 notification.success(
                     {
                         message: "OK"
@@ -54,26 +54,26 @@ export const DetailWinePage = () => {
     //#region wine room list
     const toggleWineRoomList = async () => {
         if (showWineRooms) {
-            setWineRooms([]);
+            setWineRooms([])
         } else {
             try {
                 //call api wine rooms here
-                await fetchWineRoomList(wineId);
+                await fetchWineRoomList(wineId)
 
             } catch (err) {
                 notification.error({
                     message: err.message,
-                });
+                })
             }
         }
-        setShowWineRooms(!showWineRooms);
-    };
+        setShowWineRooms(!showWineRooms)
+    }
 
     const fetchWineRoomList = async (wineId) => {
         try {
-            const response = await fetchWineRoomsByWineId(wineId);
+            const response = await fetchWineRoomsByWineId(wineId)
             if (response.data && response.status === 200) {
-                setWineRooms(response.data);
+                setWineRooms(response.data)
                 notification.success(
                     {
                         message: "Load wine rooms ok"
@@ -102,8 +102,8 @@ export const DetailWinePage = () => {
 
     //redirect to the wine list
     const handleBackToList = () => {
-        navigate('/app/wines');
-    };
+        navigate('/app/wines')
+    }
 
 
     const columns = [
@@ -122,9 +122,9 @@ export const DetailWinePage = () => {
         { title: 'Bottle Size', dataIndex: 'bottleSize', key: 'bottleSize' },
         { title: 'Alcohol Volume', dataIndex: 'alcoholByVolume', key: 'alcoholByVolume' },
         { title: 'Image', dataIndex: 'imageUrl', key: 'imageUrl' },
-    ];
+    ]
 
-    if (!wine) return null;
+    if (!wine) return null
 
     return (
         <div style={{ width: '100%', height: '100%', margin: 'auto', padding: '40px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}>
@@ -141,7 +141,7 @@ export const DetailWinePage = () => {
                         <Descriptions.Item label="Import Price">{wine.importPrice}</Descriptions.Item>
                         <Descriptions.Item label="Export Price">{wine.exportPrice}</Descriptions.Item>
                         <Descriptions.Item label="Wine Category">{wine.wineCategory?.categoryName}</Descriptions.Item>
-                        <Descriptions.Item label="Manufacture Date">{moment(wine.mfd).format('YYYY-MM-DD')}</Descriptions.Item>
+                        <Descriptions.Item label="Manufacture Date">{dayjs(wine.mfd).format('YYYY-MM-DD')}</Descriptions.Item>
                         <Descriptions.Item label="Taste">{wine.taste?.tasteType}</Descriptions.Item>
                         <Descriptions.Item label="Class">{wine.class?.classType}</Descriptions.Item>
                         <Descriptions.Item label="Qualification">{wine.qualification?.qualificationType}</Descriptions.Item>
@@ -163,7 +163,7 @@ export const DetailWinePage = () => {
                 <Table dataSource={wineRooms} columns={columns} rowKey="Id" pagination={{ pageSize: 8 }} />
             )}
         </div>
-    );
-};
+    )
+}
 
-export default DetailWinePage;
+export default DetailWinePage

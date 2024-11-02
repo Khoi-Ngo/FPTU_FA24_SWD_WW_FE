@@ -23,7 +23,7 @@ function UpdateRoomForm({ setIsModalOpen, updateRoom, data, isModalOpen, setModa
     capacity: 0,
     wineRooms: []
   })
-  const handleCancle = () => {
+  const handleCancel = () => {
     setIsModalOpen(false)
     clearForm()
   }
@@ -101,7 +101,7 @@ function UpdateRoomForm({ setIsModalOpen, updateRoom, data, isModalOpen, setModa
         <Button type="primary" htmlType="submit">
           Submit
         </Button>
-        <Button style={{ marginLeft: 8 }} onClick={() => handleCancle()}>
+        <Button style={{ marginLeft: 8 }} onClick={() => handleCancel()}>
           Cancel
         </Button>
       </Form.Item>

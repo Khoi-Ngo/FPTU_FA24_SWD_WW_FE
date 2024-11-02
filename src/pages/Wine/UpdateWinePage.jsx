@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { Form, Input, Button, Select, DatePicker, Upload, Row, Col, notification, Image, message } from 'antd'
 import { ArrowLeftOutlined, InboxOutlined } from '@ant-design/icons'
 import { useParams, useNavigate } from 'react-router-dom'
-import moment from 'moment'
 import { fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI, fetchWineDetailAPI, updateWineAPI } from '~/services/api-service/WineApiService'
+import dayjs from 'dayjs'
 
 const mockWine = {
     Id: 1,
@@ -19,6 +19,7 @@ const mockWine = {
     ImageUrl: 'https://minuman.com/cdn/shop/files/B_G-CUVEE-SPECIALE-ROUGE-SWEET-WINE.jpg?v=1700117745',
 }
 const { Dragger } = Upload
+let currentDate = new Date().toJSON().slice(0, 10)
 
 const UpdateWinePage = () => {
     const [form] = Form.useForm()
@@ -52,7 +53,7 @@ const UpdateWinePage = () => {
             // Set form fields when wine data is available
             form.setFieldsValue({
                 ...wine,
-                mfd: moment(wine.MFD),
+                mfd: dayjs(wine.mfd),
                 wineCategoryId: wine.wineCategory.id,
                 countryId: wine.country.id,
                 tasteId: wine.taste.id,
@@ -253,7 +254,7 @@ const UpdateWinePage = () => {
                     </Col>
                     <Col span={12}>
                         <Form.Item name="mfd" label="Manufacture Date" rules={[{ required: true, message: 'Please select the manufacture date!' }]}>
-                            <DatePicker style={{ width: '100%' }} />
+                            <DatePicker style={{ width: '100%' }} maxDate={dayjs(currentDate)}/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import moment from 'moment'
 
 import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
@@ -18,6 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import EditIcon from '@mui/icons-material/Edit'
 import CheckIcon from '@mui/icons-material/Check'
+import dayjs from 'dayjs'
 
 const { Title } = Typography
 const { Option } = Select
@@ -92,13 +92,13 @@ export const IORequestListPage = () => {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : 'N/A'),
+      render: (text) => (text ? dayjs(text).format('YYYY-MM-DD') : 'N/A'),
     },
     {
       title: 'Due Date',
       dataIndex: 'dueDate',
       key: 'dueDate',
-      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : 'N/A'),
+      render: (text) => (text ? dayjs(text).format('YYYY-MM-DD') : 'N/A'),
     },
     {
       title: 'IO Type',
@@ -154,8 +154,8 @@ export const IORequestListPage = () => {
     form.setFieldsValue({
       ...record,
       ioRequestDetails: record.ioRequestDetails || [],
-      startDate: moment(record.startDate),
-      dueDate: moment(record.dueDate),
+      startDate: dayjs(record.startDate),
+      dueDate: dayjs(record.dueDate),
     })
     setIsModalVisible(true)
   }
@@ -294,8 +294,8 @@ export const IORequestListPage = () => {
           onFinish={handleOk}
           initialValues={{
             ...currentRequest,
-            startDate: currentRequest ? moment(currentRequest.startDate) : null,
-            dueDate: currentRequest ? moment(currentRequest.dueDate) : null,
+            startDate: currentRequest ? dayjs(currentRequest.startDate) : null,
+            dueDate: currentRequest ? dayjs(currentRequest.dueDate) : null,
             ioRequestDetails: currentRequest ? currentRequest.ioRequestDetails : [],
             ioType: selectedIOType
           }}
