@@ -355,7 +355,8 @@ export const IORequestListPage = () => {
                         {...restField}
                         name={[name, 'quantity']}
                         fieldKey={[fieldKey, 'quantity']}
-                        rules={[{ required: true, message: 'Enter Number Quantity' },
+                        rules={[{ required: true, message: 'Enter Number Quantity' }
+
                         ]}
                       >
                         <Input type="number" placeholder="Quantity" />
