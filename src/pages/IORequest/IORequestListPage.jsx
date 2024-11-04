@@ -1,7 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-
+import dayjs from 'dayjs';
+import DeleteIcon from '@mui/icons-material/Delete'
+import { MdDoneOutline } from "react-icons/md";
+import EditIcon from '@mui/icons-material/Edit'
 
 import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker, notification } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -110,29 +113,35 @@ export const IORequestListPage = () => {
       key: 'actions',
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
+          <Button style={{ backgroundColor: 'yellow', color: 'black' }}
+            title='Show Details'
+            type="primary"
+            onClick={() => handleDetail(record)}>Detail</Button>
           <Button
-            type="default"
+            type="primary"
             onClick={() => handleUpdate(record)}
             disabled={record.status !== 'Pending'}
+            title='Update'
           >
-            Update
+            <EditIcon />
           </Button>
-          <Button style={{ backgroundColor: 'red', borderColor: 'black' }}
+          <Button style={{ backgroundColor: 'red' }}
             type="primary"
             onClick={() => confirmDelete(record.id)}
             disabled={record.status !== 'Pending'}
+            title='Disable'
           >
-            Disable
+            <DeleteIcon />
           </Button>
           <Button style={{ backgroundColor: '#4CAF50', borderColor: '#4CAF50' }}
             type="primary"
             onClick={() => confirmDone(record.id)}
             disabled={record.status !== 'Pending'}
+            title='Done'
           >
-            Done
+            <MdDoneOutline />
           </Button>
-        </Space>
+        </Space >
       ),
     },
   ];
