@@ -1,85 +1,80 @@
-import React, { useEffect, useState } from 'react'
-import moment from 'moment'
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 
-import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
+import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker, notification } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchIORequestApi,
   createIORequestApi,
   updateIORequestApi,
   handleDisableStatus,
   fetchIORequestTypeApi,
-  handleDoneStatus
-} from '../../services/api-service/IORequestApiService'
-import { fetchRoomsAPI } from '~/services/api-service/RoomApiService'
-import { fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest'
-import DeleteIcon from '@mui/icons-material/Delete'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import EditIcon from '@mui/icons-material/Edit'
-import CheckIcon from '@mui/icons-material/Check'
-
-const { Title } = Typography
-const { Option } = Select
+  handleDoneStatus,
+  fetchRoomById
+} from '../../services/api-service/IORequestApiService';
+import { fetchRoomAvailable, fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest';
+const { Title } = Typography;
+const { Option } = Select;
 
 export const IORequestListPage = () => {
-  const navigate = useNavigate()
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [currentRequest, setCurrentRequest] = useState(null)
-  const [ioRequests, setIORequests] = useState([])
-  const [selectedIOType, setSelectedIOType] = useState('ALL')
-  const [form] = Form.useForm()
+  const navigate = useNavigate();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentRequest, setCurrentRequest] = useState(null);
+  const [ioRequests, setIORequests] = useState([]);
+  const [selectedIOType, setSelectedIOType] = useState('ALL');
+  const [form] = Form.useForm();
 
-  const [rooms, setRooms] = useState([])
-  const [suppliers, setSuppliers] = useState([])
-  const [checkers, setCheckers] = useState([])
-  const [customers, setCustomers] = useState([])
-  const [wines, setWines] = useState([])
+  const [rooms, setRooms] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [checkers, setCheckers] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [wines, setWines] = useState([]);
 
   const fetchData = async (ioType) => {
     try {
-      let requests
+      let requests;
       if (ioType === 'ALL') {
-        requests = await fetchIORequestApi()
+        requests = await fetchIORequestApi();
       } else {
-        requests = await fetchIORequestTypeApi(ioType)
+        requests = await fetchIORequestTypeApi(ioType);
       }
-      console.log("Fetched IO Requests:", requests)
-      setIORequests(requests)
+      console.log("Fetched IO Requests:", requests);
+      setIORequests(requests);
     } catch (error) {
-      console.error("Error fetching IO Requests:", error)
+      console.error("Error fetching IO Requests:", error);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchData(selectedIOType)
+    fetchData(selectedIOType);
 
     const fetchDropdownData = async () => {
       try {
         const [roomData, supplierData, checkerData, customerData, wineData] = await Promise.all([
-          fetchRoomsAPI(),
+          fetchRoomAvailable(),
           fetchSuppliersApi(),
           fetchCheckersApi(),
           fetchCustomersApi(),
           fetchWineIDApi()
-        ])
-        setRooms(roomData)
-        setSuppliers(supplierData)
-        setCheckers(checkerData)
-        setCustomers(customerData)
-        setWines(wineData)
-        console.log("Rooms:", roomData)
-        console.log("Suppliers:", supplierData)
-        console.log("Checkers:", checkerData)
-        console.log("Customers:", customerData)
-        console.log("Wines:", wineData)
+        ]);
+        setRooms(roomData);
+        setSuppliers(supplierData);
+        setCheckers(checkerData);
+        setCustomers(customerData);
+        setWines(wineData);
+        console.log("Rooms:", roomData);
+        console.log("Suppliers:", supplierData);
+        console.log("Checkers:", checkerData);
+        console.log("Customers:", customerData);
+        console.log("Wines:", wineData);
       } catch (error) {
-        console.error("Error fetching dropdown data:", error)
+        console.error("Error fetching dropdown data:", error);
       }
-    }
+    };
 
-    fetchDropdownData()
-  }, [selectedIOType])
+    fetchDropdownData();
+  }, [selectedIOType]);
 
 
   const columns = [
@@ -92,12 +87,6 @@ export const IORequestListPage = () => {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : 'N/A'),
-    },
-    {
-      title: 'Due Date',
-      dataIndex: 'dueDate',
-      key: 'dueDate',
       render: (text) => (text ? moment(text).format('YYYY-MM-DD') : 'N/A'),
     },
     {
@@ -115,65 +104,98 @@ export const IORequestListPage = () => {
       key: 'actions',
       render: (text, record) => (
         <Space size="middle">
+          <Button type="primary" onClick={() => handleDetail(record)}>Detail</Button>
           <Button
-            type="primary"
+            type="default"
             onClick={() => handleUpdate(record)}
             disabled={record.status !== 'Pending'}
           >
-            <EditIcon />
+            Update
           </Button>
-          <Button
-            type="danger"
-            color='danger'
-            variant='solid'
+          <Button style={{ backgroundColor: 'red', borderColor: 'black' }}
+            type="primary"
             onClick={() => confirmDelete(record.id)}
             disabled={record.status !== 'Pending'}
           >
-            <DeleteIcon />
+            Disable
           </Button>
-          <Button type="default" variant='solid' style={{ background: 'orange', color: 'white' }} onClick={() => handleDetail(record)}><ArrowForwardIosIcon /></Button>
           <Button style={{ backgroundColor: '#4CAF50', borderColor: '#4CAF50' }}
             type="primary"
             onClick={() => confirmDone(record.id)}
             disabled={record.status !== 'Pending'}
           >
-            <CheckIcon />
+            Done
           </Button>
         </Space>
       ),
     },
-  ]
+  ];
 
   const handleDetail = (record) => {
-    navigate(`/app/io-requests/${record.id}`)
-  }
+    navigate(`/app/io-requests/${record.id}`);
+  };
 
   const handleUpdate = (record) => {
-    console.log("Updating record:", record)
-    setCurrentRequest(record)
+    console.log("Updating record:", record);
+    setCurrentRequest(record);
     form.setFieldsValue({
       ...record,
       ioRequestDetails: record.ioRequestDetails || [],
       startDate: moment(record.startDate),
       dueDate: moment(record.dueDate),
-    })
-    setIsModalVisible(true)
-  }
+    });
+    setSelectedIOType(record.ioType);
+    setIsModalVisible(true);
+  };
 
   const confirmDelete = (id) => {
     if (window.confirm("Are you sure you want to disable this request?")) {
-      handleDisableStatus(id).then(() => {
-        fetchData(selectedIOType)
-      })
+      handleDisableStatus(id).then((response) => {
+        if (response.success) {
+          fetchData(selectedIOType);
+          notification.success({
+            message: 'Disable Successful',
+            description: 'Request disable successfully.',
+          });
+        } else {
+          notification.error({
+            message: 'Disable Failed',
+            description: 'The request could not be disabled.',
+          });
+        }
+      }).catch(error => {
+        console.error("Error disabling request:", error);
+        notification.error({
+          message: 'An error occurred',
+          description: 'Unable to disable request. Please try again.',
+        });
+      });
     }
-  }
+  };
   const confirmDone = (id) => {
     if (window.confirm("Are you sure you want to done this request?")) {
-      handleDoneStatus(id).then(() => {
-        fetchData(selectedIOType)
-      })
+      handleDoneStatus(id).then((response) => {
+        if (response.success) {
+          fetchData(selectedIOType);
+          notification.success({
+            message: 'Done Successful',
+            description: 'The request has been done.',
+          });
+        } else {
+          notification.error({
+            message: 'Done Failed',
+            description: 'The request could not be completed.',
+          });
+        }
+      }).catch(error => {
+        console.error("Error completing request:", error);
+        notification.error({
+          message: 'An error occurred',
+          description: 'Unable to done request. Please try again.',
+        });
+      });
     }
-  }
+  };
 
   const handleCreate = (ioType) => {
     setCurrentRequest(null);
@@ -183,7 +205,7 @@ export const IORequestListPage = () => {
   };
 
   const handleOk = async (values) => {
-    console.log("Submitted values:", values)
+    console.log("Submitted values:", values);
     const requestPayload = {
       ...values,
       startDate: values.startDate ? values.startDate.format('YYYY-MM-DD') : null,
@@ -194,25 +216,37 @@ export const IORequestListPage = () => {
     console.log("Request Payload:", requestPayload);
     try {
       if (currentRequest) {
-        console.log("Updating request with ID:", currentRequest.id)
-        await updateIORequestApi(currentRequest.id, requestPayload)
+        console.log("Updating request with ID:", currentRequest.id);
+        await updateIORequestApi(currentRequest.id, requestPayload);
+        notification.success({
+          message: 'Update successful',
+          description: 'The request was updated successfully.',
+        });
       } else {
-        console.log("Creating new request")
-        await createIORequestApi(requestPayload)
+        console.log("Creating new request");
+        await createIORequestApi(requestPayload);
+        notification.success({
+          message: 'Created successfully',
+          description: 'The request has been successfully created.',
+        });
       }
-      setIsModalVisible(false)
-      setCurrentRequest(null)
-      fetchData(selectedIOType)
+      setIsModalVisible(false);
+      setCurrentRequest(null);
+      fetchData(selectedIOType);
     } catch (error) {
-      console.error("Error creating/updating request:", error)
+      console.error("Error creating/updating request:", error);
+      notification.error({
+        message: 'An error occurred',
+        description: 'The request could not be fulfilled. Please try again.',
+      });
     }
-  }
+  };
 
   const handleCancel = () => {
-    setIsModalVisible(false)
-    setCurrentRequest(null)
-    form.resetFields()
-  }
+    setIsModalVisible(false);
+    setCurrentRequest(null);
+    form.resetFields();
+  };
 
   const handleSelectChange = (value) => {
     setSelectedIOType(value);
@@ -221,17 +255,21 @@ export const IORequestListPage = () => {
 
   const handleRoomChange = async (roomId) => {
     try {
-      const wineData = await fetchWineIDApi(roomId);
+      const roomData = await fetchRoomById(roomId);
+      const wineData = roomData.wineRooms;
       setWines(wineData);
 
-      const ioRequestDetails = wineData.map(wine => ({
-        wineId: wine.id,
-        quantity: 0
-      }));
+      if (selectedIOType === 'Out') {
 
-      form.setFieldsValue({
-        ioRequestDetails: ioRequestDetails
-      });
+        const ioRequestDetails = wineData.map(wine => ({
+          wineId: wine.wineId,
+          quantity: 0
+        }));
+
+        form.setFieldsValue({
+          ioRequestDetails: ioRequestDetails// show all wine in this room
+        });
+      }
     } catch (error) {
       console.error("Error fetching wines for room:", error);
     }
@@ -247,7 +285,6 @@ export const IORequestListPage = () => {
             icon={<PlusOutlined />}
             onClick={() => handleCreate('In')}
             style={{ marginBottom: 16 }}
-            shape='round'
           >
             Create Import Request
           </Button>
@@ -256,7 +293,6 @@ export const IORequestListPage = () => {
             icon={<PlusOutlined />}
             onClick={() => handleCreate('Out')}
             style={{ marginBottom: 16 }}
-            shape='round'
           >
             Create Export Request
           </Button>
@@ -300,29 +336,28 @@ export const IORequestListPage = () => {
             ioType: selectedIOType
           }}
         >
-          <Form.Item name="requestCode" label="Request Code" rules={[{ required: true, message: 'Please enter the request code!' }]}>
-            <Input placeholder="Enter the request code" />
-          </Form.Item>
+
           <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Please enter start date!' }]}>
             <DatePicker placeholder="Select Start Date" format="YYYY-MM-DD" />
-          </Form.Item>
-
-          <Form.Item name="dueDate" label="Due Date" rules={[{ required: true, message: 'Please enter due date!' }]}>
-            <DatePicker placeholder="Select Due Date" format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item name="comments" label="Comments" rules={[{ required: false }]}>
             <Input.TextArea placeholder="Enter your comments" />
           </Form.Item>
-          <Form.Item name="suplierId" label="Supplier ID" rules={[{ required: true, message: 'Please enter Supplier ID!' }]}>
-            <Select placeholder="Select Supplier" showSearch>
-              {suppliers.map(supplier => (
-                <Option key={supplier.id} value={supplier.id}>{supplier.suplierName}</Option>
-              ))}
-            </Select>
-          </Form.Item>
+          {selectedIOType === 'In' && (
+            <Form.Item name="suplierId" label="Supplier ID" rules={[{ required: true, message: 'Please enter Supplier ID!' }]}>
+              <Select placeholder="Select Supplier" showSearch>
+                {suppliers.map(supplier => (
+                  <Option key={supplier.id} value={supplier.id}>{supplier.suplierName}</Option>
+                ))}
+              </Select>
+            </Form.Item>)}
 
           <Form.Item name="roomId" label="Room ID" rules={[{ required: true, message: 'Please enter Room ID!' }]}>
-            <Select placeholder="Select Room" showSearch onChange={handleRoomChange}>
+            <Select
+              placeholder="Select Room"
+              showSearch
+              onChange={selectedIOType === 'Out' ? handleRoomChange : undefined}
+            >
               {rooms.map(room => (
                 <Option key={room.id} value={room.id}>{room.roomName}</Option>
               ))}
@@ -336,14 +371,14 @@ export const IORequestListPage = () => {
               ))}
             </Select>
           </Form.Item>
-
-          <Form.Item name="customerId" label="Customer ID" rules={[{ required: true, message: 'Please enter Customer ID!' }]}>
-            <Select placeholder="Select Customer" showSearch>
-              {customers.map(customer => (
-                <Option key={customer.id} value={customer.id}>{customer.customerName}</Option>
-              ))}
-            </Select>
-          </Form.Item>
+          {selectedIOType === 'Out' && (
+            <Form.Item name="customerId" label="Customer ID" rules={[{ required: true, message: 'Please enter Customer ID!' }]}>
+              <Select placeholder="Select Customer" showSearch>
+                {customers.map(customer => (
+                  <Option key={customer.id} value={customer.id}>{customer.customerName}</Option>
+                ))}
+              </Select>
+            </Form.Item>)}
 
           {!currentRequest && (
             <Form.List name="ioRequestDetails">
@@ -355,25 +390,50 @@ export const IORequestListPage = () => {
                         {...restField}
                         name={[name, 'quantity']}
                         fieldKey={[fieldKey, 'quantity']}
-                        rules={[{ required: true, message: 'Enter Number Quantity' },
+                        rules={[
+                          { required: true, message: 'Enter Number Quantity' },
+                          {
+                            validator: (_, value) => {
+                              if (value && value <= 0) {
+                                return Promise.reject(new Error('Quantity must be a positive number'));
+                              }
+                              return Promise.resolve();
+                            },
+                          },
                         ]}
                       >
                         <Input type="number" placeholder="Quantity" />
                       </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'wineId']}
-                        fieldKey={[fieldKey, 'wineId']}
-                        rules={[{ required: true, message: 'Missing wine ID' }]}
-                      >
-                        <Select placeholder="Select Wine">
-                          {wines.map(wine => (
-                            <Option key={wine.id} value={wine.id}>
-                              {wine.wineName}
-                            </Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
+                      {selectedIOType === 'In' && (
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'wineId']}
+                          fieldKey={[fieldKey, 'wineId']}
+                          rules={[{ required: true, message: 'Missing wine ID' }]}
+                        >
+                          <Select placeholder="Select Wine">
+                            {wines.map(wine => (
+                              <Option key={wine.id} value={wine.id}>
+                                {wine.wineName}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>)}
+                      {selectedIOType === 'Out' && (
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'wineId']}
+                          fieldKey={[fieldKey, 'wineId']}
+                          rules={[{ required: true, message: 'Missing wine ID' }]}
+                        >
+                          <Select placeholder="Select Wine">
+                            {wines.map(wine => (
+                              <Option key={wine.wineId} value={wine.wineId}>
+                                {wine.wineName}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>)}
                       <Button type="danger" onClick={() => remove(name)}>
                         Remove
                       </Button>
@@ -397,7 +457,7 @@ export const IORequestListPage = () => {
         </Form>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default IORequestListPage
+export default IORequestListPage;
