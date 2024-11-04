@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Table, Button, Space, Modal, notification, Card, Divider, Typography } from 'antd'
+import { Table, Button, Space, Modal, notification, Card, Divider, Typography, Input } from 'antd'
 import '../../styles/WineListStyle.css' // Import custom styles
 import { useLocation, useNavigate } from 'react-router-dom'
 import { deleteWineAPI, fetchAllWineAPI } from '../../services/api-service/WineApiService'
@@ -8,11 +8,14 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import EditIcon from '@mui/icons-material/Edit'
 import AddIcon from '@mui/icons-material/Add'
 import dayjs from 'dayjs'
+import { SearchOutlined } from '@ant-design/icons'
 
 const { Title } = Typography
 
 export const WineListPage = () => {
-    const [wines, setWines] = useState(null)
+    const [wines, setWines] = useState(null) //for api
+    const [allWines, setAllWines] = useState(null) //for search filter and not using api
+    const [searchText, setSearchText] = useState('')
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
     const [currentWineId, setCurrentWineId] = useState(null)
     const navigate = useNavigate()
@@ -55,6 +58,16 @@ export const WineListPage = () => {
     const handleUpdateButtonClicked = (record) => {
         navigate(`/app/update-wine/${record.id}`)
     }
+    const handleSearch = (e) => {
+        const { value } = e.target
+        setSearchText(value)
+
+        // Filter wines based on search text
+        const filteredWines = allWines.filter((wine) =>
+            wine.wineName.toLowerCase().includes(value.toLowerCase())
+        )
+        setWines(filteredWines)
+    }
 
     //#region fetch wine region
     const fetchAllWines = async () => {
@@ -63,6 +76,7 @@ export const WineListPage = () => {
             const activeWines = response.filter(wine => wine.status === 'Active')
             if (activeWines) {
                 setWines(activeWines)
+                setAllWines(activeWines)
             } else {
                 throw new Error('API request failed')
             }
@@ -125,23 +139,33 @@ export const WineListPage = () => {
     return (
         <div className="wine-list-container">
             <Card bordered={false}>
-            <Title level={2} >Wine List</Title>
-            <Button
-                type="primary"
-                className="create-wine-button"
-                onClick={handleCreateButtonClicked}
-                shape="round"
-            >
-                <AddIcon /> Add new wine
-            </Button>
-            <Divider />
-            <Table
-                dataSource={wines}
-                columns={columns}
-                rowKey="id"
-                pagination={{ pageSize: 5 }}
-                className="wine-table"
-            />
+                <Title level={2} >Wine List</Title>
+                <Space size="middle">
+                    <Button
+                        type="primary"
+                        onClick={handleCreateButtonClicked}
+                        shape="round"
+                    >
+                        <AddIcon /> Add new wine
+                    </Button>
+                    <Space.Compact >
+                        <Button shape='round' disabled ><SearchOutlined /></Button>
+                        <Input
+                            placeholder="Enter wine name"
+                            value={searchText}
+                            onChange={handleSearch}
+                            style={{ borderRadius: '0 100px 100px 0' }}
+                        />
+                    </Space.Compact>
+                </Space>
+                <Divider />
+                <Table
+                    dataSource={wines}
+                    columns={columns}
+                    rowKey="id"
+                    pagination={{ pageSize: 5 }}
+                    className="wine-table"
+                />
             </Card>
 
             {/* MODAL CONFIRM */}

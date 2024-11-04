@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Table, Button, Space, Typography, Card, Divider, message } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { Table, Button, Space, Typography, Card, Divider, message, Input } from 'antd'
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import PopupDialog from '~/components/PopupDialog'
 import CreateRoomForm from './CreateRoomForm'
 import { createRoomAPI, deleteRoomAPI, fetchRoomsAPI, updateRoomAPI } from '~/services/api-service/RoomApiService'
@@ -18,11 +18,15 @@ export const RoomListPage = () => {
   const [modalAction, setModalAction] = useState('')
   const [content, setContent] = useState(null)
   const navigate = useNavigate();
+  const [searchText, setSearchText] = useState('')
+  const [allRooms, setAllRooms] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const fetchRoomData = async () => {
     const response = await fetchRoomsAPI()
     const activeRooms = response.filter(room => room.status === 'Active')
     setData(activeRooms)
+    setAllRooms(activeRooms)
   }
   useEffect(() => {
     fetchRoomData()
@@ -55,17 +59,26 @@ export const RoomListPage = () => {
         <Space size="middle">
           <Button type="default" color='primary' variant='solid' onClick={() => handleUpdate(record)}><EditIcon /></Button>
           <Button type="danger" color='danger' variant='solid' onClick={() => handleDelete(record)}><DeleteIcon /></Button>
-          <Button type="default" variant='solid' style={{ background: 'orange', color: 'white' }}  onClick={() => handleDetail(record.id)}><ArrowForwardIosIcon /></Button>
+          <Button type="default" variant='solid' style={{ background: 'orange', color: 'white' }} onClick={() => handleDetail(record.id)}><ArrowForwardIosIcon /></Button>
         </Space>
       )
     }
   ]
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  const handleSearch = (e) => {
+    const { value } = e.target
+    setSearchText(value)
+
+    const filteredRooms = allRooms.filter((data) =>
+        data.roomName.toLowerCase().includes(value.toLowerCase())
+    )
+    setData(filteredRooms)
+}
 
   const handleDetail = (id) => {
     setModalAction('detail')
     console.log(`Navigate to detail page of record with id: ${id}`)
-    navigate(`/app/room-details/${id}`); 
+    navigate(`/app/room-details/${id}`);
   }
 
   const handleUpdate = (data) => {
@@ -110,15 +123,25 @@ export const RoomListPage = () => {
     <div style={{ padding: '24px' }}>
       <Card bordered={false}>
         <Title level={2}>Room List</Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreate}
-          style={{ marginBottom: 16 }}
-          shape='round'
-        >
-          Create New Room
-        </Button>
+        <Space size="middle">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleCreate}
+            shape='round'
+          >
+            Create New Room
+          </Button>
+          <Space.Compact >
+            <Button shape='round' disabled ><SearchOutlined /></Button>
+            <Input
+              placeholder="Enter room name"
+              value={searchText}
+              onChange={handleSearch}
+              style={{ borderRadius: '0 100px 100px 0' }}
+            />
+          </Space.Compact>
+        </Space>
         <Divider />
         <Table
           columns={columns}
