@@ -35,7 +35,8 @@ export const updateIORequestApi = async (id, updatedRequest) => {
 
 export const handleDisableStatus = async (id) => {
     try {
-        await axios.delete(`${BASE_URL}/${id}`); // Gọi API để xóa yêu cầu
+        await axios.delete(`${BASE_URL}/${id}`);
+        return { success: true };
     } catch (error) {
         if (error.response) {
             console.error('Error disabling IO Request:', error.response.data);
@@ -43,11 +44,13 @@ export const handleDisableStatus = async (id) => {
         } else {
             console.error('Error disabling IO Request:', error.message);
         }
+        return { success: false };
     }
 };
 export const handleDoneStatus = async (id) => {
     try {
         await axios.put(`${BASE_URL}/done/${id}`);
+        return { success: true };
     } catch (error) {
         if (error.response) {
             console.error('Error Done IO Request:', error.response.data);
@@ -55,6 +58,7 @@ export const handleDoneStatus = async (id) => {
         } else {
             console.error('Error Done IO Request:', error.message);
         }
+        return { success: false };
     }
 };
 
@@ -79,7 +83,7 @@ export const fetchIORequestTypeApi = async (ioType) => {
 };
 export const fetchRoomById = async (roomId) => {
     try {
-        const response = await axios.get(`${BASE_URL}/rooms/${roomId}`);
+        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/${roomId}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching room by ID:", error);

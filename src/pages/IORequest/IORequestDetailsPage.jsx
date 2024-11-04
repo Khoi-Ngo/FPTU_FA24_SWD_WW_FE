@@ -210,7 +210,7 @@ export const IORequestDetailsPage = () => {
                 {/* Modal Add/Edit */}
                 <Modal
                     title={currentDetail ? 'Edit Form' : 'Add Form'}
-                    visible={isModalVisible}
+                    open={isModalVisible}
                     onCancel={() => { setIsModalVisible(false); form.resetFields(); setCurrentDetail(null); }}
                     onOk={currentDetail ? handleEditDetail : handleAddDetail}
                 >
