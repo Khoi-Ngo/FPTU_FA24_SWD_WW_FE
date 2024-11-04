@@ -178,7 +178,7 @@ export const IORequestDetailsPage = () => {
                     <Descriptions.Item label="Status">
                         <span className={ioRequest?.status === 'Pending' ? 'request-status-pending' :
                             ioRequest?.status === 'Done' ? 'request-status-done' :
-                                ioRequest?.status === 'Cancle' ? 'request-status-cancle' : ''}>
+                                ioRequest?.status === 'Cancel' ? 'request-status-cancel' : ''}>
                             {ioRequest?.status}
                         </span>
                     </Descriptions.Item>

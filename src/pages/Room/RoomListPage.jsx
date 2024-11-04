@@ -10,37 +10,8 @@ import { useNavigate } from 'react-router-dom'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import EditIcon from '@mui/icons-material/Edit'
-import AddIcon from '@mui/icons-material/Add'
 
 const { Title } = Typography
-
-// Mock Data
-// const mockRooms = [
-//   {
-//     id: 1,
-//     roomName: "Tasting Room 1",
-//     locationAddress: "123 Vineyard Lane",
-//     capacity: 50,
-//     currentOccupancy: 30,
-//     managerName: "John Doe",
-//   },
-//   {
-//     id: 2,
-//     roomName: "Cellar Room",
-//     locationAddress: "456 Winery Blvd",
-//     capacity: 100,
-//     currentOccupancy: 80,
-//     managerName: "Jane Smith",
-//   },
-//   {
-//     id: 3,
-//     roomName: "VIP Room",
-//     locationAddress: "789 Estate Ave",
-//     capacity: 20,
-//     currentOccupancy: 10,
-//     managerName: "Emily Johnson",
-//   },
-// ]
 
 export const RoomListPage = () => {
   const [data, setData] = useState([])
@@ -52,9 +23,6 @@ export const RoomListPage = () => {
     const response = await fetchRoomsAPI()
     const activeRooms = response.filter(room => room.status === 'Active')
     setData(activeRooms)
-    // .catch(error => {
-    //   message.error('Error fetching data:', error.data)
-    // })
   }
   useEffect(() => {
     fetchRoomData()
@@ -80,16 +48,6 @@ export const RoomListPage = () => {
       dataIndex: 'currentOccupancy',
       key: 'currentOccupancy'
     },
-    // {
-    //   title: 'Manager Name',
-    //   dataIndex: 'managerName',
-    //   key: 'managerName'
-    // },
-    // {
-    //   title: 'Status',
-    //   dataIndex: 'status',
-    //   key: 'status'
-    // },
     {
       title: 'Actions',
       key: 'actions',
@@ -170,7 +128,6 @@ export const RoomListPage = () => {
           pagination={{ pageSize: 10 }}
         />
       </Card>
-      {/* <PopupRoom setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} createRoom={createRoom} /> */}
       <PopupDialog
         title={modalAction === 'create' ? 'Create Room' :
           modalAction === 'delete' ? 'Delete Room' :

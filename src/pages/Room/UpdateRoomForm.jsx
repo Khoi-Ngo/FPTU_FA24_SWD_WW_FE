@@ -21,11 +21,9 @@ function UpdateRoomForm({ setIsModalOpen, updateRoom, data, isModalOpen, setModa
     roomName: '',
     locationAddress: '',
     capacity: 0,
-    currentOccupancy: 0,
-    managerName: '',
     wineRooms: []
   })
-  const handleCancle = () => {
+  const handleCancel = () => {
     setIsModalOpen(false)
     clearForm()
   }
@@ -98,43 +96,12 @@ function UpdateRoomForm({ setIsModalOpen, updateRoom, data, isModalOpen, setModa
           }
         />
       </Form.Item>
-
-      <Form.Item
-        label="Current Occupancy"
-        name="currentOccupancy"
-        rules={[{ required: true, message: 'Please input the current occupancy!' }]}
-      >
-        <InputNumber
-          style={{ width: '100%' }}
-          type="text"
-          name="currentOccupancy"
-          value={formData.currentOccupancy}
-          onChange={(value) =>
-            setFormData((prevData) => ({
-              ...prevData,
-              currentOccupancy: value
-            }))
-          }
-        />
-      </Form.Item>
-
-      <Form.Item
-        label="Manager Name"
-        name="managerName"
-        rules={[{ required: true, message: 'Please input the manager name!' }]}
-      >
-        <Input
-          type="text"
-          name="managerName"
-          value={formData.managerName}
-          onChange={handleChange} />
-      </Form.Item>
-
+      
       <Form.Item wrapperCol={{ span: 24, offset: 6 }}>
         <Button type="primary" htmlType="submit">
           Submit
         </Button>
-        <Button style={{ marginLeft: 8 }} onClick={() => handleCancle()}>
+        <Button style={{ marginLeft: 8 }} onClick={() => handleCancel()}>
           Cancel
         </Button>
       </Form.Item>

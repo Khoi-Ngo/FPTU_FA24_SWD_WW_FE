@@ -70,10 +70,6 @@ export const fetchAlcoholVolumeAPI = async () => {
     const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/alcohol-by-volumes`)
     return response.data
 }
-export const uploadImageWineAPI = async (formData) => {
-    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload`, formData)
-    return response.data
-}
 
 export {deleteWineAPI, createWineAPI, 
 }

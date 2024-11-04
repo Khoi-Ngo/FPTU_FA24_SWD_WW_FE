@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Table, Button, Space, Modal, notification } from 'antd'
+import { Table, Button, Space, Modal, notification, Card, Divider, Typography } from 'antd'
 import '../../styles/WineListStyle.css' // Import custom styles
 import { useLocation, useNavigate } from 'react-router-dom'
 import { deleteWineAPI, fetchAllWineAPI } from '../../services/api-service/WineApiService'
@@ -7,68 +7,65 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import EditIcon from '@mui/icons-material/Edit'
 import AddIcon from '@mui/icons-material/Add'
-import Title from 'antd/es/skeleton/Title'
+import dayjs from 'dayjs'
+
+const { Title } = Typography
 
 export const WineListPage = () => {
-    const [wines, setWines] = useState(null);
-    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-    const [currentWineId, setCurrentWineId] = useState(null);
-    const navigate = useNavigate();
-    const location = useLocation();
+    const [wines, setWines] = useState(null)
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
+    const [currentWineId, setCurrentWineId] = useState(null)
+    const navigate = useNavigate()
+    const location = useLocation()
 
     //#region directly DELETE wine in the list
     const handleDeleteButtonClicked = (wineId) => {
-        setCurrentWineId(wineId);
-        setIsDeleteModalVisible(true);
-    };
+        setCurrentWineId(wineId)
+        setIsDeleteModalVisible(true)
+    }
 
     const confirmDelete = async () => {
         try {
             console.log('currentWineId ', currentWineId)
-            await deleteWineAPI(currentWineId);
+            await deleteWineAPI(currentWineId)
             notification.success({
                 message: `Wine deleted successfully`,
                 description: `Wine with ID: ${currentWineId} was deleted.`,
-            });
+            })
         } catch (error) {
             notification.error({
                 message: 'Error',
                 description: error.message,
-            });
+            })
         }
-        setIsDeleteModalVisible(false);
-        fetchAllWines();
-    };
+        setIsDeleteModalVisible(false)
+        fetchAllWines()
+    }
     //#endregion
 
     //redirect to create wine page
     const handleCreateButtonClicked = () => {
-        navigate("/app/create-wine");
-    };
+        navigate("/app/create-wine")
+    }
     //redirect to the detail page with id path
     const handleDetailButtonClicked = (record) => {
-        navigate(`/app/wines/${record.id}`);
-    };
+        navigate(`/app/wines/${record.id}`)
+    }
     //redirect to the update wine page
     const handleUpdateButtonClicked = (record) => {
-        navigate(`/app/update-wine/${record.id}`);
-    };
+        navigate(`/app/update-wine/${record.id}`)
+    }
 
     //#region fetch wine region
     const fetchAllWines = async () => {
         try {
-            const response = await fetchAllWineAPI();
+            const response = await fetchAllWineAPI()
             const activeWines = response.filter(wine => wine.status === 'Active')
             if (activeWines) {
-                setWines(activeWines);
+                setWines(activeWines)
             } else {
-                throw new Error('API request failed');
+                throw new Error('API request failed')
             }
-            // notification.success(
-            //     {
-            //         message: "Load oke"
-            //     }
-            // )
         } catch (error) {
             notification.error({
                 message: "Fail load" + error
@@ -77,7 +74,7 @@ export const WineListPage = () => {
     }
 
     useEffect(() => {
-        fetchAllWines();
+        fetchAllWines()
     }, [location])
     //#endregion
 
@@ -92,21 +89,14 @@ export const WineListPage = () => {
             dataIndex: 'wineName',
             key: 'wineName',
         },
-        // {
-        //     title: 'Available Stock',
-        //     dataIndex: 'availableStock',
-        //     key: 'availableStock',
-        // },
         {
             title: 'MFD',
             dataIndex: 'mfd',
             key: 'mfd',
+            render: (mfd) => (
+                <span>{dayjs(mfd).format('YYYY-MM-DD')}</span>
+            ),
         },
-        // {
-        //     title: 'Supplier',
-        //     dataIndex: 'supplier',
-        //     key: 'supplier',
-        // },
         {
             title: 'Image',
             dataIndex: 'imageUrl',
@@ -119,11 +109,6 @@ export const WineListPage = () => {
                 />
             ),
         },
-        // {
-        //     title: 'Status',
-        //     dataIndex: 'status',
-        //     key: 'status',
-        // },
         {
             title: 'Actions',
             key: 'actions',
@@ -135,11 +120,12 @@ export const WineListPage = () => {
                 </Space>
             ),
         },
-    ];
+    ]
 
     return (
         <div className="wine-list-container">
-            <Title level={2} className="wine-list-title" >Wine List</Title>
+            <Card bordered={false}>
+            <Title level={2} >Wine List</Title>
             <Button
                 type="primary"
                 className="create-wine-button"
@@ -148,6 +134,7 @@ export const WineListPage = () => {
             >
                 <AddIcon /> Add new wine
             </Button>
+            <Divider />
             <Table
                 dataSource={wines}
                 columns={columns}
@@ -155,6 +142,7 @@ export const WineListPage = () => {
                 pagination={{ pageSize: 5 }}
                 className="wine-table"
             />
+            </Card>
 
             {/* MODAL CONFIRM */}
             <Modal
@@ -168,7 +156,7 @@ export const WineListPage = () => {
                 <p>Are you sure you want to delete this wine?</p>
             </Modal>
         </div>
-    );
-};
+    )
+}
 
-export default WineListPage;
+export default WineListPage

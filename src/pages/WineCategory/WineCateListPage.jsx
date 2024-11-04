@@ -97,7 +97,7 @@ export const WineCateListPage = () => {
       {/* Modal create */}
       <Modal
         title="Create New Wine Category"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
         okText="Create"

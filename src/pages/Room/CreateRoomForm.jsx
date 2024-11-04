@@ -20,19 +20,9 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
   const [formData, setFormData] = useState({
     roomName: '',
     locationAddress: '',
-    capacity: 0,
-    //currentOccupancy: 0,
-    managerName: ''
-    // wineRooms: [
-    //   {
-    //     currQuantity: 0,
-    //     totalQuantity: 0,
-    //     roomId: 0,
-    //     wineId: 0
-    //   }
-    // ]
+    capacity: 0
   })
-  const handleCancle = () => {
+  const handleCancel = () => {
     setIsModalOpen(false)
     clearForm()
   }
@@ -101,42 +91,11 @@ function CreateRoomForm({ setIsModalOpen, createRoom, isModalOpen, setModalActio
         />
       </Form.Item>
 
-      {/* <Form.Item
-        label="Current Occupancy"
-        name="currentOccupancy"
-        rules={[{ required: true, message: 'Please input the current occupancy!' }]}
-      >
-        <InputNumber
-          style={{ width: '100%' }}
-          type="text"
-          name="currentOccupancy"
-          value={formData.currentOccupancy}
-          onChange={(value) =>
-            setFormData((prevData) => ({
-              ...prevData,
-              currentOccupancy: value
-            }))
-          }
-        />
-      </Form.Item> */}
-
-      <Form.Item
-        label="Manager Name"
-        name="managerName"
-        rules={[{ required: true, message: 'Please input the manager name!' }]}
-      >
-        <Input
-          type="text"
-          name="managerName"
-          value={formData.managerName}
-          onChange={handleChange} />
-      </Form.Item>
-
       <Form.Item wrapperCol={{ span: 24, offset: 6 }}>
         <Button type="primary" color='primary' shape='round' htmlType="submit">
           Submit
         </Button>
-        <Button style={{ marginLeft: 8 }} shape='round' onClick={() => handleCancle()}>
+        <Button style={{ marginLeft: 8 }} shape='round' onClick={() => handleCancel()}>
           Cancel
         </Button>
       </Form.Item>
