@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Table, Button, Space, Modal, notification, Typography, Card } from 'antd'
+import { Table, Button, Space, Modal, notification, Typography, Card, Input, Divider } from 'antd'
 import '../../styles/WineListStyle.css'
 import { useNavigate } from 'react-router-dom'
 import { deleteWineAPI } from '../../services/api-service/WineApiService'
@@ -9,19 +9,24 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import EditIcon from '@mui/icons-material/Edit'
 import AddIcon from '@mui/icons-material/Add'
 import dayjs from 'dayjs'
+import { SearchOutlined } from '@ant-design/icons'
 
 const { Title } = Typography
 
 function FilteredWineListPage() {
-  const wine = useBearStore(state => state.wine)
+  //const wine = useBearStore(state => state.wine)
+  const { wine, setWine } = useBearStore()
+  const [searchText, setSearchText] = useState('')
+  const [wineDefaultState, setWineDefaultState] = useState(null)
   const navigate = useNavigate();
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [currentWineId, setCurrentWineId] = useState(null);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
+  const [currentWineId, setCurrentWineId] = useState(null)
   const columns = [
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      sorter: (a, b) => a.id - b.id,
     },
     {
       title: 'Wine Name',
@@ -35,6 +40,7 @@ function FilteredWineListPage() {
       render: (mfd) => (
         <span>{dayjs(mfd).format('YYYY-MM-DD')}</span>
       ),
+      sorter: (a, b) => new Date(b.mfd) - new Date(a.mfd),
     },
     {
       title: 'Image',
@@ -62,7 +68,24 @@ function FilteredWineListPage() {
   ]
   useEffect(() => {
     console.log('Filtered wine: ', wine)
+    setWineDefaultState(wine)
   }, [])
+
+  const handleSearch = (e) => {
+    const { value } = e.target
+    setSearchText(value)
+
+    if (value === '') {
+      // Reset to original data
+      setWine(wineDefaultState)
+    } else {
+      // Filter wines based on search text
+      const filteredWines = wine.filter((wine) =>
+        wine.wineName.toLowerCase().includes(value.toLowerCase())
+      )
+      setWine(filteredWines)
+    }
+  }
 
   const handleDeleteButtonClicked = (wineId) => {
     setCurrentWineId(wineId);
@@ -101,14 +124,25 @@ function FilteredWineListPage() {
     <div className="wine-list-container">
       <Card bordered={false}>
         <Title level={2} >Wine List</Title>
-        <Button
-          type="primary"
-          className="create-wine-button"
-          onClick={handleCreateButtonClicked}
-          shape='round'
-        >
-          <AddIcon /> Add new wine
-        </Button>
+        <Space size="middle">
+          <Button
+            type="primary"
+            onClick={handleCreateButtonClicked}
+            shape="round"
+          >
+            <AddIcon /> Add new wine
+          </Button>
+          <Space.Compact >
+            <Button shape='round' disabled ><SearchOutlined /></Button>
+            <Input
+              placeholder="Enter wine name"
+              value={searchText}
+              onChange={handleSearch}
+              style={{ borderRadius: '0 100px 100px 0' }}
+            />
+          </Space.Compact>
+        </Space>
+        <Divider />
         <Table
           dataSource={wine}
           columns={columns}

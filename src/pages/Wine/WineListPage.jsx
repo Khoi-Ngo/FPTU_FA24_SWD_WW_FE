@@ -97,11 +97,13 @@ export const WineListPage = () => {
             title: 'ID',
             dataIndex: 'id',
             key: 'id',
+            sorter: (a, b) => a.id - b.id,
         },
         {
             title: 'Wine Name',
             dataIndex: 'wineName',
             key: 'wineName',
+            sorter: (a, b) => a.wineName.localeCompare(b.wineName),
         },
         {
             title: 'MFD',
@@ -110,6 +112,7 @@ export const WineListPage = () => {
             render: (mfd) => (
                 <span>{dayjs(mfd).format('YYYY-MM-DD')}</span>
             ),
+            sorter: (a, b) => new Date(b.mfd) - new Date(a.mfd),
         },
         {
             title: 'Image',
