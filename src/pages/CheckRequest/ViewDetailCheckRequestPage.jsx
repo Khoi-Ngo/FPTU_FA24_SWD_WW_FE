@@ -324,19 +324,19 @@ const ViewDetailCheckRequestPage = () => {
             <Card style={styles.infoCard}>
                 <h2 style={styles.sectionHeader}>Check Request Information</h2>
                 <Descriptions bordered column={1} labelStyle={styles.labelStyle} contentStyle={styles.contentStyle}>
-                    <Descriptions.Item label="Request ID">{id}</Descriptions.Item>
-                    <Descriptions.Item label="Request Code">{requestCode}</Descriptions.Item>
-                    <Descriptions.Item label="Purpose">
+                    <Descriptions.Item label="REQUEST ID">{id}</Descriptions.Item>
+                    <Descriptions.Item label="CODE">{requestCode}</Descriptions.Item>
+                    <Descriptions.Item label="PURPOSE">
                         {isEditing ? (
                             <Input name="purpose" value={newData.purpose} onChange={handleInputChange} />
                         ) : (
                             purpose
                         )}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Request Code">{startDate}</Descriptions.Item>
+                    <Descriptions.Item label="START DATE">{startDate}</Descriptions.Item>
 
-                    <Descriptions.Item label="Request Code">{dueDate}</Descriptions.Item>
-                    <Descriptions.Item label="Priority Level">
+                    <Descriptions.Item label="DUE DATE">{dueDate}</Descriptions.Item>
+                    <Descriptions.Item label="PRIORITY LEVEL">
                         {isEditing ? (
                             <Select value={newData.priorityLevel} onChange={handleSelectChange} style={{ width: '100%' }}>
                                 {priorityOptions.map(option => (
@@ -349,10 +349,10 @@ const ViewDetailCheckRequestPage = () => {
                             priorityLevel
                         )}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Requester ID">{requesterId}</Descriptions.Item>
-                    <Descriptions.Item label="Requester Name">{requesterName}</Descriptions.Item>
-                    <Descriptions.Item label="Status">{status}</Descriptions.Item>
-                    <Descriptions.Item label="Comments">
+                    <Descriptions.Item label="REQUESTER ID">{requesterId}</Descriptions.Item>
+                    <Descriptions.Item label="REQUESTER NAME">{requesterName}</Descriptions.Item>
+                    <Descriptions.Item label="STATUS">{status}</Descriptions.Item>
+                    <Descriptions.Item label="COMMENTS">
                         {isEditing ? (
                             <Input name="comments" value={newData.comments || ''} onChange={handleInputChange} />
                         ) : (
