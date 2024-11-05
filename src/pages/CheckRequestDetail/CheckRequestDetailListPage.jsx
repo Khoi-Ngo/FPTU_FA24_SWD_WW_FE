@@ -274,7 +274,7 @@ export const CheckRequestDetailListPage = () => {
 
             <Modal
                 title="Create Additional Check Request Detail"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleCreateAdditional}
                 onCancel={hideModal}
                 okText="Create"

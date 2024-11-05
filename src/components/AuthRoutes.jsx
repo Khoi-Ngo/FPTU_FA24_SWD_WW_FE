@@ -9,7 +9,7 @@ export const AuthRoutes = (props) => {
     if (userLogin && userLogin.id) {
         return (
             <>
-                {props.children};
+                {props.children}
             </>
         );
     }

@@ -253,7 +253,7 @@ const UserProfilePage = () => {
             {/* UPDATE PASSWORD MODAL */}
             <Modal
                 title="Change Password"
-                visible={isPasswordModalVisible}
+                open={isPasswordModalVisible}
                 onOk={handleOkPasswordForm}
                 onCancel={handleCancelPasswordForm}
                 okText="Update"

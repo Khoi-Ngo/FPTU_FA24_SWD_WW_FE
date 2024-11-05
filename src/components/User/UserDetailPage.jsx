@@ -213,7 +213,7 @@ export const UserDetailPage = () => {
             {/* RESET PASSWORD REGION */}
             <Modal
                 title="Change Password"
-                visible={isPasswordModalVisible}
+                open={isPasswordModalVisible}
                 onOk={handleOkPasswordForm}
                 onCancel={handleCancelPasswordForm}
                 okText="Update"

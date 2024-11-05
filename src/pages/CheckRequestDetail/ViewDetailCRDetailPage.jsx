@@ -172,7 +172,7 @@ export const ViewDetailCRDetailPage = () => {
 
             <Modal
                 title="Create Report"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleCreateReport}
                 onCancel={() => {
                     setReportFields({ ReportDescription: '', DiscrepanciesFound: 0, ActualQuantity: 0 });
