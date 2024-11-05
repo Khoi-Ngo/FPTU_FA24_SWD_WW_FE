@@ -51,6 +51,7 @@ const router = createBrowserRouter([
     element: <ResetPasswordPage></ResetPasswordPage>,
     errorElement: <ErrorPage />
   },
+  
 
   {
     path: "/app",
@@ -92,9 +93,7 @@ const router = createBrowserRouter([
       {
         path: 'wines',
         element: <WineListPage />,
-        children: [
 
-        ]
       },
       {
         path: 'filtered-wine',
