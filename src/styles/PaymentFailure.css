@@ -1,0 +1,73 @@
+.payment-failure-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+
+    padding: 20px;
+}
+
+.payment-failure-wrapper {
+    text-align: center;
+    background-color: #fff;
+
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+    max-width: 500px;
+    color: #333;
+}
+
+.payment-failure-icon-wrapper {
+    display: inline-block;
+    padding: 16px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+
+    margin-bottom: 20px;
+}
+
+.payment-failure-icon {
+    width: 60px;
+    height: 60px;
+}
+
+.payment-failure-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e74c3c;
+
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+}
+
+.payment-failure-message {
+    font-size: 16px;
+    color: #555;
+
+    line-height: 1.6;
+    margin: 0 20px 24px;
+    font-family: Arial, sans-serif;
+}
+
+.payment-failure-button {
+    background-color: #e74c3c;
+
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+
+}
+
+.payment-failure-button:hover {
+    background-color: #da5d4f;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+}

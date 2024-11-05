@@ -29,6 +29,8 @@ import ViewDetailCheckRequestPage from './pages/CheckRequest/ViewDetailCheckRequ
 import { CheckRequestDetailListPage } from './pages/CheckRequestDetail/CheckRequestDetailListPage.jsx'
 import { ViewDetailCRDetailPage } from './pages/CheckRequestDetail/ViewDetailCRDetailPage.jsx'
 import FilteredWineListPage from './pages/Wine/FilteredWineListPage.jsx'
+import PaymentSuccess from './pages/IORequest/PaymentSuccess.jsx'
+import PaymentFailure from './pages/IORequest/PaymentFailure.jsx'
 
 const router = createBrowserRouter([
   {
@@ -36,7 +38,14 @@ const router = createBrowserRouter([
     element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
-
+  {
+    path: "payment-success",
+    element: <PaymentSuccess />
+  },
+  {
+    path: "payment-failure",
+    element: <PaymentFailure />
+  },
   {
     path: "/reset-password",
     element: <ResetPasswordPage></ResetPasswordPage>,
@@ -84,7 +93,7 @@ const router = createBrowserRouter([
         path: 'wines',
         element: <WineListPage />,
         children: [
-          
+
         ]
       },
       {

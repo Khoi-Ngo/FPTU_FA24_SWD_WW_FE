@@ -1,11 +1,11 @@
-
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete'
 import { MdDoneOutline } from "react-icons/md";
-import EditIcon from '@mui/icons-material/Edit'
-
-import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker, notification } from 'antd';
+import EditIcon from '@mui/icons-material/Edit';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { MdOutlinePayment } from "react-icons/md";
+import { Table, Button, Space, Typography, Card, Divider, Modal, Form, Input, Select, List, DatePicker, notification, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -14,11 +14,11 @@ import {
   updateIORequestApi,
   handleDisableStatus,
   fetchIORequestTypeApi,
-
+  paymentIORequestApi,
   handleDoneStatus,
-  fetchRoomById
+  fetchRoomByIdForExport
 } from '../../services/api-service/IORequestApiService';
-import { fetchRoomAvailable, fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest';
+import { fetchRoomAvailableForExport, fetchRoomAvailable, fetchSuppliersApi, fetchCheckersApi, fetchCustomersApi, fetchWineIDApi } from '~/services/api-service/FetchInputIORequest';
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -58,7 +58,7 @@ export const IORequestListPage = () => {
     const fetchDropdownData = async () => {
       try {
         const [roomData, supplierData, checkerData, customerData, wineData] = await Promise.all([
-          fetchRoomAvailable(),
+          selectedIOType === 'Out' ? fetchRoomAvailableForExport() : fetchRoomAvailable(),
           fetchSuppliersApi(),
           fetchCheckersApi(),
           fetchCustomersApi(),
@@ -94,6 +94,7 @@ export const IORequestListPage = () => {
       dataIndex: 'startDate',
       key: 'startDate',
       render: (text) => (text ? dayjs(text).format('YYYY-MM-DD') : 'N/A'),
+      sorter: (a, b) => new Date(b.startDate) - new Date(a.startDate),
     },
     {
 
@@ -106,6 +107,11 @@ export const IORequestListPage = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      render: (status) => (
+        <Tag color={status === "Pending" ? 'gold' : status === "Done" ? 'green' : status === "Cancelled" ? 'red' : 'default'} style={{ fontWeight: 'bold' }}>
+          {status || 'Unknown'}
+        </Tag>
+      )
     },
     {
       title: 'Actions',
@@ -115,7 +121,7 @@ export const IORequestListPage = () => {
           <Button style={{ backgroundColor: 'yellow', color: 'black' }}
             title='Show Details'
             type="primary"
-            onClick={() => handleDetail(record)}>Detail</Button>
+            onClick={() => handleDetail(record)}><ArrowForwardIosIcon /></Button>
           <Button
             type="primary"
             onClick={() => handleUpdate(record)}
@@ -140,7 +146,15 @@ export const IORequestListPage = () => {
           >
             <MdDoneOutline />
           </Button>
-        </Space >
+          <Button style={{ backgroundColor: 'orange' }}
+            type="primary"
+            onClick={() => handlePayment(record.id)}
+            disabled={record.status !== 'Pending'}
+            title='Payment'
+          >
+            <MdOutlinePayment />
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -197,16 +211,20 @@ export const IORequestListPage = () => {
             description: 'The request has been done.',
           });
         } else {
+          const errorMessage = response.errorMessage || 'The request could not be completed.';
+          console.log('Response error message:', errorMessage);
           notification.error({
             message: 'Done Failed',
-            description: 'The request could not be completed.',
+            description: errorMessage,
           });
         }
       }).catch(error => {
         console.error("Error completing request:", error);
+        const apiErrorMessage = error.response?.data?.errorMessage || 'Unable to done request. Please try again.';
+        console.log('Error response:', error.response);
         notification.error({
           message: 'An error occurred',
-          description: 'Unable to done request. Please try again.',
+          description: apiErrorMessage,
         });
       });
     }
@@ -270,23 +288,36 @@ export const IORequestListPage = () => {
 
   const handleRoomChange = async (roomId) => {
     try {
-      const roomData = await fetchRoomById(roomId);
+      const roomData = await fetchRoomByIdForExport(roomId)
+
       const wineData = roomData.wineRooms;
       setWines(wineData);
 
       if (selectedIOType === 'Out') {
-
         const ioRequestDetails = wineData.map(wine => ({
           wineId: wine.wineId,
-          quantity: 0
+          quantity: wine.currentQuantity
         }));
 
         form.setFieldsValue({
-          ioRequestDetails: ioRequestDetails// show all wine in this room
+          ioRequestDetails: ioRequestDetails
         });
       }
     } catch (error) {
       console.error("Error fetching wines for room:", error);
+    }
+  };
+
+  const handlePayment = async (id) => {
+    try {
+      const data = await paymentIORequestApi(id);
+      window.open(data.paymentUrl, '_blank');
+    } catch (error) {
+      notification.error({
+        message: 'Payment Failed',
+        description: 'Unable to process payment. Please try again.',
+      });
+      navigate('/payment-failure');
     }
   };
 
@@ -296,6 +327,8 @@ export const IORequestListPage = () => {
         <Title level={2}>I/O Request List</Title>
         <Space size="middle">
           <Button
+            shape='round'
+            title='Create Import Request'
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => handleCreate('In')}
@@ -304,6 +337,8 @@ export const IORequestListPage = () => {
             Create Import Request
           </Button>
           <Button
+            shape='round'
+            title='Create Export Request'
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => handleCreate('Out')}
@@ -316,6 +351,7 @@ export const IORequestListPage = () => {
             defaultValue="Show ALL"
             style={{ width: 120, marginBottom: 16 }}
             onChange={handleSelectChange}
+
           >
             <Option value="ALL">Show ALL</Option>
             <Option value="In">Input Type</Option>
@@ -353,7 +389,11 @@ export const IORequestListPage = () => {
         >
 
           <Form.Item name="startDate" label="Start Date" rules={[{ required: true, message: 'Please enter start date!' }]}>
-            <DatePicker placeholder="Select Start Date" format="YYYY-MM-DD" />
+            <DatePicker
+              placeholder="Select Start Date"
+              format="YYYY-MM-DD"
+              disabledDate={(current) => current && current < dayjs().startOf('day')}
+            />
           </Form.Item>
           <Form.Item name="comments" label="Comments" rules={[{ required: false }]}>
             <Input.TextArea placeholder="Enter your comments" />
