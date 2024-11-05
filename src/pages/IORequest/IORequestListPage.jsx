@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete'
 import { MdDoneOutline } from "react-icons/md";
@@ -156,9 +155,8 @@ export const IORequestListPage = () => {
     form.setFieldsValue({
       ...record,
       ioRequestDetails: record.ioRequestDetails || [],
-
-      startDate: moment(record.startDate),
-      dueDate: moment(record.dueDate),
+      startDate: dayjs(record.startDate),
+      dueDate: dayjs(record.dueDate),
     });
     setSelectedIOType(record.ioType);
     setIsModalVisible(true);
