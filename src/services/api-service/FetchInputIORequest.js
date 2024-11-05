@@ -52,7 +52,17 @@ export const fetchRoomAvailable = async () => {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/rooms/available`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching customers:', error);
+        console.error('Error fetching rooms for import:', error);
+        throw error;
+    }
+};
+
+export const fetchRoomAvailableForExport = async () => {
+    try {
+        const response = await axios.get('https://winewarehousesystem.azurewebsites.net/api/v1/rooms/export');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching rooms for export:', error);
         throw error;
     }
 };

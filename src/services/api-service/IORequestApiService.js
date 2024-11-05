@@ -55,6 +55,8 @@ export const handleDoneStatus = async (id) => {
         if (error.response) {
             console.error('Error Done IO Request:', error.response.data);
             console.error('Status code:', error.response.status);
+            const errorMessage = error.response.data.errorMessage || 'An unknown error occurred.';
+            return { success: false, errorMessage };
         } else {
             console.error('Error Done IO Request:', error.message);
         }
@@ -87,6 +89,24 @@ export const fetchRoomById = async (roomId) => {
         return response.data;
     } catch (error) {
         console.error("Error fetching room by ID:", error);
+        throw error;
+    }
+};
+export const paymentIORequestApi = async (id) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/${id}/payment`, {});
+        return response.data;
+    } catch (error) {
+        console.error('Error processing payment for IO Request', error);
+        throw error;
+    }
+};
+export const fetchRoomByIdForExport = async (roomId) => {
+    try {
+        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/export/${roomId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching room for export by ID:", error);
         throw error;
     }
 };
