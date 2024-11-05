@@ -35,7 +35,8 @@ export const RoomListPage = () => {
     {
       title: 'Room Name',
       dataIndex: 'roomName',
-      key: 'roomName'
+      key: 'roomName',
+      sorter: (a, b) => a.roomName.localeCompare(b.roomName)
     },
     {
       title: 'Location Address',
@@ -45,12 +46,14 @@ export const RoomListPage = () => {
     {
       title: 'Capacity',
       dataIndex: 'capacity',
-      key: 'capacity'
+      key: 'capacity',
+      sorter: (a, b) => a.capacity - b.capacity
     },
     {
       title: 'Current Occupancy',
       dataIndex: 'currentOccupancy',
-      key: 'currentOccupancy'
+      key: 'currentOccupancy',
+      sorter: (a, b) => a.currentOccupancy - b.currentOccupancy
     },
     {
       title: 'Actions',
