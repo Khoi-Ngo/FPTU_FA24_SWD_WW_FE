@@ -131,9 +131,9 @@ export const WineListPage = () => {
             key: 'actions',
             render: record => (
                 <Space size="middle">
-                    <Button type="default" color='primary' variant='solid' onClick={() => handleUpdateButtonClicked(record)}><EditIcon /></Button>
-                    <Button color='danger' variant='solid' onClick={() => handleDeleteButtonClicked(record.id)}><DeleteIcon /></Button>
-                    <Button type="default" variant='solid' style={{ background: 'orange', color: 'white' }} onClick={() => handleDetailButtonClicked(record)}><ArrowForwardIosIcon /></Button>
+                    <Button title='Update' type="default" color='primary' variant='solid' onClick={() => handleUpdateButtonClicked(record)}><EditIcon /></Button>
+                    <Button title='Delete' color='danger' variant='solid' onClick={() => handleDeleteButtonClicked(record.id)}><DeleteIcon /></Button>
+                    <Button title='Details' type="default" variant='solid' style={{ background: 'orange', color: 'white' }} onClick={() => handleDetailButtonClicked(record)}><ArrowForwardIosIcon /></Button>
                 </Space>
             ),
         },
