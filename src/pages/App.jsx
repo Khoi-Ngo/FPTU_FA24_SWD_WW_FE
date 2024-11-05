@@ -3,36 +3,37 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AuthContext } from "../components/auth-context"
 import { Layout, Menu, notification, Spin } from "antd"
 import Footer from "../components/Footer"
-import { PieChartOutlined, DesktopOutlined, UserOutlined, RobotOutlined, AppstoreOutlined } from '@ant-design/icons'
+import { PieChartOutlined, UserOutlined, RobotOutlined, AppstoreOutlined } from '@ant-design/icons'
 import Sider from "antd/es/layout/Sider"
 import { Content } from "antd/es/layout/layout"
-import { fetchAllWineAPI, fetchWineCategoriesAPI, getWineByCategoryAPI } from "~/services/api-service/WineApiService"
-import DynamicMenu from "~/components/Antd_Custom/DynamicMenu"
+import { fetchWineCategoriesAPI, getWineByCategoryAPI } from "~/services/api-service/WineApiService"
 import useBearStore from "~/services/zustand"
 import LocalBarIcon from '@mui/icons-material/LocalBar'
 import LiquorIcon from '@mui/icons-material/Liquor'
 import StoreIcon from '@mui/icons-material/Store'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 
+import '../styles/MockDashboardPage.css' // Importing the external CSS file
+
 export const App = () => {
-    const { isAppLoading, SetIsAppLoading, setUserLogin, userLogin } = useContext(AuthContext);
-    const [selectedMenu, setSelectedMenu] = useState('Overview');
-    const [wineCategories, setWineCategories] = useState([]);
-    const navigate = useNavigate();
-    const location = useLocation();
-    const filteredWine = useBearStore((state) => state.setWine);
+    const { isAppLoading, SetIsAppLoading, setUserLogin, userLogin } = useContext(AuthContext)
+    const [selectedMenu, setSelectedMenu] = useState('Overview')
+    const [wineCategories, setWineCategories] = useState([])
+    const navigate = useNavigate()
+    const location = useLocation()
+    const filteredWine = useBearStore((state) => state.setWine)
 
     const delay = (milSeconds) => {
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve();
-            }, milSeconds);
-        });
-    };
+                resolve()
+            }, milSeconds)
+        })
+    }
 
     const handleLogout = async () => {
         try {
-            localStorage.removeItem("access_token");
+            localStorage.removeItem("access_token")
             setUserLogin({
                 email: "",
                 phone: "",
@@ -43,102 +44,102 @@ export const App = () => {
                 avatar: "",
                 id: "",
                 status: "",
-            });
+            })
             notification.success({
                 message: "Logout successful"
-            });
-            navigate("/");
+            })
+            navigate("/")
         } catch (error) {
             notification.error({
                 message: "Logout failed"
-            });
+            })
         }
-    };
+    }
 
     const getMenuKeyFromPath = (path) => {
-        if (path.startsWith('/app/users')) return 'Users';
-        if (path.startsWith('/app/profile')) return 'Profile';
-        if (path.startsWith('/app/wines') || path.startsWith('/app/create-wine') || path.startsWith('/app/update-wine')) return 'Wines';
-        if (path.startsWith('/app/wine-categories')) return 'WineCates';
-        if (path.startsWith('/app/rooms')) return 'Rooms';
-        if (path.startsWith('/app/io-requests')) return 'IORequests';
-        if (path.startsWith('/app/tasks')) return 'StaffTasks';
-        if (path.startsWith('/app/check-requests') || path.startsWith('/app/create-check-request')) return 'CheckRequests';
+        if (path.startsWith('/app/users')) return 'Users'
+        if (path.startsWith('/app/profile')) return 'Profile'
+        if (path.startsWith('/app/wines') || path.startsWith('/app/create-wine') || path.startsWith('/app/update-wine')) return 'Wines'
+        if (path.startsWith('/app/wine-categories')) return 'WineCates'
+        if (path.startsWith('/app/rooms')) return 'Rooms'
+        if (path.startsWith('/app/io-requests')) return 'IORequests'
+        if (path.startsWith('/app/tasks')) return 'StaffTasks'
+        if (path.startsWith('/app/check-requests') || path.startsWith('/app/create-check-request')) return 'CheckRequests'
 
-        return 'Overview';
-    };
+        return 'Overview'
+    }
 
     const handleMenuClick = (menuKey) => {
-        setSelectedMenu(menuKey);
+        setSelectedMenu(menuKey)
         switch (menuKey) {
             case 'Overview':
-                navigate('/app');
-                break;
+                navigate('/app')
+                break
             case 'Users':
-                navigate('/app/users');
-                break;
+                navigate('/app/users')
+                break
             case 'Profile':
-                navigate('/app/profile');
-                break;
+                navigate('/app/profile')
+                break
             case 'Wines':
-                navigate('/app/wines');
-                break;
+                navigate('/app/wines')
+                break
             case 'WineCates':
-                navigate('/app/wine-categories');
-                break;
+                navigate('/app/wine-categories')
+                break
             case 'Rooms':
-                navigate('/app/rooms');
-                break;
+                navigate('/app/rooms')
+                break
             case 'IORequests':
-                navigate('/app/io-requests');
-                break;
+                navigate('/app/io-requests')
+                break
             case 'StaffTasks':
-                navigate('/app/tasks');
-                break;
+                navigate('/app/tasks')
+                break
             case 'CheckRequests':
-                navigate('/app/check-requests');
-                break;
+                navigate('/app/check-requests')
+                break
             default:
-                break;
+                break
         }
-    };
+    }
 
     const fetchUserInfo = async () => {
-        await delay(500);
-        SetIsAppLoading(false);
-    };
+        await delay(500)
+        SetIsAppLoading(false)
+    }
 
     const fetchWineCategories = async () => {
-        const data = await fetchWineCategoriesAPI();
-        if (data) setWineCategories(data);
-    };
+        const data = await fetchWineCategoriesAPI()
+        if (data) setWineCategories(data)
+    }
 
     const getWineByCategory = async (categoryId) => {
         try {
-            const response = await getWineByCategoryAPI(categoryId);
+            const response = await getWineByCategoryAPI(categoryId)
             if (response) {
-                const filter = response.wines.filter(wine => wine.status === 'Active');
-                filteredWine(filter);
-                navigate('/app/filtered-wine');
+                const filter = response.wines.filter(wine => wine.status === 'Active')
+                filteredWine(filter)
+                navigate('/app/filtered-wine')
             } else {
-                throw new Error('API request failed');
+                throw new Error('API request failed')
             }
         } catch (error) {
             notification.error({
                 message: "Failed to load: " + error.message
-            });
+            })
         }
-    };
+    }
 
     const wineCategoryItems = wineCategories.map(category => ({
         key: category.id,
         label: category.categoryName,
-        onClick: () => { getWineByCategory(category.id); },
-    }));
+        onClick: () => { getWineByCategory(category.id) },
+    }))
     const handleParentWineClick = (key) => {
         console.log('Parent item clicked')
         navigate(`/app/wines`)
-    };
+    }
 
     const getMenuItems = () => {
         const commonItems = [
@@ -148,7 +149,7 @@ export const App = () => {
                 key: 'Profile'
             },
 
-        ];
+        ]
 
         if (userLogin.role === 'ADMIN') {
             return [
@@ -171,7 +172,7 @@ export const App = () => {
                     onClick: handleLogout,
                     danger: true
                 }
-            ];
+            ]
         }
 
         if (userLogin.role === 'MANAGER') {
@@ -221,7 +222,7 @@ export const App = () => {
                     onClick: handleLogout,
                     danger: true
                 }
-            ];
+            ]
         }
 
         if (userLogin.role === 'STAFF') {
@@ -239,21 +240,21 @@ export const App = () => {
                     onClick: handleLogout,
                     danger: true
                 }
-            ];
+            ]
         }
 
-        return commonItems; // Default case
-    };
+        return commonItems // Default case
+    }
 
     useEffect(() => {
-        fetchUserInfo();
-        fetchWineCategories();
-    }, []);
+        fetchUserInfo()
+        fetchWineCategories()
+    }, [])
 
     useEffect(() => {
-        const currentMenu = getMenuKeyFromPath(location.pathname);
-        setSelectedMenu(currentMenu);
-    }, [location.pathname]);
+        const currentMenu = getMenuKeyFromPath(location.pathname)
+        setSelectedMenu(currentMenu)
+    }, [location.pathname])
 
     return (
         isAppLoading ? (
@@ -281,11 +282,11 @@ export const App = () => {
                     </div>
                 </Sider>
                 <Content style={{ margin: '0 ' }}>
-                    <div style={{ background: '#fff', minHeight: 360 }}>
+                    <div style={{ background: '#fff', minHeight: '100vh' }}>
                         <Outlet fetchUserInfo={fetchUserInfo} />
                     </div>
                 </Content>
             </Layout>
         )
-    );
+    )
 }

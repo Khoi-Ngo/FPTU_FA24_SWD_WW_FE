@@ -151,7 +151,7 @@ const UserListPage = () => {
 
       {/* Update User Modal */}
       <Modal
-        visible={isModalUpdateVisible}
+        open={isModalUpdateVisible}
         onCancel={hiddenModalUpdate}
         onOk={handleSave}
         footer={null}
@@ -184,7 +184,7 @@ const UserListPage = () => {
       </Modal>
 
       {/* Add User Modal */}
-      <Modal visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
+      <Modal open={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
         <AddUserForm fetchUsers={fetchUsers} setIsModalVisible={setIsModalVisible} token={authToken} />
       </Modal>
     </div>

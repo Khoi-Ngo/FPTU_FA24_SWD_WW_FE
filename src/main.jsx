@@ -1,35 +1,34 @@
-import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ErrorPage from './pages/ErrorPage.jsx';
-import { LoginPage } from './pages/LoginPage.jsx';
-import { AuthWrapper } from './components/auth-context.jsx';
-import { App } from './pages/App.jsx';
-import MockDashboardPage from './pages/MockDashboard.jsx';
-import UserListPage from './pages/User/UserListPage.jsx';
-import WineListPage from './pages/Wine/WineListPage.jsx';
-import { RoomListPage } from './pages/Room/RoomListPage.jsx';
-import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx';
-import dayjs from 'dayjs';
+import { createRoot } from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import ErrorPage from './pages/ErrorPage.jsx'
+import { LoginPage } from './pages/LoginPage.jsx'
+import { AuthWrapper } from './components/auth-context.jsx'
+import { App } from './pages/App.jsx'
+import StatisticPage from '~/pages/StatisticPage.jsx'
+import UserListPage from './pages/User/UserListPage.jsx'
+import WineListPage from './pages/Wine/WineListPage.jsx'
+import { RoomListPage } from './pages/Room/RoomListPage.jsx'
+import { IORequestListPage } from './pages/IORequest/IORequestListPage.jsx'
 
-import TaskHome from './pages/Task/TaskHome.jsx';
-import ResetPasswordPage from './pages/ResetPassword/ResetPasswordPage.jsx';
-import { CreateWinePage } from './pages/Wine/CreateWinePage.jsx';
-import { DetailWinePage } from './pages/Wine/DetailWinePage.jsx';
-import UpdateWinePage from './pages/Wine/UpdateWinePage.jsx';
-import UserProfilePage from './pages/User/UserProfilePage.jsx';
-import { UserDetailPage } from './components/User/UserDetailPage.jsx';
-import { AuthRoutes } from './components/AuthRoutes.jsx';
-import { NonStaffRoutes } from './components/NonStaffRoutes.jsx';
-import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx';
-import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx';
-import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx';
-import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx';
-import CheckRequestListPage from './pages/CheckRequest/CheckRequestListPage.jsx';
-import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestPage.jsx';
-import ViewDetailCheckRequestPage from './pages/CheckRequest/ViewDetailCheckRequestPage.jsx';
-import { CheckRequestDetailListPage } from './pages/CheckRequestDetail/CheckRequestDetailListPage.jsx';
-import { ViewDetailCRDetailPage } from './pages/CheckRequestDetail/ViewDetailCRDetailPage.jsx';
-import FilteredWineListPage from './pages/Wine/FilteredWineListPage.jsx';
+import TaskHome from './pages/Task/TaskHome.jsx'
+import ResetPasswordPage from './pages/ResetPassword/ResetPasswordPage.jsx'
+import { CreateWinePage } from './pages/Wine/CreateWinePage.jsx'
+import { DetailWinePage } from './pages/Wine/DetailWinePage.jsx'
+import UpdateWinePage from './pages/Wine/UpdateWinePage.jsx'
+import UserProfilePage from './pages/User/UserProfilePage.jsx'
+import { UserDetailPage } from './components/User/UserDetailPage.jsx'
+import { AuthRoutes } from './components/AuthRoutes.jsx'
+import { NonStaffRoutes } from './components/NonStaffRoutes.jsx'
+import { WineCateListPage } from './pages/WineCategory/WineCateListPage.jsx'
+import RoomDetails from './pages/Room/RoomDetails/RoomDetails.jsx'
+import { IORequestDetailsPage } from './pages/IORequest/IORequestDetailsPage.jsx'
+import WineCateDetailsPage from './pages/WineCategory/WineCateDetailsPage.jsx'
+import CheckRequestListPage from './pages/CheckRequest/CheckRequestListPage.jsx'
+import { CreateCheckRequestPage } from './pages/CheckRequest/CreateCheckRequestPage.jsx'
+import ViewDetailCheckRequestPage from './pages/CheckRequest/ViewDetailCheckRequestPage.jsx'
+import { CheckRequestDetailListPage } from './pages/CheckRequestDetail/CheckRequestDetailListPage.jsx'
+import { ViewDetailCRDetailPage } from './pages/CheckRequestDetail/ViewDetailCRDetailPage.jsx'
+import FilteredWineListPage from './pages/Wine/FilteredWineListPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -55,7 +54,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <MockDashboardPage />
+        element: <StatisticPage />
       },
       {
         path: 'io-requests/:id',
@@ -154,7 +153,7 @@ const router = createBrowserRouter([
 
     ],
   },
-]);
+])
 
 
 // Render the application
@@ -162,4 +161,4 @@ createRoot(document.getElementById('root')).render(
   <AuthWrapper>
     <RouterProvider router={router} />
   </AuthWrapper>
-);
+)

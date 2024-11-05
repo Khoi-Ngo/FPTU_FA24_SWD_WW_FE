@@ -17,7 +17,7 @@ export const LoginPage = () => {
     const [isEntered, setIsEntered] = useState(false);
 
 
-    const { userLogin, setUserLogin } = useContext(AuthContext);
+    const { setUserLogin } = useContext(AuthContext);
 
 
     const onFinish = async (values) => {
@@ -32,9 +32,9 @@ export const LoginPage = () => {
                     // login successful
                     localStorage.setItem("access_token", res.data.accessToken);
                     setUserLogin(res.data.userInfo);
-                    notification.info({
-                        message: "Login successfully",
-                    });
+                    // notification.info({
+                    //     message: "Login successfully",
+                    // });
 
                     setIsLoading(false);
                     setIsEntered(false);
