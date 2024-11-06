@@ -10,7 +10,6 @@ import { CheckOutlined, CheckSquareOutlined, HomeOutlined, SunOutlined, WarningO
 import { fetchRequestHistoryAPI } from '~/services/api-service/DashboardAPI'
 import { Bar } from 'react-chartjs-2'
 import { Chart, BarElement, CategoryScale, Legend, LinearScale, Title as ChartTitle, Tooltip } from 'chart.js'
-import StoreIcon from '@mui/icons-material/Store'
 
 Chart.register(
     CategoryScale,
@@ -32,41 +31,6 @@ const twoColors = {
 const formatter = (value) => <CountUp end={value} separator="," />
 const currentYear = new Date().getFullYear()
 
-// const labels 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
-const data = {
-    labels: labels,
-    datasets: [{
-        label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
-        backgroundColor: [
-            // 'rgba(255, 99, 132, 0.2)',
-            // 'rgba(255, 159, 64, 0.2)',
-            // 'rgba(255, 205, 86, 0.2)',
-            // 'rgba(75, 192, 192, 0.2)',
-            // 'rgba(54, 162, 235, 0.2)',
-            // 'rgba(153, 102, 255, 0.2)',
-            // 'rgba(201, 203, 207, 0.2)'
-            '#ff957f',
-            '#1c1c1c',
-            '#a1e3ff',
-            '#f0a89c',
-            '#80e3d5',
-        ],
-        // borderColor: [
-        //     'rgb(255, 99, 132)',
-        //     'rgb(255, 159, 64)',
-        //     'rgb(255, 205, 86)',
-        //     'rgb(75, 192, 192)',
-        //     'rgb(54, 162, 235)',
-        //     'rgb(153, 102, 255)',
-        //     'rgb(201, 203, 207)'
-        // ],
-        borderWidth: 1,
-        borderRadius: 20
-    }]
-}
-
 const StatisticPage = () => {
     const [selectedMenu, setSelectedMenu] = useState('Overview') // State to track selected menu
     const navigate = useNavigate()
@@ -81,6 +45,8 @@ const StatisticPage = () => {
     const [currentTime, setCurrentTime] = useState(new Date())
     const [requestHistory, setRequestHistory] = useState([])
     const [months, setMonths] = useState([])
+    const [importHistoryData, setImportHistoryData] = useState([])
+    const [exportHistoryData, setExportHistoryData] = useState([])
 
     useEffect(() => {
         setTimeout(() => {
@@ -88,8 +54,14 @@ const StatisticPage = () => {
             fetchAllWines()
             fetchAllRooms()
             fetchALLRequest()
+            fetchRequestHistory(currentYear)
         }, 1000)
     }, [userLogin])
+
+    // useEffect(() => {
+    //     console.log('requestHistory3: ', requestHistory)
+    //     console.log('months: ', months)
+    // }, [requestHistory, months])
 
     //#region progress bar animation
     useEffect(() => {
@@ -164,6 +136,53 @@ const StatisticPage = () => {
     }
     //#endregion
 
+    const data = {
+        labels: months,
+        datasets: [{
+            label: 'Total imported requests',
+            data: importHistoryData,
+            backgroundColor: [
+                // 'rgba(255, 99, 132, 0.2)',
+                // 'rgba(255, 159, 64, 0.2)',
+                // 'rgba(255, 205, 86, 0.2)',
+                // 'rgba(75, 192, 192, 0.2)',
+                // 'rgba(54, 162, 235, 0.2)',
+                // 'rgba(153, 102, 255, 0.2)',
+                // 'rgba(201, 203, 207, 0.2)'
+                '#ff957f',
+                // '#1c1c1c',
+                // '#a1e3ff',
+                // '#f0a89c',
+                // '#80e3d5',
+            ],
+            // borderColor: [
+            //     'rgb(255, 99, 132)',
+            //     'rgb(255, 159, 64)',
+            //     'rgb(255, 205, 86)',
+            //     'rgb(75, 192, 192)',
+            //     'rgb(54, 162, 235)',
+            //     'rgb(153, 102, 255)',
+            //     'rgb(201, 203, 207)'
+            // ],
+            borderWidth: 1,
+            borderRadius: 20
+        },
+        {
+            label: 'Total exported requests',
+            data: exportHistoryData,
+            backgroundColor: [
+                //'#ff957f',
+                // '#1c1c1c',
+                 '#a1e3ff',
+                // '#f0a89c',
+                // '#80e3d5',
+            ],
+            borderWidth: 1,
+            borderRadius: 20
+        }
+        ]
+    }
+
     const chartConfig = {
         type: 'bar',
         data: data,
@@ -176,23 +195,34 @@ const StatisticPage = () => {
         },
     }
 
-    const PastMonthsArray = () => {
+    useEffect(() => {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        const currentMonth = new Date().getMonth() + 1 // getMonth() returns month from 0-11, so we add 1
+        const pastMonths = []
+        const importHistoryData = []
+        const exportHistoryData = []
 
-        useEffect(() => {
-            const currentMonth = new Date().getMonth() + 1 // getMonth() returns month from 0-11, so we add 1
-            const pastMonths = []
-
-            for (let i = 5; i >= 0; i--) {
-                let month = currentMonth - i
-                if (month <= 0) {
-                    month += 12 // wrap around to previous year
-                }
-                pastMonths.push(month)
+        for (let i = 4; i >= 0; i--) {
+            let month = currentMonth - i
+            if (month <= 0) {
+                month += 12 // wrap around to previous year
             }
+            const monthName = monthNames[month - 1]
+            pastMonths.push(monthName)
+            const selectedMonth = requestHistory.filter(request => request.month == month)
+            //console.log('selectedMonth: ', selectedMonth)
+            if (selectedMonth.length > 0) {
+                //console.log('importRequestQuantity: ',selectedMonth[0].importRequestQuantity)
+                importHistoryData.push(selectedMonth[0].importRequestQuantity)
+                exportHistoryData.push(selectedMonth[0].exportRequestQuantity)
+            }
+            //console.log('importHistoryData: ', importHistoryData)
+            setImportHistoryData(importHistoryData)
+            setExportHistoryData(exportHistoryData)
+        }
 
-            setMonths(pastMonths)
-        }, [])
-    }
+        setMonths(pastMonths)
+    }, [requestHistory])
 
     const handleMenuClick = (menuKey) => {
         setSelectedMenu(menuKey) // Update selected menu
@@ -212,9 +242,9 @@ const StatisticPage = () => {
     }
 
     //#region Fetch API
-    const fetchRequestHistory = async (month, year) => {
+    const fetchRequestHistory = async (year) => {
         try {
-            const response = await fetchRequestHistoryAPI(month, year)
+            const response = await fetchRequestHistoryAPI(year)
             if (response) {
                 setRequestHistory(response)
             } else {
@@ -391,7 +421,7 @@ const StatisticPage = () => {
                     </Col>
                     <Col span={12}>
                         <Card bordered={false} style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fcfcfc' }}>
-                            <Title level={5}>Request history chart</Title>
+                            <Title level={5}>Request history</Title>
                             <Bar {...chartConfig} />
                         </Card>
                     </Col>
