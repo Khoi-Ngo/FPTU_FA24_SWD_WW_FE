@@ -6,4 +6,7 @@ export const fetchRequestHistoryAPI = async (year) => {
   })
   return response.data
 }
-
+export const fetchTotalWinesAPI = async () => {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/dashboard/quantity`)
+  return response.data
+}

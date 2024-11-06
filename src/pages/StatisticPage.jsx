@@ -7,7 +7,7 @@ import { fetchRoomsAPI } from '~/services/api-service/RoomApiService'
 import { fetchIORequestApi } from '~/services/api-service/IORequestApiService'
 import CountUp from 'react-countup'
 import { CheckOutlined, CheckSquareOutlined, HomeOutlined, SunOutlined, WarningOutlined } from '@ant-design/icons'
-import { fetchRequestHistoryAPI } from '~/services/api-service/DashboardAPI'
+import { fetchRequestHistoryAPI, fetchTotalWinesAPI } from '~/services/api-service/DashboardAPI'
 import { Bar } from 'react-chartjs-2'
 import { Chart, BarElement, CategoryScale, Legend, LinearScale, Title as ChartTitle, Tooltip } from 'chart.js'
 
@@ -47,6 +47,9 @@ const StatisticPage = () => {
     const [months, setMonths] = useState([])
     const [importHistoryData, setImportHistoryData] = useState([])
     const [exportHistoryData, setExportHistoryData] = useState([])
+    const [totalWines, setTotalWines] = useState([])
+    const [wineLabels, setWineLabels] = useState([])
+    const [wineDatasets, setWineDatasets] = useState([])
 
     useEffect(() => {
         setTimeout(() => {
@@ -55,6 +58,7 @@ const StatisticPage = () => {
             fetchAllRooms()
             fetchALLRequest()
             fetchRequestHistory(currentYear)
+            fetchTotalWines()
         }, 1000)
     }, [userLogin])
 
@@ -136,7 +140,8 @@ const StatisticPage = () => {
     }
     //#endregion
 
-    const data = {
+    //#region chart area
+    const requestHistoryData = {
         labels: months,
         datasets: [{
             label: 'Total imported requests',
@@ -173,7 +178,7 @@ const StatisticPage = () => {
             backgroundColor: [
                 //'#ff957f',
                 // '#1c1c1c',
-                 '#a1e3ff',
+                '#a1e3ff',
                 // '#f0a89c',
                 // '#80e3d5',
             ],
@@ -185,7 +190,7 @@ const StatisticPage = () => {
 
     const chartConfig = {
         type: 'bar',
-        data: data,
+        data: requestHistoryData,
         options: {
             scales: {
                 y: {
@@ -194,6 +199,84 @@ const StatisticPage = () => {
             }
         },
     }
+
+    const totalWineData =
+    {
+        labels: wineLabels,
+        datasets: wineDatasets,
+        // [
+        //     {
+        //         label: 'Room 1',
+        //         data: ,
+        //         backgroundColor: '#835f73',
+        //     },
+        //     {
+        //         label: 'Room 2',
+        //         data: ,
+        //         backgroundColor: '#ff6854',
+        //     },
+        //     {
+        //         label: 'Room 3',
+        //         data: ,
+        //         backgroundColor: '#76d6f1',
+        //     },
+        // ]
+    }
+    const footer = (tooltipItems) => {
+        let sum = 0
+
+        tooltipItems.forEach(function (tooltipItem) {
+            sum += tooltipItem.parsed.y
+        })
+        return 'Sum: ' + sum
+    }
+
+    const stackBarChartConfig = {
+        type: 'bar',
+        data: totalWineData,
+        options: {
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        footer: function (tooltipItems) {
+                            // Calculate the total quantity for all segments (rooms) of this wine
+                            const total = tooltipItems.reduce((sum, tooltipItem) => sum + tooltipItem.raw, 0);
+                            return `Total: ${total}`;
+                        },
+                    }
+                }
+            },
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true
+                }
+            }
+        }
+    }
+    useEffect(() => {
+        const wineLabel = totalWines.map(wine => wine.wineName) //Array wine name: [wineA, wineB, wineC,...]
+        setWineLabels(wineLabel)
+        const allRooms = Array.from(new Set(totalWines.flatMap(wine => wine.wineRooms.map(room => room.roomName)))) //Array room name: [roomA, roomB, roomC,...]
+        const datasets = allRooms.map((roomName, index) => ({
+            label: roomName,
+            data: totalWines.map(wine => {
+                // Find the quantity for the current room in this wine's data
+                const room = wine.wineRooms.find(r => r.roomName === roomName)
+                return room ? room.currentQuantity : 0
+            }),
+            backgroundColor: ['#835f73', '#ff6854', '#76d6f1', '#8db600', '#ffae42', '#ff3370', '#cd5c5c', '#4682b4'][index % 8], // Cycle through colors
+            borderRadius: 10
+        }))
+        setWineDatasets(datasets)
+    }, [totalWines])
 
     useEffect(() => {
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -223,6 +306,7 @@ const StatisticPage = () => {
 
         setMonths(pastMonths)
     }, [requestHistory])
+    //#endregion
 
     const handleMenuClick = (menuKey) => {
         setSelectedMenu(menuKey) // Update selected menu
@@ -242,6 +326,21 @@ const StatisticPage = () => {
     }
 
     //#region Fetch API
+    const fetchTotalWines = async () => {
+        try {
+            const response = await fetchTotalWinesAPI()
+            if (response) {
+                setTotalWines(response)
+            } else {
+                throw new Error('API request failed')
+            }
+        } catch (error) {
+            notification.error({
+                message: "Fail load" + error
+            })
+        }
+    }
+
     const fetchRequestHistory = async (year) => {
         try {
             const response = await fetchRequestHistoryAPI(year)
@@ -393,7 +492,7 @@ const StatisticPage = () => {
                     </Col>
                     <Col span={6} offset={1}>
                         <Card bordered={false} style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#27b5af', color: 'white', borderRadius: '100px 0 100px 0' }}>
-                            <Space align="center" size="middle">
+                            <Space align="center" size="small">
                                 <Title level={2} style={{ color: 'white', textWrap: 'nowrap' }}>{greeting()} {userLogin?.firstName}</Title>
                                 <Avatar
                                     size={64}
@@ -428,8 +527,9 @@ const StatisticPage = () => {
                 </Row>
                 <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
                     <Col span={12}>
-                        <Card bordered={false} style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fcfcfc', overflowY: 'auto', height: '400px' }}>
+                        <Card bordered={false} style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fcfcfc' }}>
                             <Title level={5}>Total quantity for each wine</Title>
+                            <Bar {...stackBarChartConfig} />
                         </Card>
                     </Col>
                 </Row>
