@@ -173,7 +173,7 @@ export const IORequestDetailsPage = () => {
                 <Descriptions bordered column={1} size="small" style={{ marginBottom: '20px' }}>
                     <Descriptions.Item label="Request Code"><strong>{ioRequest?.requestCode}</strong></Descriptions.Item>
                     <Descriptions.Item label="Start Date"><strong>{ioRequest?.startDate}</strong></Descriptions.Item>
-                    <Descriptions.Item label="Due Date"><strong>{ioRequest?.dueDate}</strong></Descriptions.Item>
+
                     <Descriptions.Item label="IO Type"><strong>{ioRequest?.ioType}</strong></Descriptions.Item>
                     <Descriptions.Item label="Status">
                         <span className={ioRequest?.status === 'Pending' ? 'request-status-pending' :

@@ -1,0 +1,120 @@
+/* Container */
+.io-request-details-container {
+    padding: 24px;
+    background-color: #f5f5f5;
+
+}
+
+/* Card */
+.io-request-card {
+    background-color: white;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Title */
+.io-request-title {
+    color: red !important;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.io-request-subtitle {
+    color: blue !important;
+    font-size: 20px;
+    margin: 20px 0 12px;
+}
+
+/* Descriptions */
+.io-request-descriptions .ant-descriptions-item-label {
+    font-weight: 500;
+    color: #4a4a4a;
+    font-size: 14px;
+}
+
+.io-request-descriptions .ant-descriptions-item-content {
+    color: #595959;
+    font-size: 14px;
+}
+
+/* Status Tag */
+.io-request-status-tag {
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.io-request-status-tag.pending {
+    background-color: #ffe58f;
+    color: #ad8b00;
+}
+
+.io-request-status-tag.done {
+    background-color: #b7eb8f;
+    color: #389e0d;
+}
+
+.io-request-status-tag.cancelled {
+    background-color: #ffa39e;
+    color: #cf1322;
+}
+
+
+.io-request-table {
+    margin-top: 16px;
+    border-radius: 8px;
+}
+
+.update-button {
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.update-button:hover {
+    background-color: #40a9ff;
+}
+
+.delete-button {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+    background-color: #ff7875;
+}
+
+.update-modal .ant-modal-title {
+    font-weight: 600;
+    color: #262626;
+}
+
+.update-form .ant-btn-primary {
+    background-color: #52c41a;
+    color: white;
+    border: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.update-form .ant-btn-primary:hover {
+    background-color: #73d13d;
+}
+
+.io-request-descriptions .ant-descriptions-item-label,
+.report-descriptions .ant-descriptions-item-label {
+    font-weight: bold;
+
+    color: #4a4a4a;
+
+}
