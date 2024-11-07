@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Spin, Button, notification, Modal } from 'antd';
-import { EditOutlined, EyeOutlined, UserDeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table, Spin, Button, notification, Modal, Input, Select, Row, Col } from 'antd';
+import { EditOutlined, EyeOutlined, UserDeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { disableCheckRequestAPI, fetchCheckRequestsAPI } from '~/services/api-service/CR-FLOW/CheckRequestApiService';
 
 const CheckRequestListPage = () => {
 
-
     //#region init + load data
     const [checkRequests, setCheckRequests] = useState([]);
+    const [filteredRequests, setFilteredRequests] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState(null);
+    const [priorityFilter, setPriorityFilter] = useState(null);
     const navigate = useNavigate();
     const token = window?.localStorage?.getItem("access_token");
     const authToken = `Bearer ${token}`;
-  
 
     // Fetch data
     const fetchRequests = async () => {
         try {
             const response = await fetchCheckRequestsAPI(authToken);
             setCheckRequests(response.data);
+            setFilteredRequests(response.data);
             setIsLoading(false);
             notification.success({
                 message: "Data loaded successfully",
@@ -35,10 +38,46 @@ const CheckRequestListPage = () => {
     useEffect(() => {
         fetchRequests();
     }, []);
+    //Handle reset filtering / searching
+    const resetFilters = () => {
+        setSearchTerm('');
+        setStatusFilter(null);
+        setPriorityFilter(null);
+        setFilteredRequests(checkRequests); // Reset the filtered requests to the full list
+    };
+    // Handle search term change
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+        filterRequests(e.target.value, statusFilter, priorityFilter);
+    };
 
+    // Handle status filter change
+    const handleStatusFilterChange = (value) => {
+        setStatusFilter(value);
+        filterRequests(searchTerm, value, priorityFilter);
+    };
 
-       // Table columns definition
-       const columns = [
+    // Handle priority filter change
+    const handlePriorityFilterChange = (value) => {
+        setPriorityFilter(value);
+        filterRequests(searchTerm, statusFilter, value);
+    };
+
+    // Filter requests based on search term and filters
+    const filterRequests = (searchTerm, status, priority) => {
+        const filtered = checkRequests.filter((request) => {
+            const matchesSearch = request.requestCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                request.requesterName.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesStatus = status ? request.status === status : true;
+            const matchesPriority = priority ? request.priorityLevel === priority : true;
+
+            return matchesSearch && matchesStatus && matchesPriority;
+        });
+        setFilteredRequests(filtered);
+    };
+
+    // Table columns definition
+    const columns = [
         {
             title: 'Request ID',
             dataIndex: 'id',
@@ -157,20 +196,68 @@ const CheckRequestListPage = () => {
     return (
         <div style={styles.pageContainer}>
             <h1 style={styles.pageTitle}>Check Request List</h1>
-            <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                style={styles.createButton}
-                onClick={handleCreate}
-                shape='round'
-            >
-                Create a New Check Request
-            </Button>
+
+            <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
+                <Col span={6}>
+                    <Input
+                        placeholder="Search by Request Code or Requester"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                </Col>
+                <Col span={6}>
+                    <Select
+                        placeholder="Filter by Status"
+                        value={statusFilter}
+                        onChange={handleStatusFilterChange}
+                        style={{ width: '100%' }}
+                    >
+                        <Select.Option value="ACTIVE">Active</Select.Option>
+                        <Select.Option value="COMPLETED">Completed</Select.Option>
+                        <Select.Option value="DISABLED">Disabled</Select.Option>
+                    </Select>
+                </Col>
+                <Col span={6}>
+                    <Select
+                        placeholder="Filter by Priority"
+                        value={priorityFilter}
+                        onChange={handlePriorityFilterChange}
+                        style={{ width: '100%' }}
+                    >
+                        <Select.Option value="High">High</Select.Option>
+                        <Select.Option value="Medium">Medium</Select.Option>
+                        <Select.Option value="Low">Low</Select.Option>
+                    </Select>
+                </Col>
+                <Col span={6}>
+                    <Button
+                        type="default"
+                        icon={<ReloadOutlined />}
+                        style={styles.resetButton}
+                        onClick={resetFilters}
+                        shape='round'
+                    >
+                        Reset Filters
+                    </Button>
+                </Col>
+                <Col span={6}>
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        style={styles.createButton}
+                        onClick={handleCreate}
+                        shape='round'
+                    >
+                        Create a New Check Request
+                    </Button>
+                </Col>
+            </Row>
+
             {isLoading ? (
                 <Spin size="large" style={styles.spinner} />
             ) : (
                 <Table
-                    dataSource={checkRequests}
+                    dataSource={filteredRequests}
                     columns={columns}
                     rowKey="id"
                     pagination={{ pageSize: 10 }}
@@ -232,8 +319,15 @@ const styles = {
         border: 'none',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     },
+    resetButton: {
+        marginBottom: '20px',
+        float: 'right',
+        backgroundColor: '#f5f5f5',
+        borderColor: '#d9d9d9',
+        fontSize: '16px',
+        marginLeft: '10px',
+    },
 };
-
 //#endregion
 
 export default CheckRequestListPage;
