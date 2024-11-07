@@ -7,9 +7,10 @@ import { fetchRoomsAPI } from '~/services/api-service/RoomApiService'
 import { fetchIORequestApi } from '~/services/api-service/IORequestApiService'
 import CountUp from 'react-countup'
 import { CheckOutlined, CheckSquareOutlined, HomeOutlined, SunOutlined, WarningOutlined } from '@ant-design/icons'
-import { fetchRequestHistoryAPI, fetchTotalWinesAPI } from '~/services/api-service/DashboardAPI'
-import { Bar } from 'react-chartjs-2'
-import { Chart, BarElement, CategoryScale, Legend, LinearScale, Title as ChartTitle, Tooltip } from 'chart.js'
+import { fetchRequestHistoryAPI, fetchTotalWinesAPI, fetchTotalWinesByCategoryAPI } from '~/services/api-service/DashboardAPI'
+import { Bar, Doughnut } from 'react-chartjs-2'
+import { Chart, BarElement, CategoryScale, Legend, LinearScale, Title as ChartTitle, Tooltip, ArcElement } from 'chart.js'
+import { AspectRatio } from '@mui/icons-material'
 
 Chart.register(
     CategoryScale,
@@ -17,7 +18,8 @@ Chart.register(
     BarElement,
     ChartTitle,
     Tooltip,
-    Legend
+    Legend,
+    ArcElement
 )
 
 const { Content } = Layout
@@ -50,6 +52,9 @@ const StatisticPage = () => {
     const [totalWines, setTotalWines] = useState([])
     const [wineLabels, setWineLabels] = useState([])
     const [wineDatasets, setWineDatasets] = useState([])
+    const [wineCategoryPercentages, setWineCategoryPercentages] = useState([])
+    const [categoryLabel, setCategoryLabel] = useState([])
+    const [winePercentage, setWinePercentage] = useState([])
 
     useEffect(() => {
         setTimeout(() => {
@@ -59,6 +64,7 @@ const StatisticPage = () => {
             fetchALLRequest()
             fetchRequestHistory(currentYear)
             fetchTotalWines()
+            fetchTotalWinesByCategory()
         }, 1000)
     }, [userLogin])
 
@@ -203,32 +209,24 @@ const StatisticPage = () => {
     const totalWineData =
     {
         labels: wineLabels,
-        datasets: wineDatasets,
-        // [
-        //     {
-        //         label: 'Room 1',
-        //         data: ,
-        //         backgroundColor: '#835f73',
-        //     },
-        //     {
-        //         label: 'Room 2',
-        //         data: ,
-        //         backgroundColor: '#ff6854',
-        //     },
-        //     {
-        //         label: 'Room 3',
-        //         data: ,
-        //         backgroundColor: '#76d6f1',
-        //     },
-        // ]
+        datasets: wineDatasets
     }
-    const footer = (tooltipItems) => {
-        let sum = 0
-
-        tooltipItems.forEach(function (tooltipItem) {
-            sum += tooltipItem.parsed.y
-        })
-        return 'Sum: ' + sum
+    const totalPercentageOfEachWine = {
+        labels: categoryLabel,
+        datasets: [{
+            label: 'quantity',
+            data: winePercentage,
+            backgroundColor: ['#835f73', '#ff6854', '#76d6f1', '#8db600', '#ffae42', '#ff3370', '#882888', '#4682b4'],
+            hoverOffset: 4,
+            borderRadius: 20
+        }]
+    }
+    const chartDoughnutConfig = {
+        type: 'doughnut',
+        data: totalPercentageOfEachWine,
+        option: {
+            maintainAspectRatio: false,
+        }
     }
 
     const stackBarChartConfig = {
@@ -262,6 +260,19 @@ const StatisticPage = () => {
         }
     }
     useEffect(() => {
+        const categoryLabel = wineCategoryPercentages.map(category => category.categoryName)
+        setCategoryLabel(categoryLabel)
+        const winePercentage = wineCategoryPercentages.map(category => category.toltalQuantity)
+        // const total = winePercentage.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+        // const convertedPercentage = []
+        // for (let i = 0; i <= winePercentage.length; i++) {
+        //     convertedPercentage.push((winePercentage[i] / total) * 100)
+        // }
+        setWinePercentage(winePercentage)
+        console.log('winePercentage: ', winePercentage)
+    }, [wineCategoryPercentages])
+
+    useEffect(() => {
         const wineLabel = totalWines.map(wine => wine.wineName) //Array wine name: [wineA, wineB, wineC,...]
         setWineLabels(wineLabel)
         const allRooms = Array.from(new Set(totalWines.flatMap(wine => wine.wineRooms.map(room => room.roomName)))) //Array room name: [roomA, roomB, roomC,...]
@@ -272,7 +283,7 @@ const StatisticPage = () => {
                 const room = wine.wineRooms.find(r => r.roomName === roomName)
                 return room ? room.currentQuantity : 0
             }),
-            backgroundColor: ['#835f73', '#ff6854', '#76d6f1', '#8db600', '#ffae42', '#ff3370', '#cd5c5c', '#4682b4'][index % 8], // Cycle through colors
+            backgroundColor: ['#835f73', '#ff6854', '#76d6f1', '#8db600', '#ffae42', '#ff3370', '#882888', '#4682b4'][index % 8], // Cycle through colors
             borderRadius: 10
         }))
         setWineDatasets(datasets)
@@ -326,11 +337,27 @@ const StatisticPage = () => {
     }
 
     //#region Fetch API
+    const fetchTotalWinesByCategory = async () => {
+        try {
+            const response = await fetchTotalWinesByCategoryAPI()
+            if (response) {
+                //const filter = response.filter(wine => wine.toltalQuantity > 0)
+                setWineCategoryPercentages(response)
+            } else {
+                throw new Error('API request failed')
+            }
+        } catch (error) {
+            notification.error({
+                message: "Fail load" + error
+            })
+        }
+    }
     const fetchTotalWines = async () => {
         try {
             const response = await fetchTotalWinesAPI()
             if (response) {
-                setTotalWines(response)
+                const filter = response.filter(wine => wine.toltalQuantity > 0)
+                setTotalWines(filter)
             } else {
                 throw new Error('API request failed')
             }
@@ -524,14 +551,23 @@ const StatisticPage = () => {
                             <Bar {...chartConfig} />
                         </Card>
                     </Col>
-                </Row>
-                <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
                     <Col span={12}>
                         <Card bordered={false} style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fcfcfc' }}>
                             <Title level={5}>Total quantity for each wine</Title>
                             <Bar {...stackBarChartConfig} />
                         </Card>
                     </Col>
+                    <Col span={12}>
+                        <Card bordered={false} style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fcfcfc' }}>
+                            <Title level={5}>Total wine of each category</Title>
+                            <div style={{height: '380px'}}>
+                                <Doughnut {...chartDoughnutConfig} style={{margin: 'auto'}}/>
+                            </div>
+                        </Card>
+                    </Col>
+                </Row>
+                <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
+
                 </Row>
             </Content>
         </Layout>
