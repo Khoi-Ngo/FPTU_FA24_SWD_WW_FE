@@ -214,20 +214,46 @@ const ReportDetailPage = () => {
                 {reports.map((report, index) => (
 
                     <Descriptions bordered key={index} className="report-descriptions" style={{ paddingBottom: '30px' }}>
-                        <Descriptions.Item label="Report ID">{report.id}</Descriptions.Item>
-                        <Descriptions.Item label="Wine ID">{report.wineId}</Descriptions.Item>
-                        <Descriptions.Item label="Quantity">{report.quantity}</Descriptions.Item>
-                        <Descriptions.Item label="Description">{report.reportDescription || 'N/A'}</Descriptions.Item>
-                        <Descriptions.Item label="Reporter Assigned">{report.reporterAssigned || 'N/A'}</Descriptions.Item>
-                        <Descriptions.Item label="Discrepancies Quantity">{report.discrepanciesFound !== null ? report.discrepanciesFound : 'N/A'}</Descriptions.Item>
-                        <Descriptions.Item label="Actual Quantity">{report.actualQuantity}</Descriptions.Item>
-                        <Descriptions.Item label="Report File">{report.reportFile ? <a href={report.reportFile} target="_blank" rel="noopener noreferrer">Xem file</a> : 'N/A'}</Descriptions.Item>
+                        <Descriptions.Item label="Report ID">
+                            {report.id}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Wine ID">
+                            {report.wineId}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Quantity">
+                            {report.quantity}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Description">
+                            {report.reportDescription || 'N/A'}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Reporter Assigned">
+                            {report.reporterAssigned || 'N/A'}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Discrepancies Quantity">
+                            {report.discrepanciesFound !== null ? report.discrepanciesFound : 'N/A'}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Actual Quantity">
+                            {report.actualQuantity}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Report File">
+                            {report.reportFile ? <a href={report.reportFile}
+                                target="_blank" rel="noopener noreferrer">
+                                View file</a> : 'N/A'}
+                        </Descriptions.Item>
                         <Descriptions.Item label="Actions">
-                            <Button className="update-button" onClick={() => showUpdateModal(report)}>
+                            <Button
+                                className="update-button"
+                                onClick={() => showUpdateModal(report)}
+                                disabled={ioRequest.status !== 'Pending'}
+                            >
                                 Update Report
                             </Button>
                             <span> </span>
-                            <Button className="delete-button" onClick={() => handleDeleteReport(id, report.id)}>
+                            <Button
+                                className="delete-button"
+                                onClick={() => handleDeleteReport(id, report.id)}
+                                disabled={ioRequest.status !== 'Pending'}
+                            >
                                 Delete
                             </Button>
                         </Descriptions.Item>
