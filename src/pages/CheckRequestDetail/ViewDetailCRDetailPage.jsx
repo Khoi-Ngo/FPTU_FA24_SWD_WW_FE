@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, Typography, Button, Space, Descriptions, Divider, notification, Modal, Input, Form } from 'antd';
+import { Card, Typography, Button, Space, Descriptions, Divider, notification, Modal, Input, Form, Spin } from 'antd';
 import { createCRReport, disableCheckRequestDetailAPI, fetchDetailOfCRDetail } from '~/services/api-service/CR-FLOW/CheckRequestDetailApiService';
 import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 
@@ -76,7 +76,8 @@ export const ViewDetailCRDetailPage = () => {
     const handleBack = () => {
         navigate(`/app/check-request-details`);
     };
-    if (!data) return <Text>Loading...</Text>;
+    if (!data) return <Spin size="large" style={styles.spinner} />
+
 
     // Check if reportCode is valid (not empty, null, or whitespace)
     const showReportFields = data.reportCode && data.reportCode.trim() !== "";
@@ -168,44 +169,73 @@ export const ViewDetailCRDetailPage = () => {
                     </Space>
                 )}
             </Card>
-
-
             <Modal
                 title="Create Report"
                 open={isModalVisible}
                 onOk={handleCreateReport}
                 onCancel={() => {
-                    setReportFields({ ReportDescription: '', DiscrepanciesFound: 0, ActualQuantity: 0 });
-                    setIsModalVisible(false)
+                    setReportFields({
+                        ReportDescription: '',
+                        DiscrepanciesFound: 0,
+                        ActualQuantity: 0
+                    });
+                    setIsModalVisible(false);
                 }}
                 okText="Submit"
                 cancelText="Cancel"
             >
                 <Form layout="vertical">
                     <Form.Item label="Report Description">
-                        <Input
+                        <Input.TextArea
+                            rows={4}
                             value={reportFields.ReportDescription}
-                            onChange={(e) => setReportFields({ ...reportFields, ReportDescription: e.target.value })}
+                            onChange={(e) =>
+                                setReportFields({ ...reportFields, ReportDescription: e.target.value })
+                            }
                         />
                     </Form.Item>
                     <Form.Item label="Discrepancies Found">
                         <Input
                             type="number"
                             value={reportFields.DiscrepanciesFound}
-                            onChange={(e) => setReportFields({ ...reportFields, DiscrepanciesFound: Number(e.target.value) })}
+                            onChange={(e) =>
+                                setReportFields({
+                                    ...reportFields,
+                                    DiscrepanciesFound: Number(e.target.value)
+                                })
+                            }
                         />
                     </Form.Item>
                     <Form.Item label="Actual Quantity">
                         <Input
                             type="number"
                             value={reportFields.ActualQuantity}
-                            onChange={(e) => setReportFields({ ...reportFields, ActualQuantity: Number(e.target.value) })}
+                            onChange={(e) =>
+                                setReportFields({
+                                    ...reportFields,
+                                    ActualQuantity: Number(e.target.value)
+                                })
+                            }
                         />
                     </Form.Item>
                 </Form>
             </Modal>
+
         </div>
     );
 };
 
 export default ViewDetailCRDetailPage;
+
+
+
+//#region Inline styles
+const styles = {
+
+    spinner: {
+        display: 'block',
+        margin: '0 auto',
+    },
+};
+
+//#endregion

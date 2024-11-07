@@ -19,14 +19,15 @@ const UserListPage = () => {
   const [isModalUpdateVisible, setIsModalUpdateVisible] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
   const [selectedId, setSelectedId] = useState(0)
-  const [isUpdating, setIsUpdating] = useState(false)
   const token = window?.localStorage?.getItem("access_token")
-  const authToken = `Bearer ${token}`
-  
+  const authToken = `Bearer ${token}`;
+  const [loading, setLoading] = useState(true);
+
 
   //#region fetch all users
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const token = window?.localStorage?.getItem("access_token")
       const response = await fetchAllUsersAPI(`Bearer ${token}`)
       if (response.data) {
@@ -37,6 +38,8 @@ const UserListPage = () => {
     } catch (err) {
       setError(err.message)
       console.error('Error fetching users:', err)
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -132,8 +135,8 @@ const UserListPage = () => {
           <Button color='danger' variant='solid' style={{ margin: 10 }} onClick={() => handleDelete(record.id)}>
             <DeleteIcon />
           </Button>
-          <Button type="default" variant='solid' style={{background: 'orange', color: 'white', margin: 10}} onClick={() => navigate(`/app/users/${record.id}`)}>
-          <ArrowForwardIosIcon />
+          <Button type="default" variant='solid' style={{ background: 'orange', color: 'white', margin: 10 }} onClick={() => navigate(`/app/users/${record.id}`)}>
+            <ArrowForwardIosIcon />
           </Button>
         </div>
       ),
@@ -144,11 +147,18 @@ const UserListPage = () => {
     <div style={{ minHeight: '100vh' }}>
       <h1 style={{ textAlign: 'center' }}>User List</h1>
       {error && <Alert message="Error" description={error} type="error" showIcon />}
-      <Button type="primary" icon={<PlusOutlined />} shape='round' onClick={() => setIsModalVisible(true)} style={{ margin: '20px' }}>
-        Add User
-      </Button>
-      <Table dataSource={Array.isArray(users) ? users : []} columns={columns} rowKey="id" pagination={{ pageSize: 20 }} />
 
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+          <Spin tip="Loading users..." size="large" />
+        </div>
+      ) : (
+        <>
+          <Button type="primary" icon={<PlusOutlined />} shape='round' onClick={() => setIsModalVisible(true)} style={{ margin: '20px' }}>
+            Add User
+          </Button>
+          <Table dataSource={Array.isArray(users) ? users : []} columns={columns} rowKey="id" pagination={{ pageSize: 20 }} /></>
+      )}
       {/* Update User Modal */}
       <Modal
         open={isModalUpdateVisible}
