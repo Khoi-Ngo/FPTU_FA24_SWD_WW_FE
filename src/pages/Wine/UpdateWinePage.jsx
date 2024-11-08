@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Form, Input, Button, Select, DatePicker, Upload, Row, Col, notification, Image, message } from 'antd'
+import { Form, Input, Button, Select, DatePicker, Upload, Row, Col, notification, Image, message, InputNumber } from 'antd'
 import { ArrowLeftOutlined, InboxOutlined } from '@ant-design/icons'
 import { useParams, useNavigate } from 'react-router-dom'
 import { fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI, fetchWineDetailAPI, updateWineAPI } from '~/services/api-service/WineApiService'
@@ -231,16 +231,46 @@ const UpdateWinePage = () => {
                         <Form.Item
                             name="importPrice"
                             label="Import Price"
+                            rules={[
+                                { required: true, message: 'Please input the import price!' },
+                                { type: 'number', message: 'Please enter a valid number!' },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('importPrice') >= 100000) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error('Import Price must be at least 100000!'));
+                                    },
+                                }),
+                            ]}
                         >
-                            <Input type="number" />
+                            <InputNumber
+                                addonAfter="VND"
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => value.replace(/\$\s?|(,*)/g, '')} />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             name="exportPrice"
                             label="Export Price"
+                            rules={[
+                                { required: true, message: 'Please input the export price!' },
+                                { type: 'number', message: 'Please enter a valid number!' },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('exportPrice') >= getFieldValue('importPrice')) {
+                                            return Promise.resolve()
+                                        }
+                                        return Promise.reject(new Error('Export Price must be greater than or equal to Import Price!'))
+                                    },
+                                }),
+                            ]}
                         >
-                            <Input type="number" />
+                            <InputNumber
+                                addonAfter="VND"
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => value.replace(/\$\s?|(,*)/g, '')} />
                         </Form.Item>
                     </Col>
                     <Col span={12}>

@@ -140,7 +140,7 @@ export const WineListPage = () => {
     ]
 
     return (
-        <div className="wine-list-container">
+        <div>
             <Card bordered={false}>
                 <Title level={2} >Wine List</Title>
                 <Space size="middle">

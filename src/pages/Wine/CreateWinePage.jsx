@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Form, Input, Button, message, Select, DatePicker, Upload, Row, Col, notification, Image } from 'antd'
+import { Form, Input, Button, message, Select, DatePicker, Upload, Row, Col, notification, Image, InputNumber } from 'antd'
 import { ArrowLeftOutlined, InboxOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { createWineAPI, fetchAlcoholVolumeAPI, fetchBottleSizesAPI, fetchBrandsAPI, fetchClassesAPI, fetchCorksAPI, fetchCountriesAPI, fetchQualificationsAPI, fetchTastesAPI, fetchWineCategoriesAPI } from '../../services/api-service/WineApiService'
@@ -45,7 +45,7 @@ export const CreateWinePage = () => {
     const onFinish = async (values) => {
         form.resetFields()
         handleCreateWine(values)
-        
+
     }
 
     //#endregion
@@ -146,7 +146,7 @@ export const CreateWinePage = () => {
 
             } else if (file.status === 'error') {
                 message.error(`${info.file.name} file upload failed.`)
-            }else if (file.status === 'removed') {
+            } else if (file.status === 'removed') {
                 setUploadedImage('')
             }
         },
@@ -191,16 +191,46 @@ export const CreateWinePage = () => {
                         <Form.Item
                             name="importPrice"
                             label="Import Price"
+                            rules={[
+                                { required: true, message: 'Please input the import price!' },
+                                { type: 'number', message: 'Please enter a valid number!' },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('importPrice') >= 100000) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error('Import Price must be at least 100000!'));
+                                    },
+                                }),
+                            ]}
                         >
-                            <Input type="number" />
+                            <InputNumber
+                                addonAfter="VND"
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => value.replace(/\$\s?|(,*)/g, '')} />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
                         <Form.Item
                             name="exportPrice"
                             label="Export Price"
+                            rules={[
+                                { required: true, message: 'Please input the export price!' },
+                                { type: 'number', message: 'Please enter a valid number!' },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('exportPrice') >= getFieldValue('importPrice')) {
+                                            return Promise.resolve()
+                                        }
+                                        return Promise.reject(new Error('Export Price must be greater than or equal to Import Price!'))
+                                    },
+                                }),
+                            ]}
                         >
-                            <Input type="number" />
+                            <InputNumber
+                                addonAfter="VND"
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={(value) => value.replace(/\$\s?|(,*)/g, '')} />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -218,7 +248,7 @@ export const CreateWinePage = () => {
                             label="Manufacture Date"
                             rules={[{ required: true, message: 'Please select the manufacture date!' }]}
                         >
-                            <DatePicker style={{ width: '100%' }} maxDate={dayjs(currentDate)}/>
+                            <DatePicker style={{ width: '100%' }} maxDate={dayjs(currentDate)} />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -383,11 +413,11 @@ export const CreateWinePage = () => {
                 </Row>
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" style={{ width: '100%', height: '40px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>
-                            Create Wine
-                        </Button>
-                    </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" style={{ width: '100%', height: '40px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>
+                                Create Wine
+                            </Button>
+                        </Form.Item>
                     </Col>
                 </Row >
             </Form>
