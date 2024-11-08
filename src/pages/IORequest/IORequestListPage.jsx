@@ -71,12 +71,13 @@ export const IORequestListPage = () => {
         setSuppliers(supplierData);
         setCheckers(checkerData);
         setCustomers(customerData);
-        setWines(wineData);
+        const activeWines = wineData.filter(wine => wine.status === 'Active')
+        setWines(activeWines);
         console.log("Rooms:", roomData);
         console.log("Suppliers:", supplierData);
         console.log("Checkers:", checkerData);
         console.log("Customers:", customerData);
-        console.log("Wines:", wineData);
+        console.log("Wines:", activeWines);
       } catch (error) {
         console.error("Error fetching dropdown data:", error);
       }
