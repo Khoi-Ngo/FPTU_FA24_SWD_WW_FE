@@ -21,9 +21,12 @@ export const RoomListPage = () => {
   const [searchText, setSearchText] = useState('')
   const [allRooms, setAllRooms] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const token = window?.localStorage?.getItem("access_token")
+  const authToken = `Bearer ${token}`
+
 
   const fetchRoomData = async () => {
-    const response = await fetchRoomsAPI()
+    const response = await fetchRoomsAPI(authToken)
     const activeRooms = response.filter(room => room.status === 'Active')
     setData(activeRooms)
     setAllRooms(activeRooms)
@@ -91,7 +94,7 @@ export const RoomListPage = () => {
     setContent(<UpdateRoomForm updateRoom={updateRoom} setIsModalOpen={setIsModalOpen} data={data} setModalAction={setModalAction} isModalOpen={isModalOpen} />)
   }
   const updateRoom = async (id, data) => {
-    await updateRoomAPI(id, data).then(() => message.success('Updated Succesfully')).catch(error => {
+    await updateRoomAPI(id, data, authToken).then(() => message.success('Updated Succesfully')).catch(error => {
       message.error(error.response.data.errorMessage)
     })
     fetchRoomData()
@@ -104,7 +107,7 @@ export const RoomListPage = () => {
     setContent(<DeleteRoom setIsModalOpen={setIsModalOpen} deleteRoom={deleteRoom} data={data} />)
   }
   const deleteRoom = async (id) => {
-    await deleteRoomAPI(id).then(() => message.success('Deleted Succesfully')).catch(error => message.error(error.response.data.errorMessage))
+    await deleteRoomAPI(id, authToken).then(() => message.success('Deleted Succesfully')).catch(error => message.error(error.response.data.errorMessage))
     fetchRoomData()
   }
 
@@ -117,7 +120,7 @@ export const RoomListPage = () => {
 
   }
   const createRoom = async (newRoomData) => {
-    const createdRoom = await createRoomAPI({ ...newRoomData }).then(() => message.success('Created Succesfully')).catch(error => message.error(error.response.data.errorMessage))
+    const createdRoom = await createRoomAPI({ ...newRoomData }, authToken).then(() => message.success('Created Succesfully')).catch(error => message.error(error.response.data.errorMessage))
     setData((prevData) => [...prevData, createdRoom])
     fetchRoomData()
   }

@@ -22,6 +22,8 @@ export const CreateWinePage = () => {
     const [Tastes, setTastes] = useState([])
     const [uploadedImage, setUploadedImage] = useState('')
     const navigate = useNavigate()
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
 
     useEffect(() => {
         fetchWineCategories()
@@ -57,7 +59,7 @@ export const CreateWinePage = () => {
                 ...createWineRequestDTO,
                 imageUrl: uploadedImage
             }
-            const response = await createWineAPI(payload)
+            const response = await createWineAPI(payload, authToken)
             if (response.data && response.status === 200) {
                 notification.success({
                     message: "Create successfully"
@@ -78,39 +80,39 @@ export const CreateWinePage = () => {
         }
     }
     const fetchWineCategories = async () => {
-        const data = await fetchWineCategoriesAPI()
+        const data = await fetchWineCategoriesAPI(authToken)
         if (data) setWineCategories(data)
     }
     const fetchContries = async () => {
-        const data = await fetchCountriesAPI()
+        const data = await fetchCountriesAPI(authToken)
         if (data) setCountries(data)
     }
     const fetchTastes = async () => {
-        const data = await fetchTastesAPI()
+        const data = await fetchTastesAPI(authToken)
         if (data) setTastes(data)
     }
     const fetchClasses = async () => {
-        const data = await fetchClassesAPI()
+        const data = await fetchClassesAPI(authToken)
         if (data) setClasses(data)
     }
     const fetchQualifications = async () => {
-        const data = await fetchQualificationsAPI()
+        const data = await fetchQualificationsAPI(authToken)
         if (data) setQualifications(data)
     }
     const fetchCorks = async () => {
-        const data = await fetchCorksAPI()
+        const data = await fetchCorksAPI(authToken)
         if (data) setCorks(data)
     }
     const fetchBrands = async () => {
-        const data = await fetchBrandsAPI()
+        const data = await fetchBrandsAPI(authToken)
         if (data) setBrands(data)
     }
     const fetchBottleSizes = async () => {
-        const data = await fetchBottleSizesAPI()
+        const data = await fetchBottleSizesAPI(authToken)
         if (data) setBottleSizes(data)
     }
     const fetchAlcoholVolume = async () => {
-        const data = await fetchAlcoholVolumeAPI()
+        const data = await fetchAlcoholVolumeAPI(authToken)
         if (data) setAlcoholVolume(data)
     }
 

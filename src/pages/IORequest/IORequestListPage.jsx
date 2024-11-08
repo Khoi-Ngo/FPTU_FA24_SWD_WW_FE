@@ -36,14 +36,17 @@ export const IORequestListPage = () => {
   const [checkers, setCheckers] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [wines, setWines] = useState([]);
+  const token = window?.localStorage?.getItem("access_token")
+  const authToken = `Bearer ${token}`
+
 
   const fetchData = async (ioType) => {
     try {
       let requests;
       if (ioType === 'ALL') {
-        requests = await fetchIORequestApi();
+        requests = await fetchIORequestApi(authToken);
       } else {
-        requests = await fetchIORequestTypeApi(ioType);
+        requests = await fetchIORequestTypeApi(ioType, authToken);
       }
       console.log("Fetched IO Requests:", requests);
       setIORequests(requests);
@@ -58,11 +61,11 @@ export const IORequestListPage = () => {
     const fetchDropdownData = async () => {
       try {
         const [roomData, supplierData, checkerData, customerData, wineData] = await Promise.all([
-          selectedIOType === 'Out' ? fetchRoomAvailableForExport() : fetchRoomAvailable(),
-          fetchSuppliersApi(),
-          fetchCheckersApi(),
-          fetchCustomersApi(),
-          fetchWineIDApi()
+          selectedIOType === 'Out' ? fetchRoomAvailableForExport(authToken) : fetchRoomAvailable(authToken),
+          fetchSuppliersApi(authToken),
+          fetchCheckersApi(authToken),
+          fetchCustomersApi(authToken),
+          fetchWineIDApi(authToken)
         ]);
         setRooms(roomData);
         setSuppliers(supplierData);
@@ -179,7 +182,7 @@ export const IORequestListPage = () => {
 
   const confirmDelete = (id) => {
     if (window.confirm("Are you sure you want to disable this request?")) {
-      handleDisableStatus(id).then((response) => {
+      handleDisableStatus(id, authToken).then((response) => {
         if (response.success) {
           fetchData(selectedIOType);
           notification.success({
@@ -203,7 +206,7 @@ export const IORequestListPage = () => {
   };
   const confirmDone = (id) => {
     if (window.confirm("Are you sure you want to done this request?")) {
-      handleDoneStatus(id).then((response) => {
+      handleDoneStatus(id, authToken).then((response) => {
         if (response.success) {
           fetchData(selectedIOType);
           notification.success({
@@ -250,14 +253,14 @@ export const IORequestListPage = () => {
     try {
       if (currentRequest) {
         console.log("Updating request with ID:", currentRequest.id);
-        await updateIORequestApi(currentRequest.id, requestPayload);
+        await updateIORequestApi(currentRequest.id, requestPayload, authToken);
         notification.success({
           message: 'Update successful',
           description: 'The request was updated successfully.',
         });
       } else {
         console.log("Creating new request");
-        await createIORequestApi(requestPayload);
+        await createIORequestApi(requestPayload, authToken);
         notification.success({
           message: 'Created successfully',
           description: 'The request has been successfully created.',
@@ -288,7 +291,7 @@ export const IORequestListPage = () => {
 
   const handleRoomChange = async (roomId) => {
     try {
-      const roomData = await fetchRoomByIdForExport(roomId)
+      const roomData = await fetchRoomByIdForExport(roomId, authToken)
 
       const wineData = roomData.wineRooms;
       setWines(wineData);
@@ -310,7 +313,7 @@ export const IORequestListPage = () => {
 
   const handlePayment = async (id) => {
     try {
-      const data = await paymentIORequestApi(id);
+      const data = await paymentIORequestApi(id, authToken);
       window.open(data.paymentUrl, '_blank');
     } catch (error) {
       notification.error({

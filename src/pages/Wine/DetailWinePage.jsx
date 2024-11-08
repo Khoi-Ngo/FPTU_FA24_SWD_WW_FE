@@ -13,6 +13,8 @@ export const DetailWinePage = () => {
     const [showWineRooms, setShowWineRooms] = useState(false)
     const { wineId } = useParams()
     const navigate = useNavigate()
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
 
 
     //#region wine detail
@@ -23,7 +25,7 @@ export const DetailWinePage = () => {
 
     const fetchWineDetail = async (wineId) => {
         try {
-            const response = await fetchWineDetailAPI(wineId)
+            const response = await fetchWineDetailAPI(wineId, authToken)
             if (response) {
                 setWine(response)
                 notification.success(

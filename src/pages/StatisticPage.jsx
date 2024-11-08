@@ -7,7 +7,7 @@ import { fetchRoomsAPI } from '~/services/api-service/RoomApiService'
 import { fetchIORequestApi } from '~/services/api-service/IORequestApiService'
 import CountUp from 'react-countup'
 import { CheckOutlined, CheckSquareOutlined, HomeOutlined, SunOutlined, WarningOutlined } from '@ant-design/icons'
-import { fetchRequestHistoryAPI, fetchTotalWinesAPI, fetchTotalWinesByCategoryAPI } from '~/services/api-service/DashboardAPI'
+import { fetchRequestHistoryAPI, fetchTotalWinesAPI, fetchTotalWinesByCategoryAPI, fetchTotalWinesBymMonthAPI } from '~/services/api-service/DashboardAPI'
 import { Bar, Doughnut } from 'react-chartjs-2'
 import { Chart, BarElement, CategoryScale, Legend, LinearScale, Title as ChartTitle, Tooltip, ArcElement } from 'chart.js'
 import { AspectRatio } from '@mui/icons-material'
@@ -55,6 +55,9 @@ const StatisticPage = () => {
     const [wineCategoryPercentages, setWineCategoryPercentages] = useState([])
     const [categoryLabel, setCategoryLabel] = useState([])
     const [winePercentage, setWinePercentage] = useState([])
+    const [wineInMonth, setWineInMonth] = useState([])
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
 
     useEffect(() => {
         setTimeout(() => {
@@ -65,6 +68,7 @@ const StatisticPage = () => {
             fetchRequestHistory(currentYear)
             fetchTotalWines()
             fetchTotalWinesByCategory()
+            fetchTotalWinesByMonth(currentYear)
         }, 1000)
     }, [userLogin])
 
@@ -259,6 +263,7 @@ const StatisticPage = () => {
             }
         }
     }
+
     useEffect(() => {
         const categoryLabel = wineCategoryPercentages.map(category => category.categoryName)
         setCategoryLabel(categoryLabel)
@@ -337,9 +342,24 @@ const StatisticPage = () => {
     }
 
     //#region Fetch API
+    const fetchTotalWinesByMonth = async (year) => {
+        try {
+            const response = await fetchTotalWinesBymMonthAPI(year, authToken)
+            if (response) {
+                //const filter = response.filter(wine => wine.toltalQuantity > 0)
+                setWineInMonth(response)
+            } else {
+                throw new Error('API request failed')
+            }
+        } catch (error) {
+            notification.error({
+                message: "Fail load" + error
+            })
+        }
+    }
     const fetchTotalWinesByCategory = async () => {
         try {
-            const response = await fetchTotalWinesByCategoryAPI()
+            const response = await fetchTotalWinesByCategoryAPI(authToken)
             if (response) {
                 //const filter = response.filter(wine => wine.toltalQuantity > 0)
                 setWineCategoryPercentages(response)
@@ -354,7 +374,7 @@ const StatisticPage = () => {
     }
     const fetchTotalWines = async () => {
         try {
-            const response = await fetchTotalWinesAPI()
+            const response = await fetchTotalWinesAPI(authToken)
             if (response) {
                 const filter = response.filter(wine => wine.toltalQuantity > 0)
                 setTotalWines(filter)
@@ -370,7 +390,7 @@ const StatisticPage = () => {
 
     const fetchRequestHistory = async (year) => {
         try {
-            const response = await fetchRequestHistoryAPI(year)
+            const response = await fetchRequestHistoryAPI(year, authToken)
             if (response) {
                 setRequestHistory(response)
             } else {
@@ -384,7 +404,7 @@ const StatisticPage = () => {
     }
     const fetchAllWines = async () => {
         try {
-            const response = await fetchAllWineAPI()
+            const response = await fetchAllWineAPI(authToken)
             const activeWines = response.filter(wine => wine.status === 'Active')
             if (activeWines) {
                 setWines(activeWines)
@@ -399,7 +419,7 @@ const StatisticPage = () => {
     }
     const fetchAllRooms = async () => {
         try {
-            const response = await fetchRoomsAPI()
+            const response = await fetchRoomsAPI(authToken)
             const activeRooms = response.filter(room => room.status === 'Active')
             if (activeRooms) {
                 setRooms(activeRooms)
@@ -414,7 +434,7 @@ const StatisticPage = () => {
     }
     const fetchALLRequest = async () => {
         try {
-            const response = await fetchIORequestApi()
+            const response = await fetchIORequestApi(authToken)
             const finishedRequest = response.filter(request => request.status === 'Done')
             const pendingRequest = response.filter(request => request.status === 'Pending')
             if (finishedRequest) {
