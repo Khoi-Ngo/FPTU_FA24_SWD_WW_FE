@@ -180,6 +180,9 @@ const UpdateWinePage = () => {
         multiple: false,
         maxCount: 1,
         listType: "picture",
+        headers: {
+            Authorization: authToken
+        },
         action: `${import.meta.env.VITE_BACKEND_URL}/upload`,
         onChange: (info) => {
             const file = info.file

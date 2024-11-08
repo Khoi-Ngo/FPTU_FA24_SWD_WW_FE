@@ -1,18 +1,25 @@
 import axios from 'axios';
 
-export const fetchReportByIdApi = async (id) => {
+export const fetchReportByIdApi = async (id, token) => {
     try {
-        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/reports/GetReportsByIORequestId/${id}`);
+        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/reports/GetReportsByIORequestId/${id}`, {
+            headers: {
+                Authorization: token,
+            },
+        });
         return response.data;
     } catch (error) {
         throw new Error('Error fetching report data');
     }
 };
 
-export const updateReportApi = async (id, reportDetails) => {
+export const updateReportApi = async (id, reportDetails, token) => {
     try {
         const response = await axios.put(`https://winewarehousesystem.azurewebsites.net/api/v1/reports?id=${id}`, {
-            ioRequestDetails: reportDetails
+            ioRequestDetails: reportDetails,
+            headers: {
+                Authorization: token,
+            },
         });
         if (response.status === 200) {
             return response.data;
@@ -25,9 +32,13 @@ export const updateReportApi = async (id, reportDetails) => {
     }
 };
 
-export const deleteReportApi = async (id, idDetails) => {
+export const deleteReportApi = async (id, idDetails, token) => {
     try {
-        const response = await axios.delete(`https://winewarehousesystem.azurewebsites.net/api/v1/reports/${id}?idDetails=${idDetails}`);
+        const response = await axios.delete(`https://winewarehousesystem.azurewebsites.net/api/v1/reports/${id}?idDetails=${idDetails}`, {
+            headers: {
+                Authorization: token,
+            },
+        });
 
         if (response.status === 200) {
             return response.data;
@@ -40,7 +51,7 @@ export const deleteReportApi = async (id, idDetails) => {
     }
 };
 
-export const uploadFileApi = async (file) => {
+export const uploadFileApi = async (file, token) => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -48,6 +59,7 @@ export const uploadFileApi = async (file) => {
         const response = await axios.post('https://winewarehousesystem.azurewebsites.net/api/v1/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
+                Authorization: token,
             },
         });
         return response.data.downloadUrl;

@@ -52,7 +52,7 @@ const ReportDetailPage = () => {
     };
     const fetchIORequestDetail = async () => {
         try {
-            const data = await fetchIORequestByIdApi(id);
+            const data = await fetchIORequestByIdApi(id, authToken);
             setIORequest(data);
         } catch (error) {
             console.error("Error fetching IO Request details:", error);
@@ -65,7 +65,7 @@ const ReportDetailPage = () => {
 
     const fetchReportDetail = async () => {
         try {
-            const reportData = await fetchReportByIdApi(id);
+            const reportData = await fetchReportByIdApi(id, authToken);
             setReports(reportData);
         } catch (error) {
             console.error("Error fetching report details:", error);
@@ -133,12 +133,12 @@ const ReportDetailPage = () => {
 
 
             if (values.reportFile && values.reportFile.file) {
-                fileUrl = await uploadFileApi(values.reportFile.file);
+                fileUrl = await uploadFileApi(values.reportFile.file, authToken);
             }
 
             const ioRequestDetails = [{ ...values, id: currentReport.id, reportFile: fileUrl }];
             console.log("Data Respone:", ioRequestDetails);
-            const response = await updateReportApi(ioRequest.id, ioRequestDetails);
+            const response = await updateReportApi(ioRequest.id, ioRequestDetails, authToken);
             console.log("Response from API:", response);
             notification.success({
                 message: 'Update successful',
@@ -157,7 +157,7 @@ const ReportDetailPage = () => {
 
     const handleDeleteReport = async (reportId, idDetails) => {
         try {
-            await deleteReportApi(reportId, idDetails);
+            await deleteReportApi(reportId, idDetails, authToken);
             notification.success({
                 message: 'Delete successful ',
                 description: 'Report deleted successfully.'
