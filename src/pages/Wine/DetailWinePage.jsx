@@ -138,8 +138,8 @@ export const DetailWinePage = () => {
                         <Descriptions.Item label="Wine Name">{wine.wineName}</Descriptions.Item>
                         <Descriptions.Item label="Description">{wine.description}</Descriptions.Item>
                         <Descriptions.Item label="Country">{wine.country?.countryName}</Descriptions.Item>
-                        <Descriptions.Item label="Import Price">{wine.importPrice}</Descriptions.Item>
-                        <Descriptions.Item label="Export Price">{wine.exportPrice}</Descriptions.Item>
+                        <Descriptions.Item label="Import Price">{wine.importPrice ? `${wine.importPrice.toLocaleString()} VND` : ''}</Descriptions.Item>
+                        <Descriptions.Item label="Export Price">{wine.exportPrice ? `${wine.exportPrice.toLocaleString()} VND` : ''}</Descriptions.Item>
                         <Descriptions.Item label="Wine Category">{wine.wineCategory?.categoryName}</Descriptions.Item>
                         <Descriptions.Item label="Manufacture Date">{dayjs(wine.mfd).format('YYYY-MM-DD')}</Descriptions.Item>
                         <Descriptions.Item label="Taste">{wine.taste?.tasteType}</Descriptions.Item>
@@ -156,12 +156,12 @@ export const DetailWinePage = () => {
                     </Descriptions>
                 </Col>
             </Row>
-            <Button type="link" onClick={toggleWineRoomList} style={{ width: '100%', height: '40px', marginTop: '24px', marginBottom: '24px' }}>
+            {/* <Button type="link" onClick={toggleWineRoomList} style={{ width: '100%', height: '40px', marginTop: '24px', marginBottom: '24px' }}>
                 {showWineRooms ? 'Hide details about the stock' : 'Show more about the stock'}
             </Button>
             {showWineRooms && (
                 <Table dataSource={wineRooms} columns={columns} rowKey="Id" pagination={{ pageSize: 8 }} />
-            )}
+            )} */}
         </div>
     )
 }
