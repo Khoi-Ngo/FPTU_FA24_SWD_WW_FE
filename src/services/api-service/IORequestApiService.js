@@ -6,7 +6,7 @@ export const fetchIORequestApi = async (token) => {
     try {
         const response = await axios.get(BASE_URL, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return response.data;
@@ -20,7 +20,7 @@ export const createIORequestApi = async (newRequest, token) => {
     try {
         const response = await axios.post(BASE_URL, newRequest, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return response.data;
@@ -35,7 +35,7 @@ export const updateIORequestApi = async (id, updatedRequest, token) => {
         console.log(`Updating IO Request at ${BASE_URL}/${id} with data:`, updatedRequest);
         const response = await axios.put(`${BASE_URL}/${id}`, updatedRequest, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return response.data;
@@ -49,7 +49,7 @@ export const handleDisableStatus = async (id, token) => {
     try {
         await axios.delete(`${BASE_URL}/${id}`, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return { success: true };
@@ -67,7 +67,7 @@ export const handleDoneStatus = async (id, token) => {
     try {
         await axios.put(`${BASE_URL}/done/${id}`, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return { success: true };
@@ -88,7 +88,7 @@ export const fetchIORequestByIdApi = async (id, token) => {
     try {
         const response = await axios.get(`${BASE_URL}/${id}`, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return response.data;
@@ -102,7 +102,7 @@ export const fetchIORequestTypeApi = async (ioType, token) => {
     try {
         const response = await axios.get(`${BASE_URL}/style?io=${ioType}`, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return response.data;
@@ -115,7 +115,7 @@ export const fetchRoomById = async (roomId, token) => {
     try {
         const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/${roomId}`, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return response.data;
@@ -124,9 +124,13 @@ export const fetchRoomById = async (roomId, token) => {
         throw error;
     }
 };
-export const paymentIORequestApi = async (id) => {
+export const paymentIORequestApi = async (id, token) => {
     try {
-        const response = await axios.post(`${BASE_URL}/${id}/payment`, {});
+        const response = await axios.post(`${BASE_URL}/${id}/payment`, {
+            headers: {
+                Authorization: token,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error processing payment for IO Request', error);
@@ -137,7 +141,7 @@ export const fetchRoomByIdForExport = async (roomId, token) => {
     try {
         const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/export/${roomId}`, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
             },
         });
         return response.data;

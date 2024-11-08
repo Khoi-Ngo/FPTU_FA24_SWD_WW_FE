@@ -30,7 +30,7 @@ export const IORequestDetailsPage = () => {
 
     const fetchData = async () => {
         try {
-            const requestDetails = await fetchIORequestByIdApi(id);
+            const requestDetails = await fetchIORequestByIdApi(id, authToken);
             setIORequest(requestDetails);
             const [roomData, supplierData, checkerData, customerData, wineData] = await Promise.all([
                 fetchRoomsAPI(authToken),
