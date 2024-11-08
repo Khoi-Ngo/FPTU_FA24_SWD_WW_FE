@@ -11,6 +11,7 @@ const priorityOptions = [
     { label: 'Medium', value: 'Medium' },
     { label: 'High', value: 'High' }
 ];
+
 export const CreateCheckRequestPage = () => {
     const [form] = Form.useForm();
     const [staffOptions, setStaffOptions] = useState([]);
@@ -117,10 +118,10 @@ export const CreateCheckRequestPage = () => {
             <Form form={form} onFinish={handleSubmit} layout="vertical">
                 {/* Form fields for main request info */}
                 <Form.Item name="comments" label="Main Request Comments" rules={[{ required: true, message: 'Comments are required' }]}>
-                    <Input placeholder="Enter comments" style={{ borderRadius: '4px', borderColor: '#d9d9d9' }} />
+                    <Input.TextArea placeholder="Enter comments" style={{ borderRadius: '4px', borderColor: '#d9d9d9' }} />
                 </Form.Item>
                 <Form.Item name="purpose" label="Purpose" rules={[{ required: true, message: 'Purpose is required' }]}>
-                    <Input placeholder="Enter purpose" style={{ borderRadius: '4px', borderColor: '#d9d9d9' }} />
+                    <Input.TextArea placeholder="Enter purpose" style={{ borderRadius: '4px', borderColor: '#d9d9d9' }} />
                 </Form.Item>
                 <Form.Item name="priorityLevel" label="Priority Level" rules={[{ required: true, message: 'Please select priority level' }]}>
                     <Select options={priorityOptions} placeholder="Select Priority" style={{ borderRadius: '4px' }} />
@@ -133,7 +134,7 @@ export const CreateCheckRequestPage = () => {
                                 <div key={field.key} style={{ marginBottom: '20px', padding: '20px', border: '1px solid #e6e6e6', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
                                     {/* Detail fields */}
                                     <Form.Item {...field} name={[field.name, 'purpose']} label="Detail Purpose" rules={[{ required: true, message: 'Purpose is required' }]}>
-                                        <Input placeholder="Detail Purpose" style={{ borderRadius: '4px' }} />
+                                        <Input.TextArea placeholder="Detail Purpose" style={{ borderRadius: '4px' }} />
                                     </Form.Item>
                                     <Form.Item {...field} name={[field.name, 'startDate']} label="Start Date" rules={[{ required: true, message: 'Start date is required' }]}>
                                         <DatePicker style={{ borderRadius: '4px', width: '100%' }} />
@@ -142,7 +143,7 @@ export const CreateCheckRequestPage = () => {
                                         <DatePicker style={{ borderRadius: '4px', width: '100%' }} />
                                     </Form.Item>
                                     <Form.Item {...field} name={[field.name, 'comments']} label="Comments">
-                                        <Input placeholder="Comments" style={{ borderRadius: '4px' }} />
+                                        <Input.TextArea placeholder="Comments" style={{ borderRadius: '4px' }} />
                                     </Form.Item>
                                     <Form.Item {...field} name={[field.name, 'checker']} label="Checker/Staff" rules={[{ required: true, message: 'Checker is required' }]}>
                                         <Select options={staffOptions} placeholder="Select Checker" style={{ borderRadius: '4px' }} />

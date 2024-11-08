@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Descriptions, Spin, notification, Button, Modal, Input, Select, DatePicker } from 'antd';
+import { Card, Table, Descriptions, Spin, notification, Button, Modal, Input, Select, DatePicker, Tag } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeftOutlined, EditFilled, SaveOutlined, CloseOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
@@ -12,12 +12,25 @@ import { fetchAllStaffAPI } from '~/services/api-service/UserApiService';
 import { createAddCheckRequestAPI, disableCheckRequestDetailAPI } from '~/services/api-service/CR-FLOW/CheckRequestDetailApiService';
 
 const { Option } = Select;
+const formatValue = (value) => (value  ? value : 'N/A');
 
 const priorityOptions = [
     { label: 'Low', value: 'Low' },
     { label: 'Medium', value: 'Medium' },
     { label: 'High', value: 'High' }
 ];
+const getStatusTagColor = (status) => {
+    switch (status) {
+        case 'COMPLETED':
+            return 'green';
+        case 'DISABLED':
+            return 'red';
+        case 'ACTIVE':
+            return 'blue';
+        default:
+            return 'gray'; // Default color for unexpected status values
+    }
+};
 
 const ViewDetailCheckRequestPage = () => {
 
@@ -195,19 +208,45 @@ const ViewDetailCheckRequestPage = () => {
     const { id, purpose, requestCode, startDate, dueDate, priorityLevel, requesterId, requesterName, status, checkRequestDetails: details } = newData;
 
     const detailColumns = [
-        { title: 'Detail ID', dataIndex: 'id', key: 'id', align: 'center' },
-        { title: 'Purpose', dataIndex: 'purpose', key: 'purpose', align: 'center' },
-        { title: 'Check Request ID', dataIndex: 'checkRequestId', key: 'checkRequestId', align: 'center' },
-        { title: 'Wine ID', dataIndex: 'wineId', key: 'wineId', align: 'center' },
-        { title: 'Wine Name', dataIndex: 'wineName', key: 'wineName', align: 'center' },
+        { title: 'Detail ID', dataIndex: 'id', key: 'id', align: 'center', render: (text) => formatValue(text) },
+        { title: 'Purpose', dataIndex: 'purpose', key: 'purpose', align: 'center', render: (text) => formatValue(text) },
+        { title: 'Check Request ID', dataIndex: 'checkRequestId', key: 'checkRequestId', align: 'center', render: (text) => formatValue(text) },
+        { title: 'Wine ID', dataIndex: 'wineId', key: 'wineId', align: 'center', render: (text) => formatValue(text) },
+        { title: 'Wine Name', dataIndex: 'wineName', key: 'wineName', align: 'center', render: (text) => formatValue(text) },
         { title: 'MFD', dataIndex: 'mfd', key: 'mfd', align: 'center', render: (date) => (date ? new Date(date).toLocaleDateString() : '-') },
-        { title: 'Room ID', dataIndex: 'roomId', key: 'roomId', align: 'center' },
-        { title: 'Room Name', dataIndex: 'roomName', key: 'roomName', align: 'center' },
-        { title: 'Checker ID', dataIndex: 'checkerId', key: 'checkerId', align: 'center' },
-        { title: 'Checker Name', dataIndex: 'checkerName', key: 'checkerName', align: 'center' },
-        { title: 'Wine Room ID', dataIndex: 'wineRoomId', key: 'wineRoomId', align: 'center' },
-        { title: 'Expected Current Quantity', dataIndex: 'expectedCurrQuantity', key: 'expectedCurrQuantity', align: 'center' },
-        { title: 'Status', dataIndex: 'status', key: 'status', align: 'center' },
+        { title: 'Room ID', dataIndex: 'roomId', key: 'roomId', align: 'center', render: (text) => formatValue(text) },
+        {
+            title: 'Room Name',
+            dataIndex: 'roomName',
+            key: 'roomName',
+            align: 'center',
+            render: (roomName) => (
+                <Tag color="purple">{formatValue(roomName)}</Tag> // Default purple color
+            ),
+        },
+        { title: 'Checker ID', dataIndex: 'checkerId', key: 'checkerId', align: 'center', render: (text) => formatValue(text) },
+        {
+            title: 'Checker Name',
+            dataIndex: 'checkerName',
+            key: 'checkerName',
+            align: 'center',
+            render: (checkerName) => (
+                <Tag color="blue">{formatValue(checkerName)}</Tag> // Default blue color
+            ),
+        },
+        { title: 'Wine Room ID', dataIndex: 'wineRoomId', key: 'wineRoomId', align: 'center', render: (text) => formatValue(text) },
+        { title: 'Expected Current Quantity', dataIndex: 'expectedCurrQuantity', key: 'expectedCurrQuantity', align: 'center', render: (text) => formatValue(text) },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            align: 'center',
+            render: (status) => (
+                <Tag color={getStatusTagColor(status)}>
+                    {formatValue(status)}
+                </Tag>
+            ),
+        },
         {
             title: 'Actions',
             key: 'action',

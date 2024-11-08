@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Spin, Button, notification, Modal, Input, Select, Row, Col } from 'antd';
+import { Table, Spin, Button, notification, Modal, Input, Select, Row, Col, Tag } from 'antd';
 import { EditOutlined, EyeOutlined, UserDeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { disableCheckRequestAPI, fetchCheckRequestsAPI } from '~/services/api-service/CR-FLOW/CheckRequestApiService';
@@ -89,6 +89,7 @@ const CheckRequestListPage = () => {
             dataIndex: 'requestCode',
             key: 'requestCode',
             align: 'center',
+            render: (requestCode) => <Tag color="gray" style={{ fontWeight: 'bolder' }}>{requestCode}</Tag>,
         },
         {
             title: 'Start Date',
@@ -109,6 +110,23 @@ const CheckRequestListPage = () => {
             dataIndex: 'priorityLevel',
             key: 'priorityLevel',
             align: 'center',
+            render: (priorityLevel) => {
+                let color;
+                switch (priorityLevel) {
+                    case 'High':
+                        color = 'volcano';  // Bright color to signify high priority
+                        break;
+                    case 'Medium':
+                        color = 'gold';     // Yellow color for medium priority
+                        break;
+                    case 'Low':
+                        color = 'green';    // Green color for low priority
+                        break;
+                    default:
+                        color = 'gray';     // Default color for undefined priority levels
+                }
+                return <Tag color={color}>{priorityLevel}</Tag>;
+            },
         },
         {
             title: 'Requester',
@@ -116,17 +134,35 @@ const CheckRequestListPage = () => {
             key: 'requesterName',
             align: 'center',
         },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            align: 'center',
-        },
+
         {
             title: 'Number of details',
             dataIndex: 'noOfDetails',
             key: 'noOfDetails',
             align: 'center',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            align: 'center',
+            render: (status) => {
+                let color;
+                switch (status) {
+                    case 'COMPLETED':
+                        color = 'green';
+                        break;
+                    case 'ACTIVE':
+                        color = 'blue';
+                        break;
+                    case 'DISABLED':
+                        color = 'red';
+                        break;
+                    default:
+                        color = 'gray';
+                }
+                return <Tag color={color}>{status}</Tag>;
+            },
         },
         {
             title: 'Actions',

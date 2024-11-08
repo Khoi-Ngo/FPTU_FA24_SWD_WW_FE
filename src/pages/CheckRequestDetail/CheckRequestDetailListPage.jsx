@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Table, Tag, Typography, Spin, Button, notification, Modal, Select, Input, DatePicker } from 'antd';
 import { createAddCheckRequestAPI, disableCheckRequestDetailAPI, fetchAllCheckRequestDetailsAPI } from '~/services/api-service/CR-FLOW/CheckRequestDetailApiService';
 import { AuthContext } from '~/components/auth-context';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { fetchAllStaffAPI } from '~/services/api-service/UserApiService';
 import { fetchAllActiveWineRoomNameAPI } from '~/services/api-service/WineRoomeApiService';
@@ -11,10 +11,12 @@ import { fetchCheckRequestsAPI } from '~/services/api-service/CR-FLOW/CheckReque
 
 const { Text } = Typography;
 export const CheckRequestDetailListPage = () => {
-
     const token = window?.localStorage?.getItem("access_token");
     const authToken = `Bearer ${token}`;
     //#region init + load data
+    const [searchText, setSearchText] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
+    const [statusFilter, setStatusFilter] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [formData, setFormData] = useState({
         purpose: '',
@@ -110,16 +112,17 @@ export const CheckRequestDetailListPage = () => {
         fetchData();
         populateWineRoomOptions();
         populateMainCheckRequestOptions();
+        setFilteredData(data);
 
     }, []);
-
+    const formatValue = (value) => (value && value.trim() ? value : 'N/A');
     const columns = [
         {
             title: 'ID',
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: (id) => <Text>{id}</Text>
+            render: (id) => <Tag color="gray" style={{ fontWeight: 'bolder' }}>{id}</Tag>
         },
         {
             title: 'Purpose',
@@ -127,26 +130,72 @@ export const CheckRequestDetailListPage = () => {
             key: 'purpose',
             align: 'center',
             ellipsis: true,
-            render: (purpose) => <Text>{purpose}</Text>
+            render: (purpose) => <Text>{formatValue(purpose)}</Text>
         },
         {
             title: 'Check Request ID',
             dataIndex: 'checkRequestId',
             key: 'checkRequestId',
             align: 'center',
-            render: (checkRequestId) => <Text>{checkRequestId}</Text>
+            render: (checkRequestId) => <Tag style={{ fontWeight: 'bolder' }}>{checkRequestId}</Tag>
+        },
+        {
+            title: 'Wine Room ID',
+            dataIndex: 'wineRoomId',
+            key: 'wineRoomId',
+            align: 'center',
+            render: (wineRoomId) => <Text>{wineRoomId}</Text>
+        },
+        {
+            title: 'Wine Name',
+            dataIndex: 'wineName',
+            key: 'wineName',
+            align: 'center',
+            render: (wineName) => (
+                <Tag color="purple" style={{ fontWeight: 'bold', padding: '5px 10px', borderRadius: '8px' }}>
+                    {formatValue(wineName)}
+                </Tag>
+            )
+        },
+        {
+            title: 'Room Name',
+            dataIndex: 'roomName',
+            key: 'roomName',
+            align: 'center',
+            render: (roomName) => (
+                <Tag color="cyan" style={{ fontWeight: 'bold', padding: '5px 10px', borderRadius: '8px' }}>
+                    {formatValue(roomName)}
+                </Tag>
+            )
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
             align: 'center',
-            render: (status) => (
-                <Tag color={status === "DISABLED" ? 'red' : 'green'}>
-                    {status || 'Unknown'}
-                </Tag>
-            )
+            render: (status) => {
+                let color;
+                switch (status) {
+                    case 'COMPLETED':
+                        color = 'green';
+                        break;
+                    case 'ACTIVE':
+                        color = 'blue';
+                        break;
+                    case 'DISABLED':
+                        color = 'red';
+                        break;
+                    default:
+                        color = 'gray';
+                }
+                return (
+                    <Tag color={color}>
+                        {status || 'Unknown'}
+                    </Tag>
+                );
+            }
         },
+
         {
             title: 'Actions',
             key: 'action',
@@ -165,6 +214,28 @@ export const CheckRequestDetailListPage = () => {
             ),
         },
     ];
+
+    //handling searching || filtering data table
+    useEffect(() => {
+        const filtered = data.filter(item =>
+            item.purpose.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.checkRequestId.toString().includes(searchText) ||
+            item.roomName?.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.wineName?.toLowerCase().includes(searchText.toLowerCase())
+        ).filter(item => (statusFilter ? item.status === statusFilter : true));
+        setFilteredData(filtered);
+    }, [data, searchText, statusFilter]);
+    const handleSearch = (e) => {
+        setSearchText(e.target.value);
+    };
+    const handleStatusFilterChange = (value) => {
+        setStatusFilter(value);
+    };
+
+    const resetFilters = () => {
+        setSearchText('');
+        setStatusFilter(null);
+    };
 
     //#endregion
 
@@ -260,92 +331,117 @@ export const CheckRequestDetailListPage = () => {
             ) : (
                 <>
                     {userLogin.role === "MANAGER" && (
-                        <Button type="primary" onClick={() => setIsModalVisible(true)}>
+                        <Button type="primary" style={{ margin: '30px' }} onClick={() => setIsModalVisible(true)}>
                             CREATE ADDITIONAL
                         </Button>
                     )}
+
+                    <div style={{ margin: '30px', display: 'flex', gap: '10px' }}>
+                        <Input
+                            placeholder="Search by Purpose, Request ID, Room Name, or Wine Name"
+                            prefix={<SearchOutlined />}
+                            onChange={handleSearch}
+                            value={searchText}
+                        />
+                        <Select
+                            placeholder="Filter by Status"
+                            onChange={handleStatusFilterChange}
+                            allowClear
+                            style={{ width: 200 }}
+                        >
+                            <Select.Option value="COMPLETED">Completed</Select.Option>
+                            <Select.Option value="ACTIVE">Active</Select.Option>
+                            <Select.Option value="DISABLED">Disabled</Select.Option>
+                        </Select>
+                        <Button onClick={resetFilters}>Reset Filters</Button>
+                    </div>
+
+
                     <Table
                         rowKey="id"
                         columns={columns}
-                        dataSource={data}
-                        pagination={{ pageSize: 5 }}
-                    /></>
+                        dataSource={filteredData}
+                        pagination={{ pageSize: 8 }}
+                    />
+
+                    <Modal
+                        title="Create Additional Check Request Detail"
+                        open={isModalVisible}
+                        onOk={handleCreateAdditional}
+                        onCancel={hideModal}
+                        okText="Create"
+                        style={{ minWidth: '80vw' }}
+                    >
+                        <label>Purpose</label>
+                        <Input.TextArea
+                            placeholder="Purpose"
+                            value={formData.purpose}
+                            onChange={(e) => handleInputChangeFormAdditional('purpose', e.target.value)}
+                            style={{ marginBottom: 10, width: '100%', height: '60px' }} // Bigger input field
+                        />
+                        <DatePicker
+                            placeholder="Start Date"
+                            value={formData.startDate}
+                            onChange={(date) => handleInputChangeFormAdditional('startDate', date)}
+                            style={{ marginBottom: 10, width: '100%' }}
+                        />
+                        <DatePicker
+                            placeholder="Due Date"
+                            value={formData.dueDate}
+                            onChange={(date) => handleInputChangeFormAdditional('dueDate', date)}
+                            style={{ marginBottom: 10, width: '100%' }}
+                        />
+                        <label>Comments</label>
+                        <Input.TextArea
+                            placeholder="Comments"
+                            value={formData.comments}
+                            onChange={(e) => handleInputChangeFormAdditional('comments', e.target.value)}
+                            style={{ marginBottom: 10, width: '100%', height: '60px' }} // Bigger input field
+                        />
+                        <label>Check Request</label>
+                        <Select
+                            placeholder="Select CR"
+                            value={formData.checkRequestId}
+                            onChange={(value) => handleInputChangeFormAdditional('checkRequestId', value)}
+                            style={{ marginBottom: 10, width: '100%' }}
+                        >
+                            {checkRequestOptions.map((option) => (
+                                <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Option>
+                            ))}
+                        </Select>
+                        <label>Wine Room</label>
+                        <Select
+                            placeholder="Select Wine Room"
+                            value={formData.wineRoomId}
+                            onChange={(value) => handleInputChangeFormAdditional('wineRoomId', value)}
+                            style={{ marginBottom: 10, width: '100%' }}
+                        >
+                            {wineRoomOptions.map((option) => (
+                                <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Option>
+                            ))}
+                        </Select>
+                        <label>Checker</label>
+                        <Select
+                            placeholder="Select Checker"
+                            value={formData.checkerId}
+                            onChange={(value) => handleInputChangeFormAdditional('checkerId', value)}
+                            style={{ marginBottom: 10, width: '100%' }}
+                        >
+                            {staffOptions.map((option) => (
+                                <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Modal>
+                </>
             )}
 
-            <Modal
-                title="Create Additional Check Request Detail"
-                open={isModalVisible}
-                onOk={handleCreateAdditional}
-                onCancel={hideModal}
-                okText="Create"
-                style={{ minWidth: '80vw' }}
-            >
-                <label>Purpose</label>
-                <Input
-                    placeholder="Purpose"
-                    value={formData.purpose}
-                    onChange={(e) => handleInputChangeFormAdditional('purpose', e.target.value)}
-                    style={{ marginBottom: 10, width: '100%', height: '60px' }} // Bigger input field
-                />
-                <DatePicker
-                    placeholder="Start Date"
-                    value={formData.startDate}
-                    onChange={(date) => handleInputChangeFormAdditional('startDate', date)}
-                    style={{ marginBottom: 10, width: '100%' }}
-                />
-                <DatePicker
-                    placeholder="Due Date"
-                    value={formData.dueDate}
-                    onChange={(date) => handleInputChangeFormAdditional('dueDate', date)}
-                    style={{ marginBottom: 10, width: '100%' }}
-                />
-                <label>Comments</label>
-                <Input
-                    placeholder="Comments"
-                    value={formData.comments}
-                    onChange={(e) => handleInputChangeFormAdditional('comments', e.target.value)}
-                    style={{ marginBottom: 10, width: '100%', height: '60px' }} // Bigger input field
-                />
-                <label>Check Request</label>
-                <Select
-                    placeholder="Select CR"
-                    value={formData.checkRequestId}
-                    onChange={(value) => handleInputChangeFormAdditional('checkRequestId', value)}
-                    style={{ marginBottom: 10, width: '100%' }}
-                >
-                    {checkRequestOptions.map((option) => (
-                        <Option key={option.value} value={option.value}>
-                            {option.label}
-                        </Option>
-                    ))}
-                </Select>
-                <label>Wine Room</label>
-                <Select
-                    placeholder="Select Wine Room"
-                    value={formData.wineRoomId}
-                    onChange={(value) => handleInputChangeFormAdditional('wineRoomId', value)}
-                    style={{ marginBottom: 10, width: '100%' }}
-                >
-                    {wineRoomOptions.map((option) => (
-                        <Option key={option.value} value={option.value}>
-                            {option.label}
-                        </Option>
-                    ))}
-                </Select>
-                <label>Checker</label>
-                <Select
-                    placeholder="Select Checker"
-                    value={formData.checkerId}
-                    onChange={(value) => handleInputChangeFormAdditional('checkerId', value)}
-                    style={{ marginBottom: 10, width: '100%' }}
-                >
-                    {staffOptions.map((option) => (
-                        <Option key={option.value} value={option.value}>
-                            {option.label}
-                        </Option>
-                    ))}
-                </Select>
-            </Modal>
+
         </div>
     );
 };

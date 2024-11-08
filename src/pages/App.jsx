@@ -63,7 +63,9 @@ export const App = () => {
         if (path.startsWith('/app/wine-categories')) return 'WineCates'
         if (path.startsWith('/app/rooms')) return 'Rooms'
         if (path.startsWith('/app/io-requests')) return 'IORequests'
-        if (path.startsWith('/app/tasks')) return 'StaffTasks'
+        if (path.startsWith('/app/tasks')
+        || path.startsWith('/app/check-request-details')
+        ) return 'StaffTasks'
         if (path.startsWith('/app/check-requests') || path.startsWith('/app/create-check-request')) return 'CheckRequests'
 
         return 'Overview'
