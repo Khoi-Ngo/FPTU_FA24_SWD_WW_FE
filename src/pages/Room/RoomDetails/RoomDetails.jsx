@@ -15,6 +15,8 @@ function RoomDetails() {
   const [content, setContent] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const roomId = useParams().roomId
+  const token = window?.localStorage?.getItem("access_token")
+  const authToken = `Bearer ${token}`
   
   const columns = [
     {
@@ -59,7 +61,7 @@ function RoomDetails() {
   }, [])
   
   const fetchRoomDetailsData = async (id) => {
-    const response = await fetchRoomDetailsAPI(id)
+    const response = await fetchRoomDetailsAPI(id, authToken)
     //const activeRooms = response.filter(room => room.status === 'Active')
     // const transformedData = response.map(item => ({
     //   ...item,
@@ -86,7 +88,7 @@ function RoomDetails() {
     setContent(<RemoveWineFromRoom setIsModalOpen={setIsModalOpen} removeWineFromRoom={removeWineFromRoom} data={data} />)
   }
   const removeWineFromRoom = async (id) => {
-    await removeWineFromRoomAPI(id).then(() => message.success('Removed Succesfully')).catch(error => message.error(error.response.data.errorMessage))
+    await removeWineFromRoomAPI(id, authToken).then(() => message.success('Removed Succesfully')).catch(error => message.error(error.response.data.errorMessage))
     fetchRoomDetailsData()
   }
   const handleUpdate = (data) => {
