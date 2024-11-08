@@ -22,6 +22,8 @@ export const App = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const filteredWine = useBearStore((state) => state.setWine)
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
 
     const delay = (milSeconds) => {
         return new Promise((resolve) => {
@@ -110,13 +112,13 @@ export const App = () => {
     }
 
     const fetchWineCategories = async () => {
-        const data = await fetchWineCategoriesAPI()
+        const data = await fetchWineCategoriesAPI(authToken)
         if (data) setWineCategories(data)
     }
 
     const getWineByCategory = async (categoryId) => {
         try {
-            const response = await getWineByCategoryAPI(categoryId)
+            const response = await getWineByCategoryAPI(categoryId, authToken)
             if (response) {
                 const filter = response.wines.filter(wine => wine.status === 'Active')
                 filteredWine(filter)

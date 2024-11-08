@@ -21,6 +21,8 @@ function FilteredWineListPage() {
   const navigate = useNavigate();
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
   const [currentWineId, setCurrentWineId] = useState(null)
+  const token = window?.localStorage?.getItem("access_token")
+  const authToken = `Bearer ${token}`
   const columns = [
     {
       title: 'ID',
@@ -107,7 +109,7 @@ function FilteredWineListPage() {
   const confirmDelete = async () => {
     try {
       console.log('currentWineId ', currentWineId)
-      await deleteWineAPI(currentWineId)
+      await deleteWineAPI(currentWineId, authToken)
       notification.success({
         message: `Wine deleted successfully`,
         description: `Wine with ID: ${currentWineId} was deleted.`,

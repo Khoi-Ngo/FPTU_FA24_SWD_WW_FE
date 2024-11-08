@@ -2,9 +2,13 @@ import axios from 'axios';
 
 const BASE_URL = 'https://winewarehousesystem.azurewebsites.net/api/v1/iorequests';
 
-export const fetchIORequestApi = async () => {
+export const fetchIORequestApi = async (token) => {
     try {
-        const response = await axios.get(BASE_URL);
+        const response = await axios.get(BASE_URL, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching IO Requests', error);
@@ -12,9 +16,13 @@ export const fetchIORequestApi = async () => {
     }
 };
 
-export const createIORequestApi = async (newRequest) => {
+export const createIORequestApi = async (newRequest, token) => {
     try {
-        const response = await axios.post(BASE_URL, newRequest);
+        const response = await axios.post(BASE_URL, newRequest, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error creating IO Request', error);
@@ -22,10 +30,14 @@ export const createIORequestApi = async (newRequest) => {
     }
 };
 
-export const updateIORequestApi = async (id, updatedRequest) => {
+export const updateIORequestApi = async (id, updatedRequest, token) => {
     try {
         console.log(`Updating IO Request at ${BASE_URL}/${id} with data:`, updatedRequest);
-        const response = await axios.put(`${BASE_URL}/${id}`, updatedRequest);
+        const response = await axios.put(`${BASE_URL}/${id}`, updatedRequest, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error updating IO Request', error);
@@ -33,9 +45,13 @@ export const updateIORequestApi = async (id, updatedRequest) => {
     }
 };
 
-export const handleDisableStatus = async (id) => {
+export const handleDisableStatus = async (id, token) => {
     try {
-        await axios.delete(`${BASE_URL}/${id}`);
+        await axios.delete(`${BASE_URL}/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return { success: true };
     } catch (error) {
         if (error.response) {
@@ -47,9 +63,13 @@ export const handleDisableStatus = async (id) => {
         return { success: false };
     }
 };
-export const handleDoneStatus = async (id) => {
+export const handleDoneStatus = async (id, token) => {
     try {
-        await axios.put(`${BASE_URL}/done/${id}`);
+        await axios.put(`${BASE_URL}/done/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return { success: true };
     } catch (error) {
         if (error.response) {
@@ -64,9 +84,13 @@ export const handleDoneStatus = async (id) => {
     }
 };
 
-export const fetchIORequestByIdApi = async (id) => {
+export const fetchIORequestByIdApi = async (id, token) => {
     try {
-        const response = await axios.get(`${BASE_URL}/${id}`);
+        const response = await axios.get(`${BASE_URL}/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error(`Error fetching IO Request with ID: ${id}`, error);
@@ -74,18 +98,26 @@ export const fetchIORequestByIdApi = async (id) => {
     }
 };
 
-export const fetchIORequestTypeApi = async (ioType) => {
+export const fetchIORequestTypeApi = async (ioType, token) => {
     try {
-        const response = await axios.get(`${BASE_URL}/style?io=${ioType}`);
+        const response = await axios.get(`${BASE_URL}/style?io=${ioType}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error(`Error fetching IO Request Type for ${ioType}`, error);
         throw error;
     }
 };
-export const fetchRoomById = async (roomId) => {
+export const fetchRoomById = async (roomId, token) => {
     try {
-        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/${roomId}`);
+        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/${roomId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error("Error fetching room by ID:", error);
@@ -101,9 +133,13 @@ export const paymentIORequestApi = async (id) => {
         throw error;
     }
 };
-export const fetchRoomByIdForExport = async (roomId) => {
+export const fetchRoomByIdForExport = async (roomId, token) => {
     try {
-        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/export/${roomId}`);
+        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/rooms/export/${roomId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error("Error fetching room for export by ID:", error);

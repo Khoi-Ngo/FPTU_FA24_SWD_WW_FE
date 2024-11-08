@@ -25,6 +25,8 @@ const ReportDetailPage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [currentReport, setCurrentReport] = useState(null);
     const [form] = Form.useForm();
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
 
     const getSupplierName = (suplierId) => {
         const supplier = suppliers.find(s => s.id === suplierId);
@@ -77,11 +79,11 @@ const ReportDetailPage = () => {
     const fetchAdditionalData = async () => {
         try {
             const [suppliersData, customersData, checkersData, roomData, wineData] = await Promise.all([
-                fetchSuppliersApi(),
-                fetchCustomersApi(),
-                fetchCheckersApi(),
-                fetchRoomsAPI(),
-                fetchWineIDApi(),
+                fetchSuppliersApi(authToken),
+                fetchCustomersApi(authToken),
+                fetchCheckersApi(authToken),
+                fetchRoomsAPI(authToken),
+                fetchWineIDApi(authToken),
             ]);
             setRooms(roomData);
             setSuppliers(suppliersData);

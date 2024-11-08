@@ -10,10 +10,13 @@ const { Title } = Typography;
 const ReportListPage = () => {
     const navigate = useNavigate();
     const [ioRequests, setIORequests] = useState([]);
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
+
 
     const fetchData = async () => {
         try {
-            const requests = await fetchIORequestApi();
+            const requests = await fetchIORequestApi(authToken);
             console.log("Fetched IO Requests:", requests);
             setIORequests(requests);
         } catch (error) {

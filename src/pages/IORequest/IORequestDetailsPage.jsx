@@ -24,17 +24,20 @@ export const IORequestDetailsPage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [currentDetail, setCurrentDetail] = useState(null);
     const [form] = Form.useForm();
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
+
 
     const fetchData = async () => {
         try {
             const requestDetails = await fetchIORequestByIdApi(id);
             setIORequest(requestDetails);
             const [roomData, supplierData, checkerData, customerData, wineData] = await Promise.all([
-                fetchRoomsAPI(),
-                fetchSuppliersApi(),
-                fetchCheckersApi(),
-                fetchCustomersApi(),
-                fetchWineIDApi(),
+                fetchRoomsAPI(authToken),
+                fetchSuppliersApi(authToken),
+                fetchCheckersApi(authToken),
+                fetchCustomersApi(authToken),
+                fetchWineIDApi(authToken),
             ]);
             setRooms(roomData);
             setSuppliers(supplierData);
@@ -88,7 +91,7 @@ export const IORequestDetailsPage = () => {
                 quantity: values.quantity,
                 wineId: values.wineId,
             };
-            await addIORequestDetail(ioRequest.id, newDetail);
+            await addIORequestDetail(ioRequest.id, newDetail, authToken);
             console.log('Detail added');
 
             fetchData();
@@ -107,7 +110,7 @@ export const IORequestDetailsPage = () => {
                 quantity: values.quantity,
                 wineId: values.wineId,
             };
-            await updateIORequestDetail(ioRequest.id, updatedDetail);
+            await updateIORequestDetail(ioRequest.id, updatedDetail, authToken);
             console.log('Detail updated');
 
             fetchData();
@@ -121,7 +124,7 @@ export const IORequestDetailsPage = () => {
 
     const handleDeleteDetail = async (detailId) => {
         try {
-            await deleteIORequestDetail(ioRequest.id, detailId);
+            await deleteIORequestDetail(ioRequest.id, detailId, authToken);
             console.log('Detail deleted');
             setIORequest(prev => ({
                 ...prev,

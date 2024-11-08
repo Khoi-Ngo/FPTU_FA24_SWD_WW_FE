@@ -1,9 +1,13 @@
 import axios from "axios";
 
 
-export const fetchSuppliersApi = async () => {
+export const fetchSuppliersApi = async (token) => {
     try {
-        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/supliers`); // Sửa lỗi chính tả thành 'suppliers'
+        const response = await axios.get(`https://winewarehousesystem.azurewebsites.net/api/v1/supliers`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }); // Sửa lỗi chính tả thành 'suppliers'
         return response.data;
     } catch (error) {
         console.error('Error fetching suppliers:', error);
@@ -11,9 +15,13 @@ export const fetchSuppliersApi = async () => {
     }
 };
 
-export const fetchCustomersApi = async () => {
+export const fetchCustomersApi = async (token) => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/customers`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/customers`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching customers:', error);
@@ -22,9 +30,7 @@ export const fetchCustomersApi = async () => {
 };
 
 
-export const fetchCheckersApi = async () => {
-    const token = localStorage.getItem('access_token');
-
+export const fetchCheckersApi = async (token) => {
     try {
         const response = await axios.get('https://winewarehousesystem.azurewebsites.net/api/v1/users/staff', {
             headers: {
@@ -38,18 +44,26 @@ export const fetchCheckersApi = async () => {
         throw error;
     }
 };
-export const fetchWineIDApi = async () => {
+export const fetchWineIDApi = async (token) => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/wines`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/wines`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching Wines:', error);
         throw error;
     }
 };
-export const fetchRoomAvailable = async () => {
+export const fetchRoomAvailable = async (token) => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/rooms/available`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/rooms/available`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching rooms for import:', error);
@@ -57,9 +71,13 @@ export const fetchRoomAvailable = async () => {
     }
 };
 
-export const fetchRoomAvailableForExport = async () => {
+export const fetchRoomAvailableForExport = async (token) => {
     try {
-        const response = await axios.get('https://winewarehousesystem.azurewebsites.net/api/v1/rooms/export');
+        const response = await axios.get('https://winewarehousesystem.azurewebsites.net/api/v1/rooms/export', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching rooms for export:', error);

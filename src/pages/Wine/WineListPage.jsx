@@ -20,6 +20,8 @@ export const WineListPage = () => {
     const [currentWineId, setCurrentWineId] = useState(null)
     const navigate = useNavigate()
     const location = useLocation()
+    const token = window?.localStorage?.getItem("access_token")
+    const authToken = `Bearer ${token}`
 
     //#region directly DELETE wine in the list
     const handleDeleteButtonClicked = (wineId) => {
@@ -30,7 +32,7 @@ export const WineListPage = () => {
     const confirmDelete = async () => {
         try {
             console.log('currentWineId ', currentWineId)
-            await deleteWineAPI(currentWineId)
+            await deleteWineAPI(currentWineId, authToken)
             notification.success({
                 message: `Wine deleted successfully`,
                 description: `Wine with ID: ${currentWineId} was deleted.`,
@@ -72,7 +74,7 @@ export const WineListPage = () => {
     //#region fetch wine region
     const fetchAllWines = async () => {
         try {
-            const response = await fetchAllWineAPI()
+            const response = await fetchAllWineAPI(authToken)
             const activeWines = response.filter(wine => wine.status === 'Active')
             if (activeWines) {
                 setWines(activeWines)
