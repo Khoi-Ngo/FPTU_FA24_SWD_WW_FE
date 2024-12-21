@@ -116,6 +116,7 @@ export const CheckRequestDetailListPage = () => {
 
     }, []);
     const formatValue = (value) => (value && value.trim() ? value : 'N/A');
+    console.log("DEMO COMMIT NEW PC");
     const columns = [
         {
             title: 'ID',
