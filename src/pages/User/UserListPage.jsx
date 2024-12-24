@@ -42,7 +42,7 @@ const UserListPage = () => {
       } else {
         notification.warning(
           {
-            message: "Something wrong",
+            message: "Something wrong, need action",
           }
         )
       }
